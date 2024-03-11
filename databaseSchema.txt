@@ -1,0 +1,35 @@
+classes
+    name: String
+    department: Maths
+
+teachers
+    name: String 
+    gender: enum (0: M - 1: F)
+    email: String
+
+students
+    name: String
+    gender: enum (0: M - 1: F)
+
+classes_students
+    class_id -> String
+        Students: List<student>
+
+teacher_classes
+    "teacher_id" -> String
+        classes: List<class>
+
+daily_mark
+    "teacher_id" -> String
+        "class_id" -> String
+            "date_id" -> String (7-1-2024-1)
+                "student_id" -> String
+                    List<Question_evaluation(Map)>
+
+## class not included in schema
+Question_evaluation
+    question: String
+    grade_value: String -> Will have values for default evaluation criteria
+    grade_type: String -> either "emoji" or "text"
+    comment: String
+
