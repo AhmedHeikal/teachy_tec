@@ -131,11 +131,14 @@ class FirestoreConstants {
   static const String id = "id";
   static const String tasks = "tasks";
   static const String task = "task";
+  static const String taskType = "taskType";
   static const String selectedOption = "selectedOption";
   static const String options = "options";
   static const String questionId = "questionId";
   static const String isCorrect = "isCorrect";
   static const String downloadUrl = "downloadUrl";
+  static const String isCorrectAnswerChosen = "isCorrectAnswerChosen";
+  static const String enteredText = "isCorrectAnswerChosen";
   static const String Kclass = "class";
   static const String classActivities = "class_activities";
   static const String activityStudents = "activity_students";

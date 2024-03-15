@@ -26,7 +26,8 @@ const AR = {
   "country": "الدولة",
   "phoneNumber": "رقم الهاتف",
   "title": "العنوان",
-  "answerShouldBeDifferent": "يجب أن تكون الأسئلة مختلفة",
+  "answerShouldBeDifferent": "يجب أن تكون الاختيارات مختلفة",
+  "questionsShouldBeDifferent": "يجب أن تكون الأسئلة مختلفة",
   "question": "السؤال",
   "didntFindNamesColumn": "لم يتم العثور على عمود اسم الطالب في الملف المرفوع.",
   "studentNamesDuplicated":
@@ -245,9 +246,9 @@ const AR = {
   "toCreateBoardYouNeedToHaveAtleastOneClassSoByAccepting":
       "لإنشاء لوحة، يجب أن يكون لديك فصل واحد على الأقل، لذلك من خلال قبول ذلك ستتم إعادة توجيهك إلى نموذج إنشاء الفصل",
   "score": "نتيجة",
-  "taskActivity": "نشاط المهمة",
+  "taskActivity": "مهمات النشاط",
   "wellDone": "أحسنت...",
-  "couldDoBetter": "يمكنك أن نفعل ما هو أفضل؟",
+  "couldDoBetter": "يمكنك فعل ما هو أفضل...",
   "intelligentBoyWithCoolSenseOfHumour": "فتى ذكي يتمتع بروح الدعابة الرائعة ❤",
   "youCantEditTasksAsThereAreGradesAssignedToThoseTasks":
       "لا يمكنك تحرير المهام نظرًا لوجود درجات مخصصة لتلك المهام",
@@ -261,4 +262,11 @@ const AR = {
   "signupWithApple": "التسجيل باستخدام أبل",
   "teachyTecSlogan": "تــــعلُّـــم. تـفُـــــوُق. مـتعــــــة",
   "teachyTec": "تقنية التعليم",
+  "textQuestion": "سؤال مقالي",
+  "multipleOptionsQuestion": "سؤال متعدد الاختيار",
+  "trueFalseQuestion": "سؤال صح/خطأ",
+  "true": "صحيح",
+  "false": "خاطى",
+  "youCanSwipeLeftRight": "يمكنك التمرير لليسار/اليمين",
+  "yourResponseIsOnPointTrulyMotivational": "ردك دقيق ومُلهِم حقًا",
 };

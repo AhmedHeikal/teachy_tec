@@ -23,6 +23,10 @@ import 'package:teachy_tec/utils/serviceLocator.dart';
 class AppUtility {
   static int decimalPointForCurrency = 2;
 
+  static bool convertStringToBool(String stringValue) {
+    return stringValue.toLowerCase() == 'true';
+  }
+
   static String localizedDateYMD(DateTime dateTime, {String? localeName}) {
     if (localeName != null) {
       return DateFormat.yMd(

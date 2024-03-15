@@ -2,17 +2,20 @@ import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:teachy_tec/hive/controllers/activityController.dart';
+import 'package:teachy_tec/hive/controllers/activityStudentsController.dart';
 import 'package:teachy_tec/models/Activity.dart';
 import 'package:teachy_tec/models/ActivityStudents.dart';
 import 'package:teachy_tec/models/AppConfiguration.dart';
 import 'package:teachy_tec/models/Class.dart';
 import 'package:teachy_tec/models/CustomQuestionOptionModel.dart';
 import 'package:teachy_tec/models/Student.dart';
+import 'package:teachy_tec/models/Task.dart';
 import 'package:teachy_tec/models/TaskViewModel.dart';
 import 'package:teachy_tec/utils/AppConstants.dart';
+import 'package:teachy_tec/utils/AppEnums.dart';
 import 'package:teachy_tec/utils/serviceLocator.dart';
 import 'package:firebase_storage/firebase_storage.dart' as FS;
 import 'dart:typed_data';
@@ -29,7 +32,7 @@ class AppNetworkProvider {
       return null;
     } else {
       try {
-        final storageRef = FirebaseStorage.instance.ref();
+        final storageRef = FS.FirebaseStorage.instance.ref();
         final Uint8List? data = await storageRef.child(imageId).getData();
         return data;
       } catch (e) {
@@ -57,14 +60,17 @@ class AppNetworkProvider {
     return studentsList;
   }
 
-  Future<AppConfiguration> getAppConfiguration() async {
-    var studentsJson = await serviceLocator<FirebaseFirestore>()
-        .collection(FirestoreConstants.applicationConfiguration)
-        .doc(serviceLocator<FirebaseAuth>().currentUser!.uid)
-        .get();
-    var currentAppConfiguration = AppConfiguration.fromJson(
-        (studentsJson.data()?.values.first as Map<String, dynamic>));
-    return currentAppConfiguration;
+  Future<AppConfiguration?> getAppConfiguration() async {
+    try {
+      var studentsJson = await serviceLocator<FirebaseFirestore>()
+          .collection(FirestoreConstants.applicationConfiguration)
+          .doc(serviceLocator<FirebaseAuth>().currentUser!.uid)
+          .get();
+      var currentAppConfiguration = AppConfiguration.fromJson(
+          (studentsJson.data() as Map<String, dynamic>));
+      return currentAppConfiguration;
+    } catch (e) {}
+    return null;
   }
 
   Future<Class> onAddNewClass(
@@ -446,10 +452,10 @@ class AppNetworkProvider {
     return [];
   }
 
-  Future<void> deleteActivity(
-      {required String activityId,
-      required String classId,
-      required int pageDate}) async {
+  Future<void> deleteActivity({
+    required Activity activity,
+    required String classId,
+  }) async {
     try {
       WriteBatch batch = FirebaseFirestore.instance.batch();
 
@@ -459,7 +465,7 @@ class AppNetworkProvider {
             .collection(FirestoreConstants.activity)
             .doc(serviceLocator<FirebaseAuth>().currentUser!.uid)
             .collection(FirestoreConstants.activities)
-            .doc(activityId),
+            .doc(activity.id),
       );
 
       // Step 2: Delete the activity from the 'classActivities' collection
@@ -468,7 +474,7 @@ class AppNetworkProvider {
             .collection(FirestoreConstants.classActivities)
             .doc(classId),
         {
-          FirestoreConstants.activities: FieldValue.arrayRemove([activityId]),
+          FirestoreConstants.activities: FieldValue.arrayRemove([activity.id]),
         },
       );
 
@@ -478,19 +484,23 @@ class AppNetworkProvider {
           .doc(serviceLocator<FirebaseAuth>().currentUser!.uid);
 
       CollectionReference activityCollection =
-          teacherActivitiesDocRef.collection((pageDate).toString());
-      batch.delete(activityCollection.doc(activityId));
+          teacherActivitiesDocRef.collection((activity.timestamp).toString());
+      batch.delete(activityCollection.doc(activity.id));
 
       // Step 4: Delete student-specific data from 'activityStudents' collection
       batch.delete(
         FirebaseFirestore.instance
             .collection(FirestoreConstants.activityStudents)
-            .doc(activityId),
+            .doc(activity.id),
       );
 
       // Commit the batched write
-      await batch.commit().then((_) {
+      await batch.commit().then((_) async {
         debugPrint('Activity and related data deleted successfully');
+        await deleteFolderFromStorage(
+            '${serviceLocator<FirebaseAuth>().currentUser!.uid}/Activities/${activity.id}');
+        await ActivityController().deleteActivity(activity);
+        await ActivityStudentsController().deleteActivity(activity);
       }).catchError((error) {
         debugPrint('Error during batch write: $error');
       });
@@ -501,8 +511,25 @@ class AppNetworkProvider {
 
   Future<void> deleteClass({required String classId}) async {
     try {
-      await ActivityController()
-          .deleteClassDetailsInActivities(classId: classId);
+      var activitiesJson = await serviceLocator<FirebaseFirestore>()
+          .collection(FirestoreConstants.classActivities)
+          .doc(classId)
+          .get();
+      var activitiesData =
+          (activitiesJson.data() as Map)[FirestoreConstants.activities];
+
+      var activitiesList = ((activitiesData as List)).map((e) {
+        return Activity.fromJson((e as Map<String, dynamic>));
+      }).toList();
+      // if (activitiesData == null) {
+      //   return null;
+      // }
+
+      // activities = ((currentActivities)).map((e) {
+      //   return Activity.fromJson((e as Map<String, dynamic>));
+      // }).toList();
+      // await ActivityController()
+      //     .deleteClassDetailsInActivities(classId: classId);
 
       WriteBatch batch = FirebaseFirestore.instance.batch();
 
@@ -544,14 +571,111 @@ class AppNetworkProvider {
         FirestoreConstants.classes: classes,
       });
 
+      for (var activityInfo in activitiesList) {
+        String activityId = activityInfo.id;
+        int pageDate = activityInfo.timestamp;
+
+        // Step 1: Delete the activity from the 'activity' collection
+        batch.delete(
+          FirebaseFirestore.instance
+              .collection(FirestoreConstants.activity)
+              .doc(serviceLocator<FirebaseAuth>().currentUser!.uid)
+              .collection(FirestoreConstants.activities)
+              .doc(activityId),
+        );
+
+        // Step 2: Delete the activity from the 'teacherActivities' collection
+        DocumentReference teacherActivitiesDocRef = FirebaseFirestore.instance
+            .collection(FirestoreConstants.teacherActivities)
+            .doc(serviceLocator<FirebaseAuth>().currentUser!.uid);
+
+        CollectionReference activityCollection =
+            teacherActivitiesDocRef.collection((pageDate).toString());
+        batch.delete(activityCollection.doc(activityId));
+
+        // Step 3: Delete student-specific data from 'activityStudents' collection
+        batch.delete(
+          FirebaseFirestore.instance
+              .collection(FirestoreConstants.activityStudents)
+              .doc(activityId),
+        );
+      }
+
+      // Exception has occurred.
+      // PlatformException (PlatformException(invalid-argument, Client specified an invalid argument. Note that this differs from failed-precondition. invalid-argument indicates arguments that are problematic regardless of the state of the system (e.g., an invalid field name)., {message: Client specified an invalid argument. Note that this differs from failed-precondition. invalid-argument indicates arguments that are problematic regardless of the state of the system (e.g., an invalid field name)., code: invalid-argument}, null))
+
       // Commit the batched write
-      await batch.commit().then((_) {
+      await batch.commit().then((_) async {
         debugPrint('Activity and related data deleted successfully');
+        await ActivityController().deleteMultipleActivitis(activitiesList);
+        await ActivityStudentsController()
+            .deleteMultipleActivities(activitiesList);
+        await Future.forEach(activitiesList, (activity) async {
+          deleteFolderFromStorage(
+              '${serviceLocator<FirebaseAuth>().currentUser!.uid}/Activities/${activity.id}');
+        });
       }).catchError((error) {
         debugPrint('Error during batch write: $error');
       });
     } catch (e) {
       debugPrint('Error occurred while deleting activity and data: $e');
+    }
+  }
+
+  Future<void> deleteActivities(
+      List<Activity> activities, String classId_) async {
+    try {
+      WriteBatch batch = FirebaseFirestore.instance.batch();
+
+      for (var activityInfo in activities) {
+        String activityId = activityInfo.id;
+        String classId = classId_;
+        int pageDate = activityInfo.timestamp;
+
+        // Step 1: Delete the activity from the 'activity' collection
+        batch.delete(
+          FirebaseFirestore.instance
+              .collection(FirestoreConstants.activity)
+              .doc(serviceLocator<FirebaseAuth>().currentUser!.uid)
+              .collection(FirestoreConstants.activities)
+              .doc(activityId),
+        );
+
+        // Step 2: Delete the activity from the 'classActivities' collection
+        batch.update(
+          FirebaseFirestore.instance
+              .collection(FirestoreConstants.classActivities)
+              .doc(classId),
+          {
+            FirestoreConstants.activities: FieldValue.arrayRemove([activityId]),
+          },
+        );
+
+        // Step 3: Delete the activity from the 'teacherActivities' collection
+        DocumentReference teacherActivitiesDocRef = FirebaseFirestore.instance
+            .collection(FirestoreConstants.teacherActivities)
+            .doc(serviceLocator<FirebaseAuth>().currentUser!.uid);
+
+        CollectionReference activityCollection =
+            teacherActivitiesDocRef.collection((pageDate).toString());
+        batch.delete(activityCollection.doc(activityId));
+
+        // Step 4: Delete student-specific data from 'activityStudents' collection
+        batch.delete(
+          FirebaseFirestore.instance
+              .collection(FirestoreConstants.activityStudents)
+              .doc(activityId),
+        );
+      }
+
+      // Commit the batched write
+      await batch.commit().then((_) {
+        debugPrint('Activities and related data deleted successfully');
+      }).catchError((error) {
+        debugPrint('Error during batch write: $error');
+      });
+    } catch (e) {
+      debugPrint('Error occurred while deleting activities and data: $e');
     }
   }
 
@@ -597,6 +721,7 @@ class AppNetworkProvider {
       Map<String, dynamic> taskData = {
         FirestoreConstants.id: task.id,
         FirestoreConstants.task: task.task,
+        FirestoreConstants.taskType: task.taskType?.jsonValue,
         // Add other task data here if needed
       };
 
@@ -693,6 +818,11 @@ class AppNetworkProvider {
       return TaskViewModel(
         id: taskData[FirestoreConstants.id],
         task: taskData[FirestoreConstants.task],
+        taskType: (taskData[FirestoreConstants.taskType] != null
+            ? TaskType.getTaskTypeFromInt(
+                taskData[FirestoreConstants.taskType] as int)
+            : null),
+        //  taskData[FirestoreConstants.taskType],
         downloadUrl: taskData[FirestoreConstants.downloadUrl],
         options: (taskData[FirestoreConstants.options] as List<dynamic>?)
             ?.map((option) => CustomQuestionOptionModel(
@@ -761,18 +891,19 @@ class AppNetworkProvider {
   Future<void> deleteFolderFromStorage(String folderPath) async {
     try {
       // Get a reference to the folder in Firebase Storage
-      Reference folderRef = FirebaseStorage.instance.ref().child(folderPath);
+      FS.Reference folderRef =
+          FS.FirebaseStorage.instance.ref().child(folderPath);
 
       // List all items (files and subfolders) in the folder
-      ListResult listResult = await folderRef.listAll();
+      FS.ListResult listResult = await folderRef.listAll();
 
       // Delete all files in the folder
-      await Future.forEach(listResult.items, (Reference itemRef) async {
+      await Future.forEach(listResult.items, (FS.Reference itemRef) async {
         await itemRef.delete();
       });
 
       // Delete all subfolders in the folder (recursively)
-      await Future.forEach(listResult.prefixes, (Reference prefixRef) async {
+      await Future.forEach(listResult.prefixes, (FS.Reference prefixRef) async {
         await deleteFolderFromStorage(prefixRef.fullPath);
       });
 
@@ -839,6 +970,96 @@ class AppNetworkProvider {
 
   //   return activitiesToReturn;
   // }
+
+  Future<ActivityStudents?> getActivityForStudents({
+    required String activityId,
+    required String classId,
+    required int timestamp,
+  }) async {
+    var activitiesJson = await serviceLocator<FirebaseFirestore>()
+        .collection(FirestoreConstants.activityStudents)
+        .doc(activityId)
+        .get();
+    var activitiesData = activitiesJson.data();
+    if (activitiesData == null) {
+      return null;
+    }
+
+    var activitiesMap = activitiesData[FirestoreConstants.students];
+    if (activitiesMap == null || activitiesMap is! Map) {
+      // Handle invalid or missing data structure
+      return null;
+    }
+
+    // Parse the data into the expected type
+    Map<String, List<Task>> parsedActivities = {};
+    activitiesMap.forEach((key, value) {
+      if (value is List && value.every((element) => element is Map)) {
+        parsedActivities[key] =
+            value.map<Task>((json) => Task.fromJson(json)).toList();
+      }
+    });
+
+    return ActivityStudents(
+      id: activityId,
+      classId: classId,
+      timestamp: timestamp,
+      studentTasks: parsedActivities,
+    );
+  }
+
+  Future<List<ActivityStudents>?> getAllActivityStudentsForTeacher() async {
+    // Create a list to store document snapshots
+    // List<DocumentSnapshot> documentSnapshots = [];
+
+    var activitiesJson = await serviceLocator<FirebaseFirestore>()
+        .collection(FirestoreConstants.activity)
+        .doc(serviceLocator<FirebaseAuth>().currentUser!.uid)
+        .collection(FirestoreConstants.activities)
+        .get();
+
+    var currentActivities =
+        activitiesJson.docs.cast().map((e) => e.data()).toList();
+    List<ActivityStudents> activityStudents = [];
+
+    List<Activity> activities = [];
+    // List<String>.from(teacherClassesSnapshot['classes']);
+
+    activities = ((currentActivities)).map((e) {
+      return Activity.fromJson((e as Map<String, dynamic>));
+    }).toList();
+
+    await Future.forEach(activities.toList(), (activity) async {
+      DocumentReference documentReference = FirebaseFirestore.instance
+          .collection(FirestoreConstants.activityStudents)
+          .doc(activity.id);
+      DocumentSnapshot snapshot = await documentReference.get();
+      var activitiesData = snapshot.data() as Map?;
+      var activitiesMap = activitiesData?[FirestoreConstants.students];
+      // documentSnapshots.add(snapshot);
+
+      if (activitiesData != null && activitiesMap is Map) {
+        // Parse the data into the expected type
+        Map<String, List<Task>> parsedActivities = {};
+        activitiesMap.forEach((key, value) {
+          if (value is List && value.every((element) => element is Map)) {
+            parsedActivities[key] =
+                value.map<Task>((json) => Task.fromJson(json)).toList();
+          }
+        });
+
+        activityStudents.add(ActivityStudents(
+          id: activity.id,
+          classId: activity.currentClass?.id ?? "",
+          timestamp: activity.timestamp,
+          studentTasks: parsedActivities,
+        ));
+      }
+    });
+
+    debugPrint('Heikal - current Activities $activities');
+    return activityStudents;
+  }
 
   Future<void> saveActivityStudents(
       List<ActivityStudents> activityStudents) async {
@@ -940,77 +1161,83 @@ class AppNetworkProvider {
 
   Future<void> deleteStudentClassStudentsAndActivityStudents(
       {required String classId, required Student updatedStudent}) async {
-    await ActivityController().deleteStudentInActivities(
-        newStudent: updatedStudent, classId: classId);
-    FirebaseFirestore firestore = FirebaseFirestore.instance;
-    WriteBatch batch = firestore.batch();
+    try {
+      await ActivityController().deleteStudentInActivities(
+          newStudent: updatedStudent, classId: classId);
+      FirebaseFirestore firestore = FirebaseFirestore.instance;
+      WriteBatch batch = firestore.batch();
 
-    // Reference to the "Student" collection
-    CollectionReference studentCollection =
-        firestore.collection(FirestoreConstants.students);
+      // Reference to the "Student" collection
+      CollectionReference studentCollection =
+          firestore.collection(FirestoreConstants.students);
 
-    // Reference to the "class_students" collection
-    CollectionReference classStudentsCollection =
-        firestore.collection(FirestoreConstants.classesStudents);
+      // Reference to the "class_students" collection
+      CollectionReference classStudentsCollection =
+          firestore.collection(FirestoreConstants.classesStudents);
 
-    // Reference to the "class_activities" collection
-    CollectionReference classActivitiesCollection =
-        firestore.collection(FirestoreConstants.classActivities);
+      // Reference to the "class_activities" collection
+      CollectionReference classActivitiesCollection =
+          firestore.collection(FirestoreConstants.classActivities);
 
-    // Reference to the "activity_students" collection
-    CollectionReference activityStudentsCollection =
-        firestore.collection(FirestoreConstants.activityStudents);
+      // Reference to the "activity_students" collection
+      CollectionReference activityStudentsCollection =
+          firestore.collection(FirestoreConstants.activityStudents);
 
-    // Update the student in the "Student" collection
-    DocumentReference studentDocRef = studentCollection.doc(updatedStudent.id);
-    batch.delete(studentDocRef);
+      // Update the student in the "Student" collection
+      DocumentReference studentDocRef =
+          studentCollection.doc(updatedStudent.id);
+      batch.delete(studentDocRef);
 
-    // Update the student in the "class_students" collection
-    DocumentReference classDocRef = classStudentsCollection.doc(classId);
-    DocumentReference classActivitiesDocRef =
-        classActivitiesCollection.doc(classId);
-    DocumentSnapshot classActivitiesDocSnapshot =
-        await classActivitiesDocRef.get();
-    DocumentSnapshot classDocSnapshot = await classDocRef.get();
-    List<dynamic> studentsData = List.from((classDocSnapshot.data()
-            as Map<String, dynamic>)[FirestoreConstants.students] ??
-        []);
+      // Update the student in the "class_students" collection
+      DocumentReference classDocRef = classStudentsCollection.doc(classId);
+      DocumentReference classActivitiesDocRef =
+          classActivitiesCollection.doc(classId);
+      DocumentSnapshot classActivitiesDocSnapshot =
+          await classActivitiesDocRef.get();
+      DocumentSnapshot classDocSnapshot = await classDocRef.get();
+      List<dynamic> studentsData = List.from((classDocSnapshot.data()
+              as Map<String, dynamic>)[FirestoreConstants.students] ??
+          []);
 
-    // Remove the student from the "class_students" collection
-    studentsData.removeWhere(
-        (student) => student[FirestoreConstants.id] == updatedStudent.id);
+      // Remove the student from the "class_students" collection
+      studentsData.removeWhere(
+          (student) => student[FirestoreConstants.id] == updatedStudent.id);
 
-    batch.update(classDocRef, {
-      FirestoreConstants.students: studentsData,
-    });
+      batch.update(classDocRef, {
+        FirestoreConstants.students: studentsData,
+      });
 
-    // Get all activities attached to this class
-    List<dynamic> classActivityRefs = List.from((classActivitiesDocSnapshot
-            .data() as Map<String, dynamic>)[FirestoreConstants.activities] ??
-        []);
+      // Get all activities attached to this class
+      List<dynamic> classActivityRefs = List.from((classActivitiesDocSnapshot
+              .data() as Map<String, dynamic>)[FirestoreConstants.activities] ??
+          []);
 
-    // Iterate through all activities from "class_activities" and remove the student from "activity_students"
-    for (Map<String, dynamic> classActivityRef in classActivityRefs) {
-      var currentActivityId = (classActivityRef)[FirestoreConstants.id];
-      DocumentSnapshot activityStudents =
-          await activityStudentsCollection.doc(currentActivityId).get();
+      // Iterate through all activities from "class_activities" and remove the student from "activity_students"
+      for (Map<String, dynamic> classActivityRef in classActivityRefs) {
+        var currentActivityId = (classActivityRef)[FirestoreConstants.id];
+        DocumentSnapshot activityStudents =
+            await activityStudentsCollection.doc(currentActivityId).get();
 
-      // Iterate through all activities from "activity_students" and remove the student
-      if (activityStudents.data() != null) {
-        var currentStudents = ((activityStudents.data()
-                as Map<String, dynamic>)[FirestoreConstants.students]
-            as Map<String, dynamic>);
+        // Iterate through all activities from "activity_students" and remove the student
+        if (activityStudents.data() != null) {
+          var currentStudents = ((activityStudents.data()
+                  as Map<String, dynamic>)[FirestoreConstants.students]
+              as List<dynamic>);
 
-        currentStudents.removeWhere((key, value) => key == updatedStudent.id);
+          currentStudents[0]
+              .removeWhere((key, value) => key == updatedStudent.id);
 
-        batch.update(activityStudentsCollection.doc(currentActivityId), {
-          FirestoreConstants.students: currentStudents,
-        });
+          batch.update(activityStudentsCollection.doc(currentActivityId), {
+            FirestoreConstants.students: currentStudents,
+          });
+        }
       }
-    }
 
-    // Commit the batch
-    await batch.commit();
+      // Commit the batch
+      await batch.commit();
+    } catch (e) {
+      await EasyLoading.dismiss(animation: true);
+    }
   }
 
   Future<void> deleteStudentInFirestoreAndClassStudentsAndActivityStudents(

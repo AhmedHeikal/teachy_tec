@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:teachy_tec/models/CustomQuestionOptionModel.dart';
 import 'package:teachy_tec/models/TaskViewModel.dart';
+import 'package:teachy_tec/utils/AppEnums.dart';
 import 'package:teachy_tec/widgets/FormParentClass.dart';
 import 'package:teachy_tec/widgets/showSpecificNotifications.dart';
 import 'package:uuid/uuid.dart';
@@ -19,6 +20,7 @@ class CustomQuestionFormVM extends ChangeNotifier {
   VoidCallback? onChange;
   List<QuestionOptionComponentVM> options = [];
   PlatformFile? image;
+  TaskType taskType;
 
   bool isReadOnly;
 
@@ -52,23 +54,42 @@ class CustomQuestionFormVM extends ChangeNotifier {
   CustomQuestionFormVM.add({
     this.question,
     this.isReadOnly = false,
+    this.taskType = TaskType.multipleOptions,
     // required this.isMultipleQuestion,
     this.addMedia = true,
   }) {
-    options = [
-      QuestionOptionComponentVM(
-        isCorrect: true,
-        isReadOnly: isReadOnly,
-      ),
-      QuestionOptionComponentVM(
-        isCorrect: false,
-        isReadOnly: isReadOnly,
-      ),
-    ];
+    if (taskType == TaskType.multipleOptions) {
+      options = [
+        QuestionOptionComponentVM(
+          isCorrect: true,
+          tasktype: taskType,
+          isReadOnly: isReadOnly,
+        ),
+        QuestionOptionComponentVM(
+          isCorrect: false,
+          tasktype: taskType,
+          isReadOnly: isReadOnly,
+        ),
+      ];
+    } else if (taskType == TaskType.trueFalse) {
+      options = [
+        QuestionOptionComponentVM(
+          isCorrect: true,
+          tasktype: taskType,
+          isReadOnly: isReadOnly,
+        ),
+      ];
+    } else {
+      options = [];
+    }
   }
 
-  CustomQuestionFormVM.edit(
-      {required this.questionVM, this.isReadOnly = false, this.onChange}) {
+  CustomQuestionFormVM.edit({
+    required this.questionVM,
+    this.taskType = TaskType.multipleOptions,
+    this.isReadOnly = false,
+    this.onChange,
+  }) {
     addMedia = true;
 
     question = questionVM!.task;
@@ -76,6 +97,7 @@ class CustomQuestionFormVM extends ChangeNotifier {
     for (int i = 0; i < (questionVM!.options?.length ?? 0); i++) {
       options.add(QuestionOptionComponentVM(
         option: questionVM!.options?[i],
+        tasktype: taskType,
         isReadOnly: isReadOnly,
       ));
     }
@@ -111,6 +133,7 @@ class CustomQuestionFormVM extends ChangeNotifier {
       );
       options.add(QuestionOptionComponentVM(
         option: newOption,
+        tasktype: taskType,
         isReadOnly: isReadOnly,
       ));
 
@@ -163,30 +186,32 @@ class CustomQuestionFormVM extends ChangeNotifier {
   bool validateForm_() {
     if (!validateForm()) {
       return false;
-    } else if (options.length < 2) {
-      showSpecificNotificaiton(
-          notifcationDetails:
-              AppNotifcationsItems.CustomQuestionOptionsNotComplete);
-      // showNotification(
-      //     UIRouter.getCurrentContext(), 'We need to have two options atleast');
-      return false;
-    } else if (options.every((element) => !(element.isCorrect ?? false))) {
-      showSpecificNotificaiton(
-          notifcationDetails:
-              AppNotifcationsItems.CustomQuestionNoCorrectOption);
-      // showNotification(
-      //     UIRouter.getCurrentContext(), 'We need to have two options atleast');
-      return false;
-    } else if (options.every((element) => (element.isCorrect ?? false))) {
-      showSpecificNotificaiton(
-          notifcationDetails:
-              AppNotifcationsItems.CustomQuestionNoIncorrectOption);
+    } else if (taskType == TaskType.multipleOptions) {
+      if (options.length < 2) {
+        showSpecificNotificaiton(
+            notifcationDetails:
+                AppNotifcationsItems.CustomQuestionOptionsNotComplete);
+        // showNotification(
+        //     UIRouter.getCurrentContext(), 'We need to have two options atleast');
+        return false;
+      } else if (options.every((element) => !(element.isCorrect ?? false))) {
+        showSpecificNotificaiton(
+            notifcationDetails:
+                AppNotifcationsItems.CustomQuestionNoCorrectOption);
+        // showNotification(
+        //     UIRouter.getCurrentContext(), 'We need to have two options atleast');
+        return false;
+      } else if (options.every((element) => (element.isCorrect ?? false))) {
+        showSpecificNotificaiton(
+            notifcationDetails:
+                AppNotifcationsItems.CustomQuestionNoIncorrectOption);
 
-      return false;
-    } else if (!validateOptionsForm()) {
-      // showNotification(UIRouter.getCurrentContext(),
-      //     'One or more options doesn\'t have body');
-      return false;
+        return false;
+      } else if (!validateOptionsForm()) {
+        // showNotification(UIRouter.getCurrentContext(),
+        //     'One or more options doesn\'t have body');
+        return false;
+      }
     }
 
     return true;
@@ -210,11 +235,12 @@ class QuestionOptionComponentVM extends ChangeNotifier with FormParentClass {
   bool? isCorrect;
   CustomQuestionOptionModel? option;
   final VoidCallback? onSelectItem;
-
+  final TaskType tasktype;
   bool isReadOnly;
   QuestionOptionComponentVM({
     this.isCorrect = false,
     this.isReadOnly = false,
+    this.tasktype = TaskType.multipleOptions,
     this.option,
     this.onSelectItem,
   }) {
@@ -245,6 +271,7 @@ class QuestionOptionComponentVM extends ChangeNotifier with FormParentClass {
   QuestionOptionComponentVM.old({
     required this.option,
     this.isReadOnly = false,
+    this.tasktype = TaskType.multipleOptions,
     this.onSelectItem,
   }) {
     optionString = option!.name;

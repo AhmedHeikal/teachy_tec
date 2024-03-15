@@ -253,19 +253,27 @@ class UIRouter extends ChangeNotifier {
       bool showNavigator = false,
       PageTransitionType pushDirection = PageTransitionType.rightToLeft,
       Curve curve = Curves.linear,
-      Duration duration = const Duration(milliseconds: 200)}) async {
+      Duration duration = const Duration(milliseconds: 200),
+      dynamic argumentReturned}) async {
+    //  }) {
+    // Navigator.of(context ?? getCurrentContext(), rootNavigator: rootNavigator)
+    //     .pop(argumentReturned);
     // FirebaseAnalytics.instance.setCurrentScreen(screenName: pageName);
 
     return await Navigator.of(context ?? getCurrentContext(),
             rootNavigator: rootNavigator)
         .pushReplacement(
       PageTransition(
-          child: newScreen,
-          type: pushDirection,
-          isIos: true,
-          duration: duration,
-          curve: curve,
-          settings: RouteSettings(name: pageName, arguments: [showNavigator])),
+        child: newScreen,
+        type: pushDirection,
+        isIos: true,
+        duration: duration,
+        curve: curve,
+        settings: RouteSettings(
+          name: pageName,
+          arguments: [showNavigator],
+        ),
+      ),
     );
   }
 

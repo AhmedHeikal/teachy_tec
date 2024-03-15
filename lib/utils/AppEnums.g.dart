@@ -56,6 +56,8 @@ class TaskTypeAdapter extends TypeAdapter<TaskType> {
         return TaskType.multipleOptions;
       case 1:
         return TaskType.trueFalse;
+      case 2:
+        return TaskType.textOnly;
       default:
         return TaskType.multipleOptions;
     }
@@ -69,6 +71,9 @@ class TaskTypeAdapter extends TypeAdapter<TaskType> {
         break;
       case TaskType.trueFalse:
         writer.writeByte(1);
+        break;
+      case TaskType.textOnly:
+        writer.writeByte(2);
         break;
     }
   }

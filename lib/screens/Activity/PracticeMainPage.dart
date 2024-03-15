@@ -2,12 +2,15 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_localization/flutter_localization.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:photo_view/photo_view.dart';
 import 'package:provider/provider.dart';
 import 'package:teachy_tec/localization/Applocalization.dart';
 import 'package:teachy_tec/screens/Activity/DayTable.dart';
 import 'package:teachy_tec/screens/Activity/DayTableVM.dart';
+import 'package:teachy_tec/screens/Activity/MultioptionsPracticePage.dart';
 import 'package:teachy_tec/screens/Activity/PracticeMainPageVM.dart';
+import 'package:teachy_tec/screens/Activity/TextOnlyPracticePage.dart';
+import 'package:teachy_tec/screens/Activity/TrueFalsePracticePage.dart';
+import 'package:teachy_tec/screens/Activity/TrueFalsePracticePageVM.dart';
 import 'package:teachy_tec/styles/AppColors.dart';
 import 'package:teachy_tec/styles/TextStyles.dart';
 import 'package:teachy_tec/utils/AppConstants.dart';
@@ -16,7 +19,6 @@ import 'package:teachy_tec/utils/AppExtensions.dart';
 import 'package:teachy_tec/utils/AppUtility.dart';
 import 'package:teachy_tec/widgets/BoardEmojisSelector.dart';
 import 'package:teachy_tec/widgets/QuestionWidget.dart';
-import 'package:teachy_tec/widgets/SliverGridLayoutWithCustomGeometryLayout.dart';
 import 'package:teachy_tec/widgets/StudentsRoller.dart';
 import 'package:teachy_tec/widgets/defaultContainer.dart';
 import 'package:collection/collection.dart';
@@ -58,8 +60,8 @@ class PracticeMainPage extends StatelessWidget {
                   padding: EdgeInsets.only(
                       top: kToolbarHeight + kMainPadding + topPadding),
                   child: SingleChildScrollView(
+                    physics: const ClampingScrollPhysics(),
                     child: Column(
-                      // mainAxisSize: MainAxisSize.max,
                       children: [
                         ValueListenableBuilder<bool>(
                           valueListenable: model.dayTableModel.isTimerOpen,
@@ -205,210 +207,24 @@ class PracticeMainPage extends StatelessWidget {
                         const SizedBox(
                           height: kMainPadding,
                         ),
-                        Text(currentTask!.task,
-                            style: TextStyles.InterBlackS18W700),
-                        const SizedBox(
-                          height: kMainPadding,
-                        ),
-                        if (currentTask.downloadUrl != null)
-                          Padding(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: kMainPadding),
-                            child: ClipRRect(
-                              borderRadius: BorderRadius.circular(12),
-                              child: DefaultContainer(
-                                height: 220,
-                                width: double.infinity,
-                                child: PhotoView(
-                                  imageProvider: NetworkImage(
-                                    currentTask.downloadUrl!,
-                                  ),
-                                  loadingBuilder: (context, event) {
-                                    final expectedBytes =
-                                        event?.expectedTotalBytes;
-                                    final loadedBytes =
-                                        event?.cumulativeBytesLoaded;
-                                    final value = loadedBytes != null &&
-                                            expectedBytes != null
-                                        ? loadedBytes / expectedBytes
-                                        : null;
-
-                                    return Center(
-                                      child: SizedBox(
-                                        width: 20.0,
-                                        height: 20.0,
-                                        child: CircularProgressIndicator(
-                                          value: value,
-                                          color: AppColors.primary700,
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                  initialScale:
-                                      PhotoViewComputedScale.contained,
-                                ),
-                              ),
-                            ),
-                          ),
-                        GridView.builder(
-                          itemCount: currentTask.options?.length ?? 0,
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: kMainPadding,
-                              vertical: kBottomPadding),
-                          physics: const NeverScrollableScrollPhysics(),
-                          shrinkWrap: true,
-                          itemBuilder: (_, index) {
-                            var currentOption = currentTask.options![index];
-                            return InkWell(
-                              onTap: model.currentSelectedOption != null
-                                  ? null
-                                  : () => model.onSelectOption(currentOption),
-                              child: ClipRRect(
-                                // borderRadius: BorderRadius.circular(8),
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    color: AppColors.grey100,
-                                    border: Border.all(
-                                      width: 2,
-                                      color:
-                                          model.currentSelectedOption == null ||
-                                                  model.currentSelectedOption
-                                                          ?.name !=
-                                                      currentOption.name
-                                              ? Colors.transparent
-                                              : model.currentSelectedOption!
-                                                      .isCorrect
-                                                  ? AppColors.green600
-                                                  : AppColors.red600,
-                                    ),
-                                    borderRadius: BorderRadius.circular(12),
-                                  ),
-                                  height: 20,
-                                  child: Stack(
-                                    children: [
-                                      Positioned.fill(
-                                        child: ClipRRect(
-                                          borderRadius:
-                                              BorderRadius.circular(8),
-                                          child: Image.asset(
-                                            'assets/png/emptyOptionAlternative.png',
-                                            fit: BoxFit.cover,
-                                            errorBuilder:
-                                                (context, error, stackTrace) {
-                                              return Container();
-                                            },
-                                          ),
-                                        ),
-                                      ),
-                                      if (currentOption.downloadUrl != null)
-                                        Positioned.fill(
-                                          child: ClipRRect(
-                                            borderRadius:
-                                                BorderRadius.circular(8),
-                                            child: PhotoView(
-                                              imageProvider: NetworkImage(
-                                                currentOption.downloadUrl!,
-                                              ),
-                                              initialScale:
-                                                  PhotoViewComputedScale
-                                                      .contained,
-                                              errorBuilder:
-                                                  (context, error, stackTrace) {
-                                                return Container();
-                                              },
-                                              loadingBuilder: (context, event) {
-                                                final expectedBytes =
-                                                    event?.expectedTotalBytes;
-
-                                                final loadedBytes = event
-                                                    ?.cumulativeBytesLoaded;
-
-                                                final value = loadedBytes !=
-                                                            null &&
-                                                        expectedBytes != null
-                                                    ? loadedBytes /
-                                                        expectedBytes
-                                                    : null;
-
-                                                return Stack(
-                                                  children: [
-                                                    Positioned(
-                                                      top: kBottomPadding,
-                                                      right: kBottomPadding,
-                                                      child: SizedBox(
-                                                        height: 20,
-                                                        width: 20,
-                                                        child:
-                                                            CircularProgressIndicator(
-                                                          value: value,
-                                                          color: AppColors
-                                                              .primary700,
-                                                          strokeWidth: 2,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ],
-                                                );
-                                              },
-                                            ),
-                                          ),
-                                        ),
-                                      Positioned(
-                                        bottom: 0,
-                                        left: 0,
-                                        top: currentOption.downloadUrl == null
-                                            ? 0
-                                            : null,
-                                        right: 0,
-                                        child: DefaultContainer(
-                                          borderRadius: BorderRadius.only(
-                                            topLeft:
-                                                currentOption.downloadUrl ==
-                                                        null
-                                                    ? const Radius.circular(8)
-                                                    : Radius.zero,
-                                            topRight:
-                                                currentOption.downloadUrl ==
-                                                        null
-                                                    ? const Radius.circular(8)
-                                                    : Radius.zero,
-                                            bottomLeft:
-                                                const Radius.circular(8),
-                                            bottomRight:
-                                                const Radius.circular(8),
-                                          ),
-                                          color: AppColors.grey900
-                                              .withOpacity(0.5),
-                                          padding: const EdgeInsets.symmetric(
-                                            vertical: 2,
-                                            horizontal: kInternalPadding,
-                                          ),
-                                          child: Align(
-                                            alignment: AlignmentDirectional
-                                                .bottomStart,
-                                            child: Text(
-                                              currentOption.name,
-                                              style:
-                                                  TextStyles.InterWhiteS14W400,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            );
-                          },
-                          gridDelegate:
-                              SliverGridDelegateWithFixedCrossAxisCountAndCentralizedLastElement(
-                            itemCount: currentTask.options?.length ?? 0,
-                            crossAxisCount: 2,
-                            mainAxisSpacing: 20,
-                            crossAxisSpacing: 20,
-                            childAspectRatio: 1.5,
-                          ),
-                        )
+                        if (currentTask != null)
+                          currentTask.taskType == TaskType.textOnly
+                              ? TextOnlyPracticePage(
+                                  key: UniqueKey(),
+                                  model: model,
+                                  currentTask: currentTask,
+                                )
+                              : currentTask.taskType == TaskType.trueFalse
+                                  ? TrueFalsePracticePage(
+                                      key: UniqueKey(),
+                                      model: TrueFalsePracticePageVM(
+                                        currentTask: currentTask,
+                                        model: model,
+                                      ))
+                                  : MultioptionsPracticePage(
+                                      key: UniqueKey(),
+                                      model: model,
+                                      currentTask: currentTask),
                       ],
                     ),
                   ),
@@ -512,15 +328,11 @@ class PracticeMainPage extends StatelessWidget {
                       MediaQuery.sizeOf(context).width - 48,
                   top: dayTableModel.position?.dy ??
                       MediaQuery.sizeOf(context).height - 200,
-                  // bottom: 20,
                   child: Draggable(
                     feedback: ActivityTableSettings(
                       dayTableModel,
                       isInPracticePage: true,
-                      isCorrectAnswerSelectedInPracticePage:
-                          dayTableModel.selectedShuffledStudent.value == null
-                              ? null
-                              : model.currentSelectedOption?.isCorrect,
+                      answerSubmittedType: model.getAnswerTypeForCurrentTask(),
                     ),
                     childWhenDragging: Container(),
                     onDragEnd: (details) {
@@ -542,10 +354,8 @@ class PracticeMainPage extends StatelessWidget {
                       child: ActivityTableSettings(
                         dayTableModel,
                         isInPracticePage: true,
-                        isCorrectAnswerSelectedInPracticePage:
-                            dayTableModel.selectedShuffledStudent.value == null
-                                ? null
-                                : model.currentSelectedOption?.isCorrect,
+                        answerSubmittedType:
+                            model.getAnswerTypeForCurrentTask(),
                         onEmojiSelected:
                             model.setEmojiForCurrentTaskAndCurrentUser,
                       ),

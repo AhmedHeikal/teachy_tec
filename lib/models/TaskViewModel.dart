@@ -17,10 +17,10 @@ class TaskViewModel {
   List<CustomQuestionOptionModel>? options;
   @HiveField(3)
   TaskType? taskType;
-  // used for the internal Components
-  String? imagePathLocally;
   @HiveField(4)
   String id;
+  // used for the internal Components
+  String? imagePathLocally;
   TaskViewModel({
     required this.task,
     required this.id,

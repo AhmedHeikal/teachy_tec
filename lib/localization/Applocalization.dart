@@ -33,6 +33,7 @@ class AppLocale {
   static const String phoneNumber = "phoneNumber";
   static const String title = "title";
   static const String answerShouldBeDifferent = "answerShouldBeDifferent";
+  static const String questionsShouldBeDifferent = "questionsShouldBeDifferent";
   static const String studentNamesDuplicated = "studentNamesDuplicated";
   static const String didntFindNamesColumn = "didntFindNamesColumn";
   static const String question = "question";
@@ -226,6 +227,9 @@ class AppLocale {
   static const youChoseUnsupportedElement = "youChoseUnsupportedElement";
   static const fileSizeWasExceeded = "fileSizeWasExceeded";
   static const takePhoto = "takePhoto";
+  static const textQuestion = "textQuestion";
+  static const multipleOptionsQuestion = "multipleOptionsQuestion";
+  static const trueFalseQuestion = "trueFalseQuestion";
   static const recordVideo = "recordVideo";
   static const chooseFromGallery = "chooseFromGallery";
   static const removeCurrentVideo = "removeCurrentVideo";
@@ -270,6 +274,11 @@ class AppLocale {
   static const teachyTecSlogan = "teachyTecSlogan";
   static const teachyTec = "teachyTec";
   static const signupWithApple = "signupWithApple";
+  static const trueString = "true";
+  static const falseString = "false";
+  static const youCanSwipeLeftRight = "youCanSwipeLeftRight";
+  static const yourResponseIsOnPointTrulyMotivational =
+      "yourResponseIsOnPointTrulyMotivational";
 
   static const Map<String, dynamic> en = EN;
   static const Map<String, dynamic> ar = AR;

@@ -34,6 +34,7 @@ class ActivityForm extends StatelessWidget {
       child: GestureDetector(
         onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
         child: Scaffold(
+          backgroundColor: AppColors.grey50,
           appBar: CustomAppBar(
             screenName:
                 AppLocale.newBoard.getString(context).capitalizeFirstLetter(),
@@ -54,6 +55,7 @@ class ActivityForm extends StatelessWidget {
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: kMainPadding),
                 child: SingleChildScrollView(
+                  physics: const ClampingScrollPhysics(),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
@@ -275,14 +277,15 @@ class ActivityForm extends StatelessWidget {
                                       additionalWidgetInTheBottomOfAdvice:
                                           Column(
                                         children: [
-                                          SizedBox(height: 20),
+                                          const SizedBox(height: 20),
                                           Text(
                                             AppLocale
                                                 .youCanClearAllGradesByPressingTheButtonBelow
                                                 .getString(context)
                                                 .capitalizeFirstLetter(),
                                           ),
-                                          SizedBox(height: kHelpingPadding),
+                                          const SizedBox(
+                                              height: kHelpingPadding),
                                           Container(
                                             margin: const EdgeInsetsDirectional
                                                 .only(end: kMainPadding),

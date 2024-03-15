@@ -311,6 +311,7 @@ class StudentsComponentVM extends ChangeNotifier {
   List<Student> getStudentsList() {
     List<Student> studentsListToReturn = [];
     for (var student in studentsList) {
+      student.studentFormVM.onCompleteButtonTapped();
       if (student.currentStudent.name.trim().isNotEmpty) {
         student.currentStudent.id = null;
         studentsListToReturn.add(student.currentStudent);

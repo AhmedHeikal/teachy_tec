@@ -96,24 +96,27 @@ class MediaPickerWidgetState
     // if (oldWidget.initialList?.length == 0 && widget.initialList?.length != 0) {
 
     if (widget.initialList != null &&
-        (oldWidget.initialList?.length != widget.initialList?.length)) {
-      setState(
-        () {
-          isLoading.value = false;
-          selectedMedia = [...widget.initialList!];
-          // TODO: VIDEO Stream
-          // selectedMedia.forEach((element) {
-          //   videoControllers.addAll({
-          //     VideoPlayerController.network(
-          //         TomatoEndpoints.Uploads + element.name,
-          //         // 'https://mrtomato-qa2.dev.trustsourcing.com/uploads/${element.name}',
-          //         httpHeaders: {
-          //           "cookie": serviceLocator<LocalStorage>().authCookie
-          //         }): element.name
-          //   });
-          // });
-        },
-      );
+        (oldWidget.initialList?.length != widget.initialList?.length &&
+            mounted)) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        setState(
+          () {
+            isLoading.value = false;
+            selectedMedia = [...widget.initialList!];
+            // TODO: VIDEO Stream
+            // selectedMedia.forEach((element) {
+            //   videoControllers.addAll({
+            //     VideoPlayerController.network(
+            //         TomatoEndpoints.Uploads + element.name,
+            //         // 'https://mrtomato-qa2.dev.trustsourcing.com/uploads/${element.name}',
+            //         httpHeaders: {
+            //           "cookie": serviceLocator<LocalStorage>().authCookie
+            //         }): element.name
+            //   });
+            // });
+          },
+        );
+      });
     }
   }
 
@@ -130,23 +133,6 @@ class MediaPickerWidgetState
     }
   }
 
-  // void didChangeAppLifecycleState(AppLifecycleState state) async {
-  // if (state == AppLifecycleState.resumed) {
-  //   if (selectedMediaType != null) {
-  //     if (selectedMediaType == mediaSelectionType.selectMediaFromGallery) {
-  //       await selectMediaFromGallery();
-  //     } else if (selectedMediaType == mediaSelectionType.takePicture) {
-  //       await capturePhoto();
-  //     } else {
-  //       await captureVideo();
-  //     }
-  //     selectedMediaType = null;
-  //     // openStoryPage();
-  //     // widget.model.storiesVM.lifecycleChangedOnPermissionPAgeOpened = false;
-  //   }
-  // }
-  // }
-
   @override
   void initState() {
     super.initState();
@@ -156,9 +142,11 @@ class MediaPickerWidgetState
     isLoading.value = widget.isStartingbyLoading;
 
     if (widget.initialList != null) {
-      setState(() {
-        isLoading.value = false;
-        selectedMedia = [...widget.initialList!];
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        setState(() {
+          isLoading.value = false;
+          selectedMedia = [...widget.initialList!];
+        });
       });
     }
   }
@@ -272,13 +260,16 @@ class MediaPickerWidgetState
                                   context,
                                 ),
                                 onRemoveTapped: () {
-                                  setState(() {
-                                    if (selectedMedia.single.name.isVideo) {
-                                      videoControllers.keys.first.dispose();
-                                      videoControllers.clear();
-                                    }
-                                    selectedMedia.clear();
-                                    widget.mediaCallBack?.call(selectedMedia);
+                                  WidgetsBinding.instance
+                                      .addPostFrameCallback((_) {
+                                    setState(() {
+                                      if (selectedMedia.single.name.isVideo) {
+                                        videoControllers.keys.first.dispose();
+                                        videoControllers.clear();
+                                      }
+                                      selectedMedia.clear();
+                                      widget.mediaCallBack?.call(selectedMedia);
+                                    });
                                   });
                                 },
                               )
@@ -302,16 +293,21 @@ class MediaPickerWidgetState
                                     onTapMedia: () =>
                                         mediaSelectionBottomSheet(context),
                                     onRemoveTapped: () {
-                                      setState(() {
-                                        if (selectedMedia.single.name.isVideo) {
-                                          videoControllers.keys.first.dispose();
+                                      WidgetsBinding.instance
+                                          .addPostFrameCallback((_) {
+                                        setState(() {
+                                          if (selectedMedia
+                                              .single.name.isVideo) {
+                                            videoControllers.keys.first
+                                                .dispose();
 
-                                          videoControllers.clear();
-                                        }
+                                            videoControllers.clear();
+                                          }
 
-                                        selectedMedia.clear();
-                                        widget.mediaCallBack
-                                            ?.call(selectedMedia);
+                                          selectedMedia.clear();
+                                          widget.mediaCallBack
+                                              ?.call(selectedMedia);
+                                        });
                                       });
                                     })
                                 : GridView.builder(
@@ -379,37 +375,39 @@ class MediaPickerWidgetState
                                           // debugPrint(
                                           //'Heikal - videosController length before deleting - ' +
                                           //videoControllers.length.toString());
+                                          WidgetsBinding.instance
+                                              .addPostFrameCallback((_) {
+                                            setState(() {
+                                              if (isVideo) {
+                                                var elementIndex =
+                                                    videoControllers.entries
+                                                        .toList()
+                                                        .indexWhere((element) =>
+                                                            element.value ==
+                                                            selectedMedia
+                                                                .elementAtOrNull(
+                                                                    index)
+                                                                ?.name);
 
-                                          setState(() {
-                                            if (isVideo) {
-                                              var elementIndex =
-                                                  videoControllers.entries
-                                                      .toList()
-                                                      .indexWhere((element) =>
-                                                          element.value ==
-                                                          selectedMedia
-                                                              .elementAtOrNull(
-                                                                  index)
-                                                              ?.name);
+                                                videoControllers.entries
+                                                    .toList()[elementIndex]
+                                                    .key
+                                                    .dispose();
 
-                                              videoControllers.entries
-                                                  .toList()[elementIndex]
-                                                  .key
-                                                  .dispose();
-
-                                              videoControllers.remove(
-                                                  videoControllers.entries
-                                                      .toList()[elementIndex]
-                                                      .key);
-                                              // element.key.dispose();
-                                              // videoControllers.remove(element);
-                                            }
-                                            selectedMedia.removeAt(index);
-                                            // debugPrint(
-                                            //'Heikal - videosController length after deleting - ' +
-                                            //  videoControllers.length.toString());
-                                            widget.mediaCallBack
-                                                ?.call(selectedMedia);
+                                                videoControllers.remove(
+                                                    videoControllers.entries
+                                                        .toList()[elementIndex]
+                                                        .key);
+                                                // element.key.dispose();
+                                                // videoControllers.remove(element);
+                                              }
+                                              selectedMedia.removeAt(index);
+                                              // debugPrint(
+                                              //'Heikal - videosController length after deleting - ' +
+                                              //  videoControllers.length.toString());
+                                              widget.mediaCallBack
+                                                  ?.call(selectedMedia);
+                                            });
                                           });
                                         },
                                         // mediaPath: selectedMedia.elementAtOrNull(index)?.path,
@@ -557,81 +555,84 @@ class MediaPickerWidgetState
 
     if (result == null) {
     } else {
-      setState(() {
-        if (widget.maxMediaCount == 1) selectedMedia.clear();
-        List<PlatformFile> files =
-            result.files.take(widget.maxMediaCount).toList();
+      if (mounted) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          setState(() {
+            if (widget.maxMediaCount == 1) selectedMedia.clear();
+            List<PlatformFile> files =
+                result.files.take(widget.maxMediaCount).toList();
 
-        files = files
-            .map(
-              (e) => PlatformFile(
-                name: e.name.replaceAll(' ', ''),
-                size: e.size,
-                path: e.path,
-                bytes: e.bytes,
-                identifier: e.identifier,
-              ),
-            )
-            .toList();
-        for (var element in files) {
-          var mediaType = MediaType.undefined;
+            files = files
+                .map(
+                  (e) => PlatformFile(
+                    name: e.name.replaceAll(' ', ''),
+                    size: e.size,
+                    path: e.path,
+                    bytes: e.bytes,
+                    identifier: e.identifier,
+                  ),
+                )
+                .toList();
+            for (var element in files) {
+              var mediaType = MediaType.undefined;
 
-          // If Item Chosen is not from the supported types remove it and show error
-          if (kImageExtensions.any(
-              (ext) => element.extension?.toLowerCase() == ext.toLowerCase())) {
-            mediaType = MediaType.image;
-          } else if (kVideoExtensions.any(
-              (ext) => element.extension?.toLowerCase() == ext.toLowerCase())) {
-            mediaType = MediaType.video;
-          }
+              // If Item Chosen is not from the supported types remove it and show error
+              if (kImageExtensions.any((ext) =>
+                  element.extension?.toLowerCase() == ext.toLowerCase())) {
+                mediaType = MediaType.image;
+              } else if (kVideoExtensions.any((ext) =>
+                  element.extension?.toLowerCase() == ext.toLowerCase())) {
+                mediaType = MediaType.video;
+              }
 
-          if (mediaType == MediaType.undefined) {
-            files.remove(element);
-            showSpecificNotificaiton(
-                notifcationDetails: AppNotifcationsItems.unsupportedMedia);
-            // EasyLoading.showError("You chose unsupported element (", duration: Duration(seconds: 2));
-          }
-          // if element more than the size then remove it and show error message
-          else if ((mediaType == MediaType.image &&
-                  ((element.size / (1024 * 1024)) > 10)) ||
-              (mediaType == MediaType.video &&
-                  ((element.size / (1024 * 1024)) > 300))) {
-            files.remove(element);
-            showSpecificNotificaiton(
-              notifcationDetails: AppNotifcationsItems.fileSizeExceeded,
-            );
+              if (mediaType == MediaType.undefined) {
+                files.remove(element);
+                showSpecificNotificaiton(
+                    notifcationDetails: AppNotifcationsItems.unsupportedMedia);
+                // EasyLoading.showError("You chose unsupported element (", duration: Duration(seconds: 2));
+              }
+              // if element more than the size then remove it and show error message
+              else if ((mediaType == MediaType.image &&
+                      ((element.size / (1024 * 1024)) > 10)) ||
+                  (mediaType == MediaType.video &&
+                      ((element.size / (1024 * 1024)) > 300))) {
+                files.remove(element);
+                showSpecificNotificaiton(
+                  notifcationDetails: AppNotifcationsItems.fileSizeExceeded,
+                );
 
-            // EasyLoading.showError("the file size was exeeded",
-            //     duration: Duration(seconds: 2));
-          }
-          // If the element is duplicated then remove it form the list
-          else if (selectedMedia.any(
-              (selectedMediaFile) => selectedMediaFile.name == element.name)) {
-            files.remove(element);
-            showSpecificNotificaiton(
-                notifcationDetails: AppNotifcationsItems.mediaChosenAlready);
-            // EasyLoading.showError("You chose this item before ((",
-            //     duration: Duration(seconds: 2));
-          }
-          // If the element is video, add its controller
-          else if (element.path != null && element.path!.isVideo) {
-            videoControllers.addAll({
-              VideoPlayerController.file(File(element.path!)): element.name
-            });
-          }
-        }
+                // EasyLoading.showError("the file size was exeeded",
+                //     duration: Duration(seconds: 2));
+              }
+              // If the element is duplicated then remove it form the list
+              else if (selectedMedia.any((selectedMediaFile) =>
+                  selectedMediaFile.name == element.name)) {
+                files.remove(element);
+                showSpecificNotificaiton(
+                    notifcationDetails:
+                        AppNotifcationsItems.mediaChosenAlready);
+                // EasyLoading.showError("You chose this item before ((",
+                //     duration: Duration(seconds: 2));
+              }
+              // If the element is video, add its controller
+              else if (element.path != null && element.path!.isVideo) {
+                videoControllers.addAll({
+                  VideoPlayerController.file(File(element.path!)): element.name
+                });
+              }
+            }
 
-        selectedMedia.addAll(files);
-        // debugPrint(
-        //"Riad - selected videos ${selectedMedia.first.path}");
-      });
+            selectedMedia.addAll(files);
+            if (result.files.length > widget.maxMediaCount) {
+              showSpecificNotificaiton(
+                  notifcationDetails:
+                      AppNotifcationsItems.itemsExceeded(widget.maxMediaCount));
+            }
 
-      if (result.files.length > widget.maxMediaCount) {
-        showSpecificNotificaiton(
-            notifcationDetails:
-                AppNotifcationsItems.itemsExceeded(widget.maxMediaCount));
+            widget.mediaCallBack?.call(selectedMedia);
+          });
+        });
       }
-      widget.mediaCallBack?.call(selectedMedia);
     }
   }
 
@@ -679,17 +680,18 @@ class MediaPickerWidgetState
       videoControllers
           .addAll({VideoPlayerController.file(video): imageFile.name});
     }
-
-    setState(() {
-      if (widget.maxMediaCount == 1) selectedMedia.clear();
-      selectedMedia.add(
-        PlatformFile(
-          name: imageFile.name,
-          size: video.lengthSync(),
-          path: video.path,
-          bytes: video.readAsBytesSync(),
-        ),
-      );
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      setState(() {
+        if (widget.maxMediaCount == 1) selectedMedia.clear();
+        selectedMedia.add(
+          PlatformFile(
+            name: imageFile.name,
+            size: video.lengthSync(),
+            path: video.path,
+            bytes: video.readAsBytesSync(),
+          ),
+        );
+      });
     });
     widget.mediaCallBack?.call(selectedMedia);
   }
@@ -739,18 +741,20 @@ class MediaPickerWidgetState
       // EasyLoading.showError("Image is more than 10MB (",
       //     duration: Duration(seconds: 2));
     }
-    setState(() {
-      if (widget.maxMediaCount == 1) selectedMedia.clear();
-      selectedMedia.add(
-        PlatformFile(
-          name: image.path.trim(),
-          size: image.lengthSync(),
-          path: image.path,
-          bytes: image.readAsBytesSync(),
-        ),
-      );
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      setState(() {
+        if (widget.maxMediaCount == 1) selectedMedia.clear();
+        selectedMedia.add(
+          PlatformFile(
+            name: image.path.trim(),
+            size: image.lengthSync(),
+            path: image.path,
+            bytes: image.readAsBytesSync(),
+          ),
+        );
+        widget.mediaCallBack?.call(selectedMedia);
+      });
     });
-    widget.mediaCallBack?.call(selectedMedia);
   }
 
   Future<dynamic> mediaSelectionBottomSheet(
@@ -850,14 +854,15 @@ class MediaPickerWidgetState
           InkWell(
             onTap: () async {
               UIRouter.popScreen(rootNavigator: true);
-
-              setState(() {
-                if (selectedMedia.single.name.isVideo) {
-                  videoControllers.keys.first.dispose();
-                  videoControllers.clear();
-                }
-                selectedMedia.clear();
-                widget.mediaCallBack?.call(selectedMedia);
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                setState(() {
+                  if (selectedMedia.single.name.isVideo) {
+                    videoControllers.keys.first.dispose();
+                    videoControllers.clear();
+                  }
+                  selectedMedia.clear();
+                  widget.mediaCallBack?.call(selectedMedia);
+                });
               });
             },
             child: Row(
@@ -964,7 +969,11 @@ class _MediaPickerTileState extends State<MediaPickerTile> {
     if ((widget.videoController != null &&
         !widget.videoController!.value.isInitialized)) {
       widget.videoController!.initialize().then((_) {
-        if (mounted) setState(() {});
+        if (mounted) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            setState(() {});
+          });
+        }
       });
     }
 
@@ -1161,7 +1170,11 @@ class _SingleMediaPickerTileState extends State<SingleMediaPickerTile> {
     if ((widget.videoController != null &&
         !widget.videoController!.value.isInitialized)) {
       widget.videoController!.initialize().then((_) {
-        if (mounted) setState(() {});
+        if (mounted) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            setState(() {});
+          });
+        }
       });
     }
   }
@@ -1336,12 +1349,14 @@ class _SingleMediaPickerTileState extends State<SingleMediaPickerTile> {
                     left: 21,
                     child: InkWell(
                       onTap: () {
-                        setState(() {
-                          if (widget.videoController!.value.volume == 0) {
-                            widget.videoController!.setVolume(1);
-                          } else {
-                            widget.videoController!.setVolume(0);
-                          }
+                        WidgetsBinding.instance.addPostFrameCallback((_) {
+                          setState(() {
+                            if (widget.videoController!.value.volume == 0) {
+                              widget.videoController!.setVolume(1);
+                            } else {
+                              widget.videoController!.setVolume(0);
+                            }
+                          });
                         });
                       },
                       child: Icon(
@@ -1356,12 +1371,14 @@ class _SingleMediaPickerTileState extends State<SingleMediaPickerTile> {
                 Center(
                   child: InkWell(
                     onTap: () {
-                      setState(() {
-                        if (widget.videoController!.value.isPlaying) {
-                          widget.videoController!.pause();
-                        } else {
-                          widget.videoController!.play();
-                        }
+                      WidgetsBinding.instance.addPostFrameCallback((_) {
+                        setState(() {
+                          if (widget.videoController!.value.isPlaying) {
+                            widget.videoController!.pause();
+                          } else {
+                            widget.videoController!.play();
+                          }
+                        });
                       });
                     },
                     child: SizedBox(

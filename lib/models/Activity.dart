@@ -31,7 +31,6 @@ class Activity {
   });
 
   factory Activity.fromJson(Map<String, dynamic> json) => Activity(
-       
         tasks: (json['tasks'] as List<dynamic>)
             .map((e) => TaskViewModel.fromJson(e as Map<String, dynamic>))
             .toList(),

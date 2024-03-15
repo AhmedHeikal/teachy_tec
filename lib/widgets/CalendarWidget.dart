@@ -17,9 +17,14 @@ class CalendarWidget extends StatefulWidget {
       this.enableMultiSelection = true,
       required this.onSelectDate,
       required this.onSelectDateRange,
+      this.rangeStartDate,
+      this.rangeEndDate,
       this.onChangeMultiDaySelectionCallback,
       super.key});
   final DateTime? initialDate;
+  final DateTime? rangeStartDate;
+  final DateTime? rangeEndDate;
+
   final Function(DateTime) onSelectDate;
   final Function(DateTime?, DateTime?) onSelectDateRange;
   final bool enableMultiSelection;
@@ -33,7 +38,6 @@ class _CalendarWidgetState extends State<CalendarWidget> {
   DateTime _focusedDay = AppUtility.removeTime(DateTime.now());
   DateTime? _selectedDay;
   DateTime? _rangeStartDate;
-  //  DateTime.now().subtract(const Duration(days: 5)),
   DateTime? _rangeEndDate;
   bool isMultiSelectionActive = true;
 
@@ -42,8 +46,10 @@ class _CalendarWidgetState extends State<CalendarWidget> {
     super.initState();
     if (widget.enableMultiSelection) {
       _onRangeSelected(
-        AppUtility.removeTime(DateTime.now().subtract(const Duration(days: 4))),
-        AppUtility.removeTime(DateTime.now()),
+        widget.rangeStartDate ??
+            AppUtility.removeTime(
+                DateTime.now().subtract(const Duration(days: 4))),
+        widget.rangeEndDate ?? AppUtility.removeTime(DateTime.now()),
         AppUtility.removeTime(
           DateTime.now().subtract(
             const Duration(days: 4),

@@ -32,10 +32,29 @@ enum TaskType {
   multipleOptions(jsonValue: 0),
   @HiveField(1)
   @JsonValue(1)
-  trueFalse(jsonValue: 1);
+  trueFalse(jsonValue: 1),
+  @HiveField(2)
+  @JsonValue(2)
+  textOnly(jsonValue: 2);
 
   final int jsonValue;
   const TaskType({required this.jsonValue});
+
+  static TaskType getTaskTypeFromInt(int jsonValue) {
+    if (jsonValue == 0) {
+      return multipleOptions;
+    } else if (jsonValue == 1) {
+      return trueFalse;
+    } else {
+      return textOnly;
+    }
+  }
+}
+
+enum AnswerSubmittedType {
+  showCorrectAnswerOptions,
+  showWrongAnswerOptions,
+  showFullAnswerOptions,
 }
 
 enum GradeType {

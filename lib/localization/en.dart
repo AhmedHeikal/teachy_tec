@@ -28,7 +28,8 @@ const EN = {
   "country": "Country",
   "phoneNumber": "Phone Number",
   "title": "Title",
-  "answerShouldBeDifferent": "Questions should be different",
+  "answerShouldBeDifferent": "Options should be different",
+  "questionsShouldBeDifferent": "Questions should be different",
   "question": "Question",
   "didntFindNamesColumn":
       "Didn't find student name column in the uploaded file",
@@ -264,4 +265,12 @@ const EN = {
   "signupWithApple": "Sign up with Apple",
   "teachyTecSlogan": "Educate. Excel. Enjoy",
   "teachyTec": "Teachy Tec",
+  "textQuestion": "Text Question",
+  "multipleOptionsQuestion": "Multiple Options Question",
+  "trueFalseQuestion": "True/False Question",
+  "true": "true",
+  "false": "false",
+  "youCanSwipeLeftRight": "You can swipe left/right",
+  "yourResponseIsOnPointTrulyMotivational":
+      "Your response is on point and truly motivational.",
 };

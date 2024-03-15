@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:flutter/material.dart';
 import 'package:flutter_localization/flutter_localization.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -28,8 +30,9 @@ class CustomQuestionComponent extends StatelessWidget {
           ),
           Consumer<CustomQuestionComponentVM>(
             builder: (context, model, _) => DefaultContainer(
+              color: AppColors.grey50,
               child: ListView.separated(
-                // reverse: true,
+                padding: EdgeInsets.zero,
                 physics: const NeverScrollableScrollPhysics(),
                 shrinkWrap: true,
                 itemBuilder: (context, index) {
@@ -42,9 +45,11 @@ class CustomQuestionComponent extends StatelessWidget {
                   );
                 },
                 separatorBuilder: (context, index) => const Padding(
-                  padding: EdgeInsets.symmetric(
-                    vertical: kHelpingPadding,
-                    horizontal: kBottomPadding,
+                  padding: EdgeInsets.fromLTRB(
+                    kBottomPadding,
+                    kBottomPadding,
+                    kBottomPadding,
+                    kHelpingPadding,
                   ),
                   child: HorizontalDottedLine(),
                 ),
@@ -54,6 +59,7 @@ class CustomQuestionComponent extends StatelessWidget {
           ),
           if (!model.isTasksReadOnlyInEditMode)
             DefaultContainer(
+              color: AppColors.grey50,
               child: InkWell(
                 onTap: model.onAddMultipleAnswersQuestion,
                 child: Padding(

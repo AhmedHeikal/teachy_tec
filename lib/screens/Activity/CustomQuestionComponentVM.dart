@@ -1,6 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localization/flutter_localization.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:teachy_tec/localization/Applocalization.dart';
 import 'package:teachy_tec/models/TaskViewModel.dart';
 import 'package:teachy_tec/screens/Activity/CustomQuestionFormVM.dart';
+import 'package:teachy_tec/styles/AppColors.dart';
+import 'package:teachy_tec/styles/TextStyles.dart';
+import 'package:teachy_tec/utils/AppConstants.dart';
+import 'package:teachy_tec/utils/AppEnums.dart';
+import 'package:teachy_tec/utils/AppExtensions.dart';
+import 'package:teachy_tec/utils/UIRouter.dart';
 import 'package:uuid/uuid.dart';
 
 class CustomQuestionComponentVM extends ChangeNotifier {
@@ -12,7 +21,10 @@ class CustomQuestionComponentVM extends ChangeNotifier {
   ) {
     items?.forEach((element) {
       questions.add(CustomQuestionFormVM.edit(
-          questionVM: element, isReadOnly: isTasksReadOnlyInEditMode));
+        questionVM: element,
+        isReadOnly: isTasksReadOnlyInEditMode,
+        taskType: element.taskType ?? TaskType.multipleOptions,
+      ));
     });
     notifyListeners();
   }
@@ -25,23 +37,110 @@ class CustomQuestionComponentVM extends ChangeNotifier {
     notifyListeners();
   }
 
+  onAddMultipleAnswersQuestion() {
+    if (validateAllForms()) {
+      UIRouter.showAppBottomDrawer(
+        options: [
+          InkWell(
+            onTap: () async {
+              UIRouter.popScreen(rootNavigator: true);
+              questions
+                  .add(CustomQuestionFormVM.add(taskType: TaskType.textOnly));
+              notifyListeners();
+            },
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                const SizedBox(width: kMainPadding),
+                SvgPicture.asset(
+                  "assets/svg/textQuestion.svg",
+                  color: AppColors.primary700,
+                  height: 20,
+                  width: 24,
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  AppLocale.textQuestion
+                      .getString(UIRouter.getCurrentContext())
+                      .capitalizeFirstLetter(),
+                  style: TextStyles.InterBlackS16W400,
+                )
+              ],
+            ),
+          ),
+          InkWell(
+            onTap: () async {
+              UIRouter.popScreen(rootNavigator: true);
+              questions.add(
+                  CustomQuestionFormVM.add(taskType: TaskType.multipleOptions));
+              notifyListeners();
+            },
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                const SizedBox(width: kMainPadding),
+                SvgPicture.asset(
+                  "assets/svg/multipleOptions.svg",
+                  color: AppColors.primary700,
+                  height: 24,
+                  width: 24,
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  AppLocale.multipleOptionsQuestion
+                      .getString(UIRouter.getCurrentContext())
+                      .capitalizeFirstLetter(),
+                  style: TextStyles.InterBlackS16W400,
+                )
+              ],
+            ),
+          ),
+          InkWell(
+            onTap: () async {
+              UIRouter.popScreen(rootNavigator: true);
+              questions
+                  .add(CustomQuestionFormVM.add(taskType: TaskType.trueFalse));
+              notifyListeners();
+            },
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                const SizedBox(width: kMainPadding),
+                SvgPicture.asset("assets/svg/trueFalse2.svg",
+                    color: AppColors.primary700, height: 22, width: 22),
+                const SizedBox(width: 8),
+                Text(
+                  AppLocale.trueFalseQuestion
+                      .getString(UIRouter.getCurrentContext())
+                      .capitalizeFirstLetter(),
+                  style: TextStyles.InterBlackS16W400,
+                )
+              ],
+            ),
+          ),
+        ],
+      );
+    }
+  }
+
   void addFromExistingQuestionVM(TaskViewModel? questionVM) {
     questions.add(
       CustomQuestionFormVM.edit(
         questionVM: questionVM,
+        taskType: questionVM?.taskType ?? TaskType.multipleOptions,
       ),
     );
     notifyListeners();
   }
 
-  onAddMultipleAnswersQuestion() {
-    if (validateAllForms()) {
-      questions.add(
-        CustomQuestionFormVM.add(),
-      );
-      notifyListeners();
-    }
-  }
+  // onAddMultipleAnswersQuestion() {
+  //   if (validateAllForms()) {
+  //     questions.add(
+  //       CustomQuestionFormVM.add(),
+  //     );
+  //     notifyListeners();
+  //   }
+  // }
 
   validateAllForms() {
     if (questions.any((element) => !element.validateForm_())) return false;
@@ -58,6 +157,7 @@ class CustomQuestionComponentVM extends ChangeNotifier {
             task: element.question ?? '',
             imagePathLocally: element.image?.path,
             downloadUrl: element.questionVM?.downloadUrl,
+            taskType: element.taskType,
             options: element.submitOptions()));
       }
     }

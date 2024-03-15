@@ -19,9 +19,11 @@ class StudentForm extends StatelessWidget {
     return ChangeNotifierProvider.value(
       value: model,
       child: SafeArea(
+        bottom: false,
         child: Form(
           key: model.formKey,
           child: SingleChildScrollView(
+            physics: const ClampingScrollPhysics(),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -121,7 +123,7 @@ class StudentForm extends StatelessWidget {
                 ),
                 const SizedBox(height: kBottomPadding),
                 if (model.isPlain != true) ...[
-                  SizedBox(height: kMainPadding),
+                  const SizedBox(height: kMainPadding),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [

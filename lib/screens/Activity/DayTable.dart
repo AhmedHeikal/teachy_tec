@@ -14,6 +14,7 @@ import 'package:teachy_tec/screens/Activity/DayTableVM.dart';
 import 'package:teachy_tec/styles/AppColors.dart';
 import 'package:teachy_tec/styles/TextStyles.dart';
 import 'package:teachy_tec/utils/AppConstants.dart';
+import 'package:teachy_tec/utils/AppEnums.dart';
 import 'package:teachy_tec/utils/AppExtensions.dart';
 import 'package:teachy_tec/utils/AppUtility.dart';
 import 'package:teachy_tec/utils/SoundService.dart';
@@ -76,15 +77,42 @@ class _DayTableState extends State<DayTable> {
     widget.model.emojisPlayer.dispose();
   }
 
+  // final Debouncer _debouncer = Debouncer(milliseconds: 200);
+
   @override
   void initState() {
     super.initState();
+
     widget.model.rowsScrollController.addListener(() {
-      _rowController.jumpTo(widget.model.rowsScrollController.position.pixels);
+      if (_rowController.position.pixels !=
+          widget.model.rowsScrollController.position.pixels) {
+        _rowController
+            .jumpTo(widget.model.rowsScrollController.position.pixels);
+      }
     });
+
     widget.model.columnsScrollController.addListener(() {
-      _columnController
-          .jumpTo(widget.model.columnsScrollController.position.pixels);
+      if (_columnController.position.pixels !=
+          widget.model.columnsScrollController.position.pixels) {
+        _columnController
+            .jumpTo(widget.model.columnsScrollController.position.pixels);
+      }
+    });
+
+    _rowController.addListener(() {
+      if (widget.model.rowsScrollController.position.pixels !=
+          _rowController.position.pixels) {
+        widget.model.rowsScrollController
+            .jumpTo(_rowController.position.pixels);
+      }
+    });
+
+    _columnController.addListener(() {
+      if (widget.model.columnsScrollController.position.pixels !=
+          _columnController.position.pixels) {
+        widget.model.columnsScrollController
+            .jumpTo(_columnController.position.pixels);
+      }
     });
 
     SystemChrome.setPreferredOrientations([
@@ -222,6 +250,7 @@ class _DayTableState extends State<DayTable> {
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(12),
                       child: Stack(
+                        fit: StackFit.passthrough,
                         children: [
                           SizedBox(
                             height: containerFullHeight,
@@ -268,11 +297,13 @@ class _DayTableState extends State<DayTable> {
                                       child: ClipRRect(
                                         borderRadius: BorderRadius.circular(6),
                                         child: PhotoView(
+                                          disableGestures: true,
                                           imageProvider: NetworkImage(
                                             question.downloadUrl!,
                                           ),
                                           initialScale:
-                                              PhotoViewComputedScale.covered,
+                                              PhotoViewComputedScale.covered *
+                                                  1,
                                           loadingBuilder: (context, event) {
                                             final expectedBytes =
                                                 event?.expectedTotalBytes;
@@ -317,27 +348,28 @@ class _DayTableState extends State<DayTable> {
                               ],
                             ),
                           ),
-                          if (question.options != null &&
-                              question.options!.isNotEmpty)
-                            Positioned.directional(
-                              textDirection: Directionality.of(context),
-                              bottom: 0,
-                              end: 0,
-                              child: ClipRRect(
-                                borderRadius:
-                                    const BorderRadiusDirectional.only(
-                                  topStart: Radius.circular(8),
-                                ),
-                                child: BackdropFilter(
-                                  filter: ImageFilter.blur(
-                                      sigmaX: 2.0, sigmaY: 2.0),
-                                  child: Container(
-                                    color: question.downloadUrl != null
-                                        ? AppColors.grey900.withOpacity(0.6)
-                                        : AppColors.white.withOpacity(0.8),
-                                    padding: const EdgeInsets.all(4),
-                                    child: Row(
-                                      children: [
+                          // if (question.options != null &&
+                          //     question.options!.isNotEmpty)
+                          Positioned.directional(
+                            textDirection: Directionality.of(context),
+                            bottom: 0,
+                            end: 0,
+                            child: ClipRRect(
+                              borderRadius: const BorderRadiusDirectional.only(
+                                topStart: Radius.circular(8),
+                              ),
+                              child: BackdropFilter(
+                                filter:
+                                    ImageFilter.blur(sigmaX: 2.0, sigmaY: 2.0),
+                                child: Container(
+                                  color: question.downloadUrl != null
+                                      ? AppColors.grey900.withOpacity(0.6)
+                                      : AppColors.white.withOpacity(0.8),
+                                  padding: const EdgeInsets.all(4),
+                                  child: Row(
+                                    children: [
+                                      if (question.taskType ==
+                                          TaskType.multipleOptions) ...[
                                         Text(
                                           question.options!.length.toString(),
                                           style: TextStyles.InterWhiteS12W600
@@ -349,18 +381,39 @@ class _DayTableState extends State<DayTable> {
                                           ),
                                         ),
                                         const SizedBox(width: 4),
-                                        SvgPicture.asset(
-                                          'assets/svg/documents.svg',
-                                          color: question.downloadUrl != null
-                                              ? AppColors.primary50
-                                              : AppColors.grey900,
-                                        )
                                       ],
-                                    ),
+                                      question.taskType == TaskType.textOnly
+                                          ? SvgPicture.asset(
+                                              'assets/svg/textQuestion.svg',
+                                              height: 14,
+                                              color:
+                                                  question.downloadUrl != null
+                                                      ? AppColors.primary50
+                                                      : AppColors.grey900,
+                                            )
+                                          : question.taskType ==
+                                                  TaskType.trueFalse
+                                              ? SvgPicture.asset(
+                                                  'assets/svg/trueFalse2.svg',
+                                                  height: 14,
+                                                  color: question.downloadUrl !=
+                                                          null
+                                                      ? AppColors.primary50
+                                                      : AppColors.grey900,
+                                                )
+                                              : SvgPicture.asset(
+                                                  'assets/svg/documents.svg',
+                                                  color: question.downloadUrl !=
+                                                          null
+                                                      ? AppColors.primary50
+                                                      : AppColors.grey900,
+                                                )
+                                    ],
                                   ),
                                 ),
                               ),
                             ),
+                          ),
                           // LanguageDropdown(),
                         ],
                       ),
@@ -459,6 +512,7 @@ class _DayTableState extends State<DayTable> {
                                     grade_value: widget.model.selectedEmoji!
                                         .emojiPath.iconGrade.iconValue,
                                     emoji_id: widget.model.selectedEmoji!.id,
+                                    taskType: task.taskType,
                                   ),
                                 );
                               }
@@ -476,6 +530,7 @@ class _DayTableState extends State<DayTable> {
                                   task: Task(
                                     task: task.task,
                                     id: task.id,
+                                    taskType: task.taskType,
                                     grade_value:
                                         widget.model.selectedEmoji == null
                                             ? null
@@ -586,6 +641,7 @@ class _DayTableState extends State<DayTable> {
                                 ),
                                 Expanded(
                                   child: SingleChildScrollView(
+                                    physics: const ClampingScrollPhysics(),
                                     controller: model.mainAxisController,
                                     // physics: NeverScrollableScrollPhysics(),
                                     child: Padding(
@@ -598,50 +654,64 @@ class _DayTableState extends State<DayTable> {
                                           Row(
                                             children: <Widget>[
                                               SingleChildScrollView(
+                                                
                                                 controller: _columnController,
                                                 scrollDirection: Axis.vertical,
                                                 physics:
-                                                    const NeverScrollableScrollPhysics(),
+                                                    const ClampingScrollPhysics(),
                                                 child: _buildFixedCol(),
                                               ),
-                                              Flexible(
-                                                child: SingleChildScrollView(
-                                                  controller: model
-                                                      .rowsScrollController,
-                                                  physics:
-                                                      const ClampingScrollPhysics(),
-                                                  scrollDirection:
-                                                      Axis.horizontal,
+                                              if (widget.model.currentActivity
+                                                          .tasks !=
+                                                      null &&
+                                                  widget.model.currentActivity
+                                                      .tasks!.isNotEmpty)
+                                                Flexible(
                                                   child: SingleChildScrollView(
                                                     controller: model
-                                                        .columnsScrollController,
+                                                        .rowsScrollController,
                                                     physics:
                                                         const ClampingScrollPhysics(),
                                                     scrollDirection:
-                                                        Axis.vertical,
-                                                    child: _buildSubTable(),
+                                                        Axis.horizontal,
+                                                    child:
+                                                        SingleChildScrollView(
+                                                      controller: model
+                                                          .columnsScrollController,
+                                                      physics:
+                                                          const ClampingScrollPhysics(),
+                                                      scrollDirection:
+                                                          Axis.vertical,
+                                                      child: _buildSubTable(),
+                                                    ),
                                                   ),
                                                 ),
-                                              ),
                                             ],
                                           ),
-                                          Row(
-                                            children: <Widget>[
-                                              _buildCornerCell(),
-                                              Flexible(
-                                                child: SingleChildScrollView(
-                                                  controller: _rowController,
-                                                  // controller:
-                                                  //     _rowController,
-                                                  scrollDirection:
-                                                      Axis.horizontal,
-                                                  physics:
-                                                      const NeverScrollableScrollPhysics(),
-                                                  child: _buildFixedRow(),
+                                          if (widget.model.currentActivity
+                                                      .tasks !=
+                                                  null &&
+                                              widget.model.currentActivity
+                                                  .tasks!.isNotEmpty)
+                                            Row(
+                                              children: <Widget>[
+                                                _buildCornerCell(),
+                                                Flexible(
+                                                  child: SingleChildScrollView(
+                                                    controller: _rowController,
+                                                    physics:
+                                                        const ClampingScrollPhysics(),
+                                                    // controller:
+                                                    //     _rowController,
+                                                    scrollDirection:
+                                                        Axis.horizontal,
+                                                    // physics:
+                                                    //     const NeverScrollableScrollPhysics(),
+                                                    child: _buildFixedRow(),
+                                                  ),
                                                 ),
-                                              ),
-                                            ],
-                                          ),
+                                              ],
+                                            ),
                                           Row(
                                             children: [
                                               _buildCornerCell(),
@@ -1016,7 +1086,7 @@ class _DayTableState extends State<DayTable> {
 Widget ActivityTableSettings(
   DayTableVM model, {
   bool isInPracticePage = false,
-  bool? isCorrectAnswerSelectedInPracticePage,
+  AnswerSubmittedType? answerSubmittedType,
   Function(Emoji)? onEmojiSelected,
 }) =>
     DefaultContainer(
@@ -1045,13 +1115,11 @@ Widget ActivityTableSettings(
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          if (!isInPracticePage ||
-              isCorrectAnswerSelectedInPracticePage != null) ...[
+          if (!isInPracticePage || answerSubmittedType != null) ...[
             InkWell(
               onTap: () => model.showEmojisPicker(
-                isCorrectAnswerChosenInPracticePage: !isInPracticePage
-                    ? null
-                    : isCorrectAnswerSelectedInPracticePage,
+                answerSubmittedType:
+                    !isInPracticePage ? null : answerSubmittedType,
                 onEmojiSelected: onEmojiSelected,
               ),
               child: model.selectedEmoji == null

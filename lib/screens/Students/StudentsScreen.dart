@@ -61,6 +61,7 @@ class StudentsScreen extends StatelessWidget {
                         plugin: AppPluginsItems().studentsEmptyPlugin);
                   }
                   return SingleChildScrollView(
+                    physics: const ClampingScrollPhysics(),
                     child: Padding(
                       padding:
                           const EdgeInsets.symmetric(horizontal: kMainPadding),

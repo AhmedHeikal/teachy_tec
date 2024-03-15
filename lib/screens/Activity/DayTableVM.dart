@@ -1,11 +1,13 @@
 import 'dart:async';
 import 'dart:math';
 import 'package:audioplayers/audioplayers.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
+import 'package:flutter_localization/flutter_localization.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:teachy_tec/hive/controllers/activityController.dart';
 import 'package:teachy_tec/hive/controllers/activityStudentsController.dart';
+import 'package:teachy_tec/localization/Applocalization.dart';
 import 'package:teachy_tec/models/Activity.dart';
 import 'package:teachy_tec/models/ActivityStudents.dart';
 import 'package:teachy_tec/models/Student.dart';
@@ -13,20 +15,25 @@ import 'package:teachy_tec/models/Task.dart';
 import 'package:teachy_tec/models/TaskViewModel.dart';
 import 'package:teachy_tec/screens/Activity/ActivityForm.dart';
 import 'package:teachy_tec/screens/Activity/ActivityFormVM.dart';
-import 'package:teachy_tec/screens/Activity/AddNewItemToDayTable.dart';
-import 'package:teachy_tec/screens/Activity/AddNewItemToDayTableVM.dart';
 import 'package:teachy_tec/screens/Activity/DayTable.dart';
 import 'package:teachy_tec/screens/Activity/NoteFormForCellInDayTable.dart';
 import 'package:teachy_tec/screens/Activity/NoteFormForCellInDayTableVM.dart';
 import 'package:teachy_tec/screens/Activity/PracticeMainPage.dart';
 import 'package:teachy_tec/screens/Activity/PracticeMainPageVM.dart';
 import 'package:teachy_tec/screens/networking/AppNetworkProvider.dart';
+import 'package:teachy_tec/styles/AppColors.dart';
+import 'package:teachy_tec/styles/TextStyles.dart';
+import 'package:teachy_tec/utils/AppConstants.dart';
+import 'package:teachy_tec/utils/AppEnums.dart';
+import 'package:teachy_tec/utils/AppExtensions.dart';
 import 'package:teachy_tec/utils/AppUtility.dart';
 import 'package:teachy_tec/utils/Routing/AppAnalyticsConstants.dart';
 import 'package:teachy_tec/utils/SoundService.dart';
 import 'package:teachy_tec/utils/UIRouter.dart';
 import 'package:teachy_tec/utils/serviceLocator.dart';
 import 'package:teachy_tec/widgets/BoardEmojisSelector.dart';
+import 'package:teachy_tec/widgets/Popups/AddStudentPopup.dart';
+import 'package:teachy_tec/widgets/Popups/AddTaskPopup.dart';
 import 'package:teachy_tec/widgets/Popups/restartShuffledStudentsPopup.dart';
 import 'package:vibration/vibration.dart';
 
@@ -83,7 +90,10 @@ class DayTableVM extends ChangeNotifier {
         onDeleteTapped: () async {
           UIRouter.showEasyLoader();
           await updateCommentForStudet(
-              student: student, task: task!, comment: null);
+            student: student,
+            task: task!,
+            comment: null,
+          );
           UIRouter.popScreen(rootNavigator: true);
 
           EasyLoading.dismiss(animation: true);
@@ -363,54 +373,323 @@ class DayTableVM extends ChangeNotifier {
   }
 
   Future<void> addNewItem() async {
-    var currentArgumentReturned =
-        await UIRouter.showAppBottomDrawerWithCustomWidget(
-      child: AddNewItemToDayTable(
-        model: AddNewItemToDayTableVM(),
+    UIRouter.showAppBottomDrawerWithCustomWidget(
+      child: Container(
+        constraints: const BoxConstraints(maxHeight: 400),
+        decoration: BoxDecoration(
+          // color: backgroundColor,
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const SizedBox(height: 8),
+            InkWell(
+              onTap: () async {
+                UIRouter.popScreen(rootNavigator: true);
+                var currentItem =
+                    await UIRouter.showAppBottomDrawerWithCustomWidget(
+                        bottomPadding: 30,
+                        child: AddStudentPopup(
+                          usersList: currentActivity.students ?? [],
+                        ));
+                debugPrint(
+                    'Heikal - current Item returned from AddStudentPopup');
+                if (currentItem == null) return;
+                UIRouter.showEasyLoader();
+                currentActivity.students == null
+                    ? currentActivity.students = [currentItem]
+                    : currentActivity.students!.add(currentItem);
+                await serviceLocator<AppNetworkProvider>().addStudents(
+                    students: [currentItem],
+                    classId: currentActivity.currentClass!.id ?? '');
+                ActivityController()
+                    .updateSingleActivty(singleActivity: currentActivity);
+                EasyLoading.dismiss(animation: true);
+                notifyListeners();
+              },
+              child: Container(
+                color: AppColors.white,
+                width: double.infinity,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: kMainPadding),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      const SizedBox(width: kMainPadding),
+                      SvgPicture.asset(
+                        "assets/svg/addStudent.svg",
+                        color: AppColors.primary700,
+                        height: 24,
+                        width: 24,
+                      ),
+                      const SizedBox(width: 8),
+                      Text(
+                        AppLocale.addStudent
+                            .getString(UIRouter.getCurrentContext())
+                            .capitalizeFirstLetter(),
+                        style: TextStyles.InterBlackS16W400,
+                      )
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            const Divider(
+              height: 1.5,
+              color: AppColors.grey300,
+            ),
+            Container(
+                color: AppColors.white,
+                width: double.infinity,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding:
+                          const EdgeInsets.symmetric(vertical: kMainPadding),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          const SizedBox(width: kMainPadding),
+                          SvgPicture.asset(
+                            "assets/svg/addNote.svg",
+                            color: AppColors.primary700,
+                            height: 24,
+                            width: 24,
+                          ),
+                          const SizedBox(width: 8),
+                          Text(
+                            AppLocale.addTask
+                                .getString(UIRouter.getCurrentContext())
+                                .capitalizeFirstLetter(),
+                            style: TextStyles.InterBlackS16W400,
+                          )
+                        ],
+                      ),
+                    ),
+                    Padding(
+                      padding:
+                          const EdgeInsets.symmetric(horizontal: kMainPadding),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          InkWell(
+                            onTap: () async {
+                              UIRouter.popScreen(rootNavigator: true);
+                              var currentItem = await UIRouter
+                                  .showAppBottomDrawerWithCustomWidget(
+                                      bottomPadding: 30,
+                                      child: AddTaskPopup(
+                                        model: AddTaskPopupVM(
+                                          taskType: TaskType.textOnly,
+                                          taskLists: (currentActivity.tasks ??
+                                                  [])
+                                              .map((element) => element.task)
+                                              .toList(),
+                                        ),
+                                      ));
+                              debugPrint(
+                                  'Heikal - current Item returned from AddTaskPopup');
+                              if (currentItem == null) return;
+
+                              await addNewTaskToTheDayTable(currentItem);
+                            },
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: kHelpingPadding),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  const SizedBox(width: kMainPadding),
+                                  SvgPicture.asset(
+                                    "assets/svg/textQuestion.svg",
+                                    color: AppColors.primary700,
+                                    height: 20,
+                                    width: 24,
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Text(
+                                    AppLocale.textQuestion
+                                        .getString(UIRouter.getCurrentContext())
+                                        .capitalizeFirstLetter(),
+                                    style: TextStyles.InterBlackS16W400,
+                                  )
+                                ],
+                              ),
+                            ),
+                          ),
+                          InkWell(
+                            onTap: () async {
+                              UIRouter.popScreen(rootNavigator: true);
+                              var currentItem = await UIRouter
+                                  .showAppBottomDrawerWithCustomWidget(
+                                      bottomPadding: 30,
+                                      child: AddTaskPopup(
+                                        model: AddTaskPopupVM(
+                                          taskType: TaskType.multipleOptions,
+                                          taskLists: (currentActivity.tasks ??
+                                                  [])
+                                              .map((element) => element.task)
+                                              .toList(),
+                                        ),
+                                      ));
+                              debugPrint(
+                                  'Heikal - current Item returned from AddTaskPopup');
+                              if (currentItem == null) return;
+
+                              await addNewTaskToTheDayTable(currentItem);
+                            },
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: kHelpingPadding),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  const SizedBox(width: kMainPadding),
+                                  SvgPicture.asset(
+                                    "assets/svg/multipleOptions.svg",
+                                    color: AppColors.primary700,
+                                    height: 24,
+                                    width: 24,
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Text(
+                                    AppLocale.multipleOptionsQuestion
+                                        .getString(UIRouter.getCurrentContext())
+                                        .capitalizeFirstLetter(),
+                                    style: TextStyles.InterBlackS16W400,
+                                  )
+                                ],
+                              ),
+                            ),
+                          ),
+                          InkWell(
+                            onTap: () async {
+                              UIRouter.popScreen(rootNavigator: true);
+                              var currentItem = await UIRouter
+                                  .showAppBottomDrawerWithCustomWidget(
+                                      bottomPadding: 30,
+                                      child: AddTaskPopup(
+                                        model: AddTaskPopupVM(
+                                          taskType: TaskType.textOnly,
+                                          taskLists: (currentActivity.tasks ??
+                                                  [])
+                                              .map((element) => element.task)
+                                              .toList(),
+                                        ),
+                                      ));
+                              debugPrint(
+                                  'Heikal - current Item returned from AddTaskPopup');
+                              if (currentItem == null) return;
+
+                              await addNewTaskToTheDayTable(currentItem);
+                            },
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: kHelpingPadding),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  const SizedBox(width: kMainPadding),
+                                  SvgPicture.asset("assets/svg/trueFalse2.svg",
+                                      color: AppColors.primary700,
+                                      height: 22,
+                                      width: 22),
+                                  const SizedBox(width: 8),
+                                  Text(
+                                    AppLocale.trueFalseQuestion
+                                        .getString(UIRouter.getCurrentContext())
+                                        .capitalizeFirstLetter(),
+                                    style: TextStyles.InterBlackS16W400,
+                                  )
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    )
+                  ],
+                )),
+          ],
+        ),
       ),
     );
-    if (currentArgumentReturned is Student) {
-      currentActivity.students == null
-          ? currentActivity.students = [currentArgumentReturned]
-          : currentActivity.students!.add(currentArgumentReturned);
 
-      await serviceLocator<AppNetworkProvider>().addStudents(
-          students: [currentArgumentReturned],
-          classId: currentActivity.currentClass!.id ?? '');
+    // var currentArgumentReturned =
+    //     await UIRouter.showAppBottomDrawerWithCustomWidget(
+    //   child: AddNewItemToDayTable(
+    //     model: AddNewItemToDayTableVM(),
+    //   ),
+    //   bottomPadding: 30,
+    // );
+    // if (currentArgumentReturned is Student) {
+    //   currentActivity.students == null
+    //       ? currentActivity.students = [currentArgumentReturned]
+    //       : currentActivity.students!.add(currentArgumentReturned);
 
-      ActivityController().updateSingleActivty(singleActivity: currentActivity);
-      notifyListeners();
-    } else if (currentArgumentReturned is TaskViewModel) {
-      try {
-        UIRouter.showEasyLoader();
+    //   await serviceLocator<AppNetworkProvider>().addStudents(
+    //       students: [currentArgumentReturned],
+    //       classId: currentActivity.currentClass!.id ?? '');
 
-        var updatedTask =
-            await serviceLocator<AppNetworkProvider>().addNewTaskToActivity(
-          activityId: currentActivity.id,
-          classId: currentActivity.currentClass!.id ?? '',
-          task: currentArgumentReturned,
-          taskIndex: (currentActivity.tasks?.length ?? 1) - 1,
-        );
+    //   ActivityController().updateSingleActivty(singleActivity: currentActivity);
+    //   notifyListeners();
+    // } else if (currentArgumentReturned is TaskViewModel) {
+    //   try {
+    //     UIRouter.showEasyLoader();
 
-        if (updatedTask == null) {
-          EasyLoading.dismiss(animation: true);
-          return;
-        }
-        currentActivity.tasks == null
-            ? currentActivity.tasks = [updatedTask]
-            : currentActivity.tasks!.add(updatedTask);
+    //     var updatedTask =
+    //         await serviceLocator<AppNetworkProvider>().addNewTaskToActivity(
+    //       activityId: currentActivity.id,
+    //       classId: currentActivity.currentClass!.id ?? '',
+    //       task: currentArgumentReturned,
+    //       taskIndex: (currentActivity.tasks?.length ?? 1) - 1,
+    //     );
 
-        // currentActivity.students ??= [];
-        // currentActivity.students?.addAll(addedStudents);
-        ActivityController()
-            .updateSingleActivty(singleActivity: currentActivity);
-      } finally {
-        EasyLoading.dismiss(animation: true);
-        notifyListeners();
-      }
-    } else {
+    //     if (updatedTask == null) {
+    //       EasyLoading.dismiss(animation: true);
+    //       return;
+    //     }
+    //     currentActivity.tasks == null
+    //         ? currentActivity.tasks = [updatedTask]
+    //         : currentActivity.tasks!.add(updatedTask);
+
+    //     // currentActivity.students ??= [];
+    //     // currentActivity.students?.addAll(addedStudents);
+    //     ActivityController()
+    //         .updateSingleActivty(singleActivity: currentActivity);
+    //   } finally {
+    //     EasyLoading.dismiss(animation: true);
+    //     notifyListeners();
+    //   }
+    // } else {
+    //   return;
+    // }
+  }
+
+  Future<void> addNewTaskToTheDayTable(TaskViewModel currentItem) async {
+    UIRouter.showEasyLoader();
+    var updatedTask =
+        await serviceLocator<AppNetworkProvider>().addNewTaskToActivity(
+      activityId: currentActivity.id,
+      classId: currentActivity.currentClass!.id ?? '',
+      task: currentItem,
+      taskIndex: (currentActivity.tasks?.length ?? 1) - 1,
+    );
+    if (updatedTask == null) {
+      EasyLoading.dismiss(animation: true);
       return;
     }
+    currentActivity.tasks == null
+        ? currentActivity.tasks = [updatedTask]
+        : currentActivity.tasks!.add(updatedTask);
+
+    ActivityController().updateSingleActivty(singleActivity: currentActivity);
+    EasyLoading.dismiss(animation: true);
+    notifyListeners();
   }
 
   Future<void> addNotes({required Student student, required Task task}) async {
@@ -420,7 +699,11 @@ class DayTableVM extends ChangeNotifier {
         onDeleteTapped: () async {
           UIRouter.showEasyLoader();
           await updateCommentForStudet(
-              student: student, task: task, comment: null);
+            student: student,
+            task: task,
+            comment: null,
+            
+          );
           UIRouter.popScreen(rootNavigator: true);
           EasyLoading.dismiss(animation: true);
         },
@@ -428,13 +711,18 @@ class DayTableVM extends ChangeNotifier {
     );
 
     if (returnedNote == null) return;
-    updateCommentForStudet(student: student, task: task, comment: returnedNote);
+    updateCommentForStudet(
+      student: student,
+      task: task,
+      comment: returnedNote,
+    );
   }
 
-  Future<void> updateCommentForStudet(
-      {required Student student,
-      required Task task,
-      required String? comment}) async {
+  Future<void> updateCommentForStudet({
+    required Student student,
+    required Task task,
+    required String? comment,
+  }) async {
     if (studentsToTask[student.id] == null) {
       studentsToTask[student.id!] = [];
     }
@@ -501,14 +789,15 @@ class DayTableVM extends ChangeNotifier {
   }
 
   Future<Emoji?> showEmojisPicker({
-    bool? isCorrectAnswerChosenInPracticePage,
+    AnswerSubmittedType? answerSubmittedType,
+    bool hideSpecifiedButtons = false,
     Function(Emoji)? onEmojiSelected,
   }) async {
     Emoji? returnedEmoji;
     await UIRouter.showAppBottomDrawerWithCustomWidget(
       child: BoardEmojisSelector(
-        isCorrectAnswerChosenInPracticePage:
-            isCorrectAnswerChosenInPracticePage,
+        answerSubmittedType: answerSubmittedType,
+        hideSpecifiedButtons: hideSpecifiedButtons,
         onSelectEmoji: (selectedEmoji) {
           this.selectedEmoji = selectedEmoji;
           if (onEmojiSelected != null) {

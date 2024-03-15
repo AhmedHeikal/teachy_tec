@@ -9,7 +9,6 @@ import 'package:teachy_tec/widgets/AutocompleteTextFieldComponent.dart';
 import 'package:teachy_tec/widgets/LanguageDropDown.dart';
 import 'package:teachy_tec/widgets/PopScreenBackArrow.dart';
 
-
 class SearchByProductNameScreen extends StatelessWidget {
   const SearchByProductNameScreen({super.key});
 
@@ -20,6 +19,7 @@ class SearchByProductNameScreen extends StatelessWidget {
       child: Scaffold(
         body: SafeArea(
           child: SingleChildScrollView(
+            physics: const ClampingScrollPhysics(),
             child: Column(
               children: [
                 Stack(

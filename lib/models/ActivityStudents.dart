@@ -25,5 +25,7 @@ class ActivityStudents {
     this.lastTimeUploadedToServer,
   });
 
+  factory ActivityStudents.fromJson(Map<String, dynamic> srcJson) =>
+      _$ActivityStudentsFromJson(srcJson);
   Map<String, dynamic> toJson() => _$ActivityStudentsToJson(this);
 }

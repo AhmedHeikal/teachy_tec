@@ -4,7 +4,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
-import 'package:provider/provider.dart';
 import 'package:teachy_tec/hive/controllers/activityController.dart';
 import 'package:teachy_tec/hive/controllers/activityStudentsController.dart';
 import 'package:teachy_tec/models/Activity.dart';
@@ -18,6 +17,7 @@ import 'package:teachy_tec/screens/Activity/DayTable.dart';
 import 'package:teachy_tec/screens/Activity/DayTableVM.dart';
 import 'package:teachy_tec/screens/networking/AppNetworkProvider.dart';
 import 'package:teachy_tec/utils/AppConstants.dart';
+import 'package:teachy_tec/utils/AppEnums.dart';
 import 'package:teachy_tec/utils/Routing/AppAnalyticsConstants.dart';
 import 'package:teachy_tec/utils/UIRouter.dart';
 import 'package:teachy_tec/utils/serviceLocator.dart';
@@ -186,6 +186,7 @@ class ActivityFormVM extends ChangeNotifier with FormParentClass {
       Map<String, dynamic> taskData = {
         FirestoreConstants.id: task.id,
         FirestoreConstants.task: task.task,
+        FirestoreConstants.taskType: task.taskType?.jsonValue,
         // Add other task data here if needed
       };
 
@@ -240,9 +241,6 @@ class ActivityFormVM extends ChangeNotifier with FormParentClass {
       questionEvaluations.add(taskData);
       tasksIndex++;
     }
-    // for (var question in questions) {
-    //   questionEvaluations.add({FirestoreConstants.task: question.optionString});
-    // }
 
     var newActivity = {
       FirestoreConstants.id: activityDocRef.id,
@@ -259,6 +257,7 @@ class ActivityFormVM extends ChangeNotifier with FormParentClass {
       studentsQuestionEvaluations.add({
         FirestoreConstants.id: task.id,
         FirestoreConstants.task: task.task,
+        FirestoreConstants.taskType: task.taskType?.jsonValue,
         FirestoreConstants.selectedOption: '',
         FirestoreConstants.gradeValue: '',
         FirestoreConstants.emojId: '',
@@ -319,7 +318,6 @@ class ActivityFormVM extends ChangeNotifier with FormParentClass {
           FirestoreConstants.activityId: activityDocRef.id,
           FirestoreConstants.students: FieldValue.arrayUnion([studentsData]),
           FirestoreConstants.classId: selectedClass?.id,
-          // FirestoreConstants.timestamp: pageDate ~/ 1000,
           FirestoreConstants.timestamp: pageDate,
         },
         SetOptions(merge: true),
@@ -407,6 +405,7 @@ class ActivityFormVM extends ChangeNotifier with FormParentClass {
         Map<String, dynamic> taskData = {
           FirestoreConstants.id: task.id,
           FirestoreConstants.task: task.task,
+          FirestoreConstants.taskType: task.taskType?.jsonValue,
           // Add other task data here if needed
         };
 
@@ -462,7 +461,6 @@ class ActivityFormVM extends ChangeNotifier with FormParentClass {
           optionsData.add(optionData);
           optionIndex++;
         }
-
         taskData[FirestoreConstants.options] = optionsData;
         questionEvaluations.add(taskData);
         tasksIndex++;
@@ -488,6 +486,7 @@ class ActivityFormVM extends ChangeNotifier with FormParentClass {
       //     '${FirestoreConstants.activities}.${oldModel!.id}': updatedActivity,
       //   },
       // );
+
       batch.set(
         FirebaseFirestore.instance
             .collection(FirestoreConstants.classActivities)
@@ -506,12 +505,6 @@ class ActivityFormVM extends ChangeNotifier with FormParentClass {
 
       CollectionReference newCollection =
           teacherActivitiesDocRef.collection(((pageDate)).toString());
-
-      // batch.update(
-      //   newCollection.doc(oldModel!.id),
-      //   {oldModel!.id: updatedActivity},
-
-      // );
 
       batch.set(
         newCollection.doc(oldModel!.id),
@@ -539,7 +532,6 @@ class ActivityFormVM extends ChangeNotifier with FormParentClass {
         for (Student student in studentsInClass) {
           // var currentStudentGrade =
           //     currentActivityStudents?.studentTasks[student.id!];
-
           // List<Task> newTasks = [];
           // int tasksIndex = 0;
           for (var task in questionEvaluations) {
@@ -577,6 +569,10 @@ class ActivityFormVM extends ChangeNotifier with FormParentClass {
               .map((task) => TaskViewModel(
                     id: task[FirestoreConstants.id],
                     task: task[FirestoreConstants.task],
+                    taskType: task[FirestoreConstants.taskType] != null
+                        ? TaskType.getTaskTypeFromInt(
+                            task[FirestoreConstants.taskType] as int)
+                        : null,
                     downloadUrl: task[FirestoreConstants.downloadUrl],
                     options:
                         (task[FirestoreConstants.options] as List<dynamic>?)

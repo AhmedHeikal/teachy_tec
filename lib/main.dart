@@ -2,9 +2,9 @@
 // // Besmillah .. In the name of Allah we start
 import 'dart:async';
 import 'dart:ui';
-
 import 'package:animated_splash_screen/animated_splash_screen.dart';
 import 'package:colorful_safe_area/colorful_safe_area.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -23,7 +23,7 @@ import 'package:teachy_tec/styles/AppColors.dart';
 import 'package:teachy_tec/utils/Routing/TabItem.dart';
 import 'package:teachy_tec/utils/UIRouter.dart';
 import 'package:teachy_tec/utils/serviceLocator.dart';
-// import 'package:teachy_tec/widgets/showSpecificNotifications.dart';
+import 'package:teachy_tec/widgets/showSpecificNotifications.dart';
 
 Future<void> main() async {
   BindingBase.debugZoneErrorsAreFatal = false;
@@ -41,21 +41,6 @@ Future<void> main() async {
   //   print('Zone Error: $error');
   //   showErrorNotification(
   //       errorText: error.toString(), stackTrace: stackTrace.toString());
-  // });
-
-  // WidgetsFlutterBinding.ensureInitialized();
-  // SystemChrome.setPreferredOrientations([
-  //   DeviceOrientation.portraitUp,
-  // ]);
-
-  // await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  // final _ = await setupServiceLocator();
-  // runZonedGuarded(() {
-  //   runApp(const MyApp());
-  // }, (error, stackTrace) {
-  //   // Handle the error
-  //   print('Zone Error: $error');
-  //   showErrorNotification(errorText: error.toString());
   // });
 }
 
@@ -87,6 +72,8 @@ class _MyAppState extends State<MyApp> {
 
   @override
   void initState() {
+    debugPrint(
+        'Heikal - current userID ${serviceLocator<FirebaseAuth>().currentUser!.uid}');
     serviceLocator<FlutterLocalization>().init(
       mapLocales: [
         const MapLocale(
@@ -170,6 +157,7 @@ class _MyAppState extends State<MyApp> {
           curve: Curves.decelerate,
           screenFunction: () async {
             UIRouter.configureEasyLoader();
+
             return Scaffold(
               backgroundColor: AppColors.appBackgroundColor,
               resizeToAvoidBottomInset: false,

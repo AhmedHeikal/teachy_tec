@@ -47,6 +47,8 @@ class ActivityScreen extends StatelessWidget {
                   CalendarWidget(
                     onSelectDate: model.onSelectDate,
                     onSelectDateRange: model.onSelectDateRange,
+                    rangeStartDate: model.startDay,
+                    rangeEndDate: model.endDay,
                     onChangeMultiDaySelectionCallback:
                         model.onToggleDaySelection,
                   ),

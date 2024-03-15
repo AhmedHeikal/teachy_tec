@@ -63,6 +63,7 @@ class SettingsScreen extends StatelessWidget {
             ],
           ),
           body: SingleChildScrollView(
+            physics: const ClampingScrollPhysics(),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,

@@ -23,9 +23,11 @@ class Store {
           : activityStudentsBoxName,
     );
 
-    boxName.toLowerCase() == activitiesBoxName.toLowerCase()
-        ? _activitiesBox = Hive.box(activitiesBoxName)
-        : _activityStudentsBox = Hive.box(activityStudentsBoxName);
+    if (boxName.toLowerCase() == activitiesBoxName.toLowerCase()) {
+      _activitiesBox = Hive.box(activitiesBoxName);
+    } else {
+      _activityStudentsBox = Hive.box(activityStudentsBoxName);
+    }
   }
   // Future<T?> getValue<T>(String boxName, Object key, {T? defaultValue}) async =>
   //     await _box.get(

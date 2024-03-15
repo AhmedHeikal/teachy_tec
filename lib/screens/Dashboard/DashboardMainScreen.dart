@@ -24,6 +24,7 @@ class DashboardMainScreen extends StatelessWidget {
       child: Consumer<DashboardMainScreenVM>(
         builder: (context, model, _) => Scaffold(
           body: SingleChildScrollView(
+            physics: const ClampingScrollPhysics(),
             child: Column(
               children: [
                 const SizedBox(height: kMainPadding),

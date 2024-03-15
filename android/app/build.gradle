@@ -9,15 +9,14 @@ ext {
     sprintNumber = 1
     testBuildNumber = 0
     versionMajor = 1
-    versionMinor = 5
+    versionMinor = 6
     versionPatch = 0
-    buildVersionCode = 6
+    buildVersionCode = 8
     apiVersion = 0
     client = '"android"'
     client_version = 0.0
 }
  
-
 def localProperties = new Properties()
 def localPropertiesFile = rootProject.file('local.properties')
 if (localPropertiesFile.exists()) {

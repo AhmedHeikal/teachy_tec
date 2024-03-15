@@ -40,7 +40,9 @@ class StudentsComponent extends StatelessWidget {
                     onTap: model.onUploadFile,
                     child: Container(
                       padding: const EdgeInsets.symmetric(
-                          vertical: 10, horizontal: 18),
+                        vertical: 10,
+                        horizontal: 18,
+                      ),
                       decoration: BoxDecoration(
                         color: AppColors.white,
                         borderRadius: BorderRadius.circular(8),

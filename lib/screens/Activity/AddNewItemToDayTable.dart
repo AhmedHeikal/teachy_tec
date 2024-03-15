@@ -4,8 +4,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_localization/flutter_localization.dart';
 import 'package:teachy_tec/localization/Applocalization.dart';
 import 'package:teachy_tec/screens/Activity/AddNewItemToDayTableVM.dart';
-import 'package:teachy_tec/screens/Activity/CustomQuestionForm.dart';
-import 'package:teachy_tec/screens/Students/StudentForm.dart';
+import 'package:teachy_tec/styles/AppColors.dart';
 import 'package:teachy_tec/utils/AppConstants.dart';
 import 'package:teachy_tec/utils/AppExtensions.dart';
 import 'package:teachy_tec/widgets/AppButtons.dart';
@@ -23,27 +22,31 @@ class _AddNewItemToDayTableState extends State<AddNewItemToDayTable> {
   Widget build(BuildContext context) {
     var keyboardHeight = MediaQuery.viewInsetsOf(context).bottom;
     return Padding(
-      padding: const EdgeInsets.fromLTRB(
-        kMainPadding,
-        kMainPadding,
-        kMainPadding,
-        0,
-      ),
+      padding: const EdgeInsets.only(top: kMainPadding),
       child: Column(
         children: [
           TogglePagesButton(
-              firstPage: StudentForm(model: widget.model.studentFormVM),
-              secondPage: CustomQuestionForm(
-                model: widget.model.addSingleTaskFormVM,
-                isInPopUp: true,
-              ),
+              firstPage: widget.model.firstItemWidget,
+              secondPage: widget.model.secongItemWidget,
               firstPageTitle: widget.model.firstPageName,
               secondPageTitle: widget.model.secondPageName,
               onChangePageCallback: widget.model.onChangePageCallback),
-          const SizedBox(height: kMainPadding),
-          BottomPageButton(
-            onTap: widget.model.onSubmitForm,
-            text: AppLocale.add.getString(context).capitalizeFirstLetter(),
+          // const SizedBox(height: kMainPadding),
+          Container(
+            decoration: BoxDecoration(
+                border: Border(
+              top: BorderSide(
+                color: AppColors.grey400.withOpacity(0.15),
+                width: 2,
+              ),
+            )),
+            padding: const EdgeInsets.only(top: kInternalPadding),
+            child: BottomPageButton(
+              onTap: widget.model.onSubmitForm,
+              // color: AppColors.black,
+              addShadows: true,
+              text: AppLocale.add.getString(context).capitalizeFirstLetter(),
+            ),
           ),
           if (keyboardHeight > 0) SizedBox(height: keyboardHeight),
         ],

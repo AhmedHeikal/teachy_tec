@@ -221,4 +221,15 @@ class ActivityController {
     await store.setValue(
         Store.activitiesBoxName, Store.activitiesList, activities);
   }
+
+  Future<void> deleteMultipleActivitis(List<Activity> activitiesList) async {
+    final List<Activity> activities = List<Activity>.from(await store.getValue(
+            Store.activitiesBoxName, Store.activitiesList,
+            defaultValue: []) ??
+        []);
+    activities.removeWhere((element) =>
+        activitiesList.any((activity) => element.id == activity.id));
+    await store.setValue(
+        Store.activitiesBoxName, Store.activitiesList, activities);
+  }
 }

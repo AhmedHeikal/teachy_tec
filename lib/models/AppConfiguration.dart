@@ -17,8 +17,22 @@ class AppConfiguration {
     required this.resetCache,
     required this.updateRequired,
   });
-  factory AppConfiguration.fromJson(Map<String, dynamic> srcJson) =>
-      _$AppConfigurationFromJson(srcJson);
 
-  Map<String, dynamic> toJson() => _$AppConfigurationToJson(this);
+  // factory AppConfiguration.fromJson(Map<String, dynamic> srcJson) =>
+  //     _$AppConfigurationFromJson(srcJson);
+
+  // Map<String, dynamic> toJson() => _$AppConfigurationToJson(this);
+  factory AppConfiguration.fromJson(Map<String, dynamic> srcJson) {
+    return AppConfiguration(
+      closeApp: srcJson['closeApp'].toString() == 'true'.toString(),
+      resetCache: srcJson['resetCache'].toString() == 'true'.toString(),
+      updateRequired: srcJson['updateRequired'].toString() == 'true'.toString(),
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+        'closeApp': closeApp.toString(),
+        'resetCache': resetCache.toString(),
+        'updateRequired': updateRequired.toString(),
+      };
 }

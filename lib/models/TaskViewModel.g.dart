@@ -75,11 +75,12 @@ Map<String, dynamic> _$TaskViewModelToJson(TaskViewModel instance) =>
       'downloadUrl': instance.downloadUrl,
       'options': instance.options?.map((e) => e.toJson()).toList(),
       'taskType': _$TaskTypeEnumMap[instance.taskType],
-      'imagePathLocally': instance.imagePathLocally,
       'id': instance.id,
+      'imagePathLocally': instance.imagePathLocally,
     };
 
 const _$TaskTypeEnumMap = {
   TaskType.multipleOptions: 0,
   TaskType.trueFalse: 1,
+  TaskType.textOnly: 2,
 };

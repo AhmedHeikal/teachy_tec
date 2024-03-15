@@ -41,6 +41,7 @@ class ClassForm extends StatelessWidget {
             key: model.formKey,
             child: SafeArea(
               child: SingleChildScrollView(
+                physics: const ClampingScrollPhysics(),
                 child: Padding(
                   padding: const EdgeInsets.symmetric(
                     horizontal: kMainPadding,

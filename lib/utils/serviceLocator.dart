@@ -35,17 +35,17 @@ Future setupServiceLocator() async {
     return object;
   }, dependsOn: [FirebaseFirestore, FirebaseAuth]);
 
-  // serviceLocator.registerSingletonAsync<ConnectionStatusSingleton>(() async {
-  //   final object = ConnectionStatusSingleton.getInstance();
-  //   object.initialize();
-  //   return object;
-  // });
-
   serviceLocator.registerSingletonAsync<Store>(() async {
     await HiveInjector.setup();
     final object = Store();
     return object;
   });
+
+  // serviceLocator.registerSingletonAsync<ConnectionStatusSingleton>(() async {
+  //   final object = ConnectionStatusSingleton.getInstance();
+  //   object.initialize();
+  //   return object;
+  // });
 
   // serviceLocator.registerSingletonAsync<TomatoNetworkProvider>(() async {
   //   final object = TomatoNetworkProvider();
@@ -65,20 +65,6 @@ Future setupServiceLocator() async {
   //     return object;
   //   },
   // );
-
-  // serviceLocator.registerSingletonAsync<VideoCache>(() async {
-  //   final object = VideoCache(8);
-  //   return object;
-  // });
-
-  // serviceLocator.registerSingletonAsync<TomatoNotificationsService>(() async {
-  //   final object = TomatoNotificationsService();
-  //   await object.init();
-  //   return object;
-  // }, dependsOn: [
-  //   UIRouter,
-  //   TomatoNetworkProvider,
-  // ]);
 
   await serviceLocator.allReady();
 

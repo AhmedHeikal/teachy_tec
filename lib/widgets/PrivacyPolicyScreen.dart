@@ -26,6 +26,7 @@ class PrivacyPolicyScreen extends StatelessWidget {
           // containsBackButton: !model.isNotAgreedToConitions,
         ),
         body: SingleChildScrollView(
+          physics: const ClampingScrollPhysics(),
           child: Container(
             padding: const EdgeInsets.all(kMainPadding),
             child: Column(

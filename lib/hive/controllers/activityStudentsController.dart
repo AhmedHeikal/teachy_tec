@@ -12,6 +12,8 @@ import 'package:teachy_tec/utils/serviceLocator.dart';
 class ActivityStudentsController {
   late final Store store;
 
+  bool isUpdatedFromServerThisTime = false;
+
   ActivityStudentsController() {
     store = serviceLocator<Store>();
   }
@@ -23,10 +25,17 @@ class ActivityStudentsController {
           defaultValue: [],
         ) ??
         []);
+
     if (kDebugMode) {
       print('Heikal - returned items from getActivities Hive $currentItems');
     }
-    return List<ActivityStudents>.from(currentItems as List);
+
+    var currentListItems = List<ActivityStudents>.from(currentItems as List);
+    if (currentListItems.isEmpty) {
+      return await updateStudentActivityFromServer();
+    } else {
+      return currentListItems;
+    }
   }
 
   Future<ActivityStudents?> getSingleActivityStudents(
@@ -106,6 +115,19 @@ class ActivityStudentsController {
         Store.activityStudentsBoxName, Store.activityStudentsList, activities);
   }
 
+  Future<void> deleteMultipleActivities(List<Activity> activitiesList) async {
+    final List<ActivityStudents> activities = List<ActivityStudents>.from(
+        await store.getValue(
+                Store.activityStudentsBoxName, Store.activityStudentsList,
+                defaultValue: []) ??
+            []);
+
+    activities.removeWhere((activityStudents) =>
+        activitiesList.any((element) => element.id == activityStudents.id));
+    await store.setValue(
+        Store.activityStudentsBoxName, Store.activityStudentsList, activities);
+  }
+
   Future<void> saveLocalUnsavedActivityStudentsToServer() async {
     var activitesSavedLocally = await getActivityStudents() ?? [];
 
@@ -143,6 +165,17 @@ class ActivityStudentsController {
     currentActivity.lastTimeUploadedToServer = currentTimeStamp;
 
     await updateSingleActivtyStudents(singleActivityStudent: currentActivity);
+  }
+
+  Future<List<ActivityStudents>?> updateStudentActivityFromServer() async {
+    if (isUpdatedFromServerThisTime) return null;
+    var currentItem = await serviceLocator<AppNetworkProvider>()
+        .getAllActivityStudentsForTeacher();
+
+    await store.setValue(
+        Store.activityStudentsBoxName, Store.activityStudentsList, currentItem);
+    isUpdatedFromServerThisTime = true;
+    return currentItem;
   }
 
   Future<Map<Student, Map<int, List<Task>>?>> getDayGradesForClass(

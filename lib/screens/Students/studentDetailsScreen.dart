@@ -64,6 +64,7 @@ class StudentDetailsScreen extends StatelessWidget {
           ),
           body: Consumer<StudentDetailsScreenVM>(
             builder: (context, model, _) => SingleChildScrollView(
+              physics: const ClampingScrollPhysics(),
               child: Column(
                 children: [
                   const SizedBox(height: kMainPadding),

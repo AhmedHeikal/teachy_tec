@@ -37,8 +37,11 @@ class ActivityScreenVM extends ChangeNotifier {
 
   DateTime selectedDay = AppUtility.removeTime(DateTime.now());
   DateTime startDay = AppUtility.removeTime(
-      DateTime.now().toUtc().subtract(const Duration(days: 4)));
-  DateTime endDay = AppUtility.removeTime(DateTime.now().toUtc());
+      DateTime.now().toUtc().subtract(const Duration(days: 3)));
+  // Added one Day becasue when we remove the time .. for some (unknown) reason it goes to the day before ..
+  // because the current time is an overhead and the absolute value is the day before
+  DateTime endDay = AppUtility.removeTime(
+      DateTime.now().toUtc().add(const Duration(days: 1)));
   bool isMultiDaySelectionActive = true;
   bool isInitialized = false;
 
@@ -89,18 +92,21 @@ class ActivityScreenVM extends ChangeNotifier {
       notifyListeners();
     }
 
-    var newActivity = await UIRouter.pushScreen(
+    /* var newActivity = */
+    await UIRouter.pushScreen(
         ActivityForm(
             model: ActivityFormVM(
                 onAddNewActivity: addNewActivityCallback,
                 pageDate:
                     DateUtils.dateOnly(selectedDay).millisecondsSinceEpoch)),
         pageName: AppAnalyticsConstants.ActivityForm);
-    if (newActivity != null) {
-      activitiesList.add(newActivity);
-      isInitialized = true;
-      notifyListeners();
-    }
+    // if (newActivity != null) {
+    isInitialized = true;
+    await getActivities();
+
+    // activitiesList.add(newActivity);
+    // notifyListeners();
+    // }
   }
 
   // Future<List<Class>> getClassesList() async {
@@ -126,15 +132,13 @@ class ActivityScreenVM extends ChangeNotifier {
           UIRouter.showEasyLoader();
 
           await serviceLocator<AppNetworkProvider>().deleteActivity(
-            activityId: activity.id,
+            activity: activity,
             classId: activity.currentClass!.id!,
-            pageDate: activity.timestamp,
           );
 
-          await serviceLocator<AppNetworkProvider>().deleteFolderFromStorage(
-              '${serviceLocator<FirebaseAuth>().currentUser!.uid}/Activities/${activity.id}');
-          await ActivityController().deleteActivity(activity);
-          await ActivityStudentsController().deleteActivity(activity);
+          // await serviceLocator<AppNetworkProvider>().deleteFolderFromStorage(
+          //     '${serviceLocator<FirebaseAuth>().currentUser!.uid}/Activities/${activity.id}');
+
           showSpecificNotificaiton(
               notifcationDetails:
                   AppNotifcationsItems.activityDeletedSuccessfully);
@@ -253,6 +257,17 @@ class ActivityScreenVM extends ChangeNotifier {
         await ActivityStudentsController().getSingleActivityStudents(
       activityId: currentActivity.id,
     );
+    if (currentStudentActivity == null) {
+      currentStudentActivity = await serviceLocator<AppNetworkProvider>()
+          .getActivityForStudents(
+              activityId: currentActivity.id,
+              classId: currentActivity.currentClass?.id ?? '',
+              timestamp: currentActivity.timestamp);
+      if (currentStudentActivity != null) {
+        await ActivityStudentsController().updateSingleActivtyStudents(
+            singleActivityStudent: currentStudentActivity);
+      }
+    }
 
     Map<String, List<Task>> studentsToTaskMap = {};
     currentStudentActivity?.studentTasks.forEach((key, value) {

@@ -30,6 +30,7 @@ class SingleStudentForm extends StatelessWidget {
         key: model.formKey,
         child: Consumer<SingleStudentFormVM>(
           builder: (context, model, _) => SingleChildScrollView(
+            physics: const ClampingScrollPhysics(),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [

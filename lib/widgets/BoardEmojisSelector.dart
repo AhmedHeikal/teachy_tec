@@ -8,22 +8,27 @@ import 'package:teachy_tec/styles/AppColors.dart';
 import 'package:teachy_tec/styles/TextStyles.dart';
 import 'package:teachy_tec/utils/AppConstants.dart';
 import 'package:collection/collection.dart';
+import 'package:teachy_tec/utils/AppEnums.dart';
 import 'package:teachy_tec/utils/AppExtensions.dart';
 import 'package:teachy_tec/utils/SoundService.dart';
 
 class BoardEmojisSelector extends StatelessWidget {
   const BoardEmojisSelector(
       {required this.onSelectEmoji,
-      this.isCorrectAnswerChosenInPracticePage,
+      this.hideSpecifiedButtons = false,
+      this.answerSubmittedType,
       super.key});
   final void Function(Emoji) onSelectEmoji;
-  final bool? isCorrectAnswerChosenInPracticePage;
+  final bool hideSpecifiedButtons;
+  final AnswerSubmittedType? answerSubmittedType;
 
   @override
   Widget build(BuildContext context) {
-    List<Emoji> currentEmojisList = (isCorrectAnswerChosenInPracticePage == null
+    List<Emoji> currentEmojisList = (answerSubmittedType == null ||
+                answerSubmittedType == AnswerSubmittedType.showFullAnswerOptions
             ? emojisList
-            : isCorrectAnswerChosenInPracticePage == true
+            : answerSubmittedType ==
+                    AnswerSubmittedType.showCorrectAnswerOptions
                 ? emojisList
                     .where((element) => element.emojiType != EmojisTypes.zero)
                 : emojisList
@@ -44,7 +49,7 @@ class BoardEmojisSelector extends StatelessWidget {
           },
           itemCount: currentEmojisList.length,
         ),
-        if (isCorrectAnswerChosenInPracticePage == null) ...[
+        if (answerSubmittedType == null && !hideSpecifiedButtons) ...[
           const SizedBox(height: kMainPadding),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,

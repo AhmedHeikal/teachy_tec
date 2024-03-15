@@ -40,6 +40,10 @@ class _MainScaffoldState extends State<MainScaffold> {
                 return SignInScreen(model: SignInScreenVM());
               }
 
+              if(widget.model.currentUserAppConfiguration != null){
+                
+              }
+
               return Stack(
                 children: [
                   Offstage(
@@ -78,10 +82,8 @@ class _MainScaffoldState extends State<MainScaffold> {
                 if (isFirstRouteInCurrentTab) {
                   if (router.currentTab != TabItem.home) {
                     router.selectTab(TabItem.home);
-                    // return false;
                   }
                 }
-                // return isFirstRouteInCurrentTab;
               },
               child: Directionality(
                 textDirection: AppUtility.isDirectionalitionalityLTR()

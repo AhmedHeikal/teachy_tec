@@ -1,6 +1,4 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:teachy_tec/styles/AppColors.dart';
 import 'package:teachy_tec/styles/TextStyles.dart';
 import 'package:teachy_tec/utils/AppConstants.dart';
@@ -105,7 +103,7 @@ class _TogglePagesButtonState extends State<TogglePagesButton> {
         ),
         const SizedBox(height: kMainPadding),
         Container(
-            constraints: const BoxConstraints(maxHeight: 500),
+            constraints: const BoxConstraints(maxHeight: 400),
             child: isFirstPageChoosen ? widget.firstPage : widget.secondPage),
       ],
     );

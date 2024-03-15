@@ -9,6 +9,7 @@ import 'package:teachy_tec/screens/Activity/CustomQuestionFormVM.dart';
 import 'package:teachy_tec/styles/AppColors.dart';
 import 'package:teachy_tec/styles/TextStyles.dart';
 import 'package:teachy_tec/utils/AppConstants.dart';
+import 'package:teachy_tec/utils/AppEnums.dart';
 import 'package:teachy_tec/utils/AppExtensions.dart';
 import 'package:teachy_tec/widgets/MediaPickerWidget.dart';
 import 'package:teachy_tec/widgets/RoundedTextField.dart';
@@ -41,17 +42,25 @@ class CustomQuestionForm extends StatelessWidget {
         builder: (context, isLoading, child) => IgnorePointer(
           ignoring: isLoading,
           child: DefaultContainer(
+            // color: AppColors.grey100,
             key: UniqueKey(),
             padding: padding,
-            // addDefaultBoxShadow: true,
             width: double.infinity,
             child: Consumer<CustomQuestionFormVM>(
               builder: (context, model, _) => SingleChildScrollView(
-                physics:
-                    isInPopUp ? null : const NeverScrollableScrollPhysics(),
+                physics: isInPopUp
+                    ? const ClampingScrollPhysics()
+                    : const NeverScrollableScrollPhysics(),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: kBottomPadding),
+                      child: Text(
+                        "> ${model.taskType == TaskType.multipleOptions ? AppLocale.multipleOptionsQuestion.getString(context).toUpperCase() : model.taskType == TaskType.trueFalse ? AppLocale.trueFalseQuestion.getString(context).toUpperCase() : AppLocale.textQuestion.getString(context).toUpperCase()}",
+                        style: TextStyles.InterBlackS14W600,
+                      ),
+                    ),
                     if (!isInOpenedCustomQuestion)
                       index != null
                           ? Text(
@@ -130,19 +139,13 @@ class CustomQuestionForm extends StatelessWidget {
                       Column(
                         children: [
                           MediaPickerWidget(
+                              key: UniqueKey(),
                               maxMediaCount: 1,
                               isReadOnly: model.isReadOnly,
                               canUploadVideos: false,
                               initialList:
                                   model.image != null ? [model.image!] : null,
                               mediaCallBack: (mediaFileList) {
-                                // if (model.questionVM != null) {
-                                //   model.questionVM!.imageFile =
-                                //       mediaFileList != null &&
-                                //               mediaFileList.length != 0
-                                //           ? mediaFileList.first
-                                //           : null;
-                                // }
                                 model.image = mediaFileList != null &&
                                         mediaFileList.isNotEmpty
                                     ? mediaFileList.first
@@ -177,7 +180,8 @@ class CustomQuestionForm extends StatelessWidget {
                         itemCount: model.options.length,
                       ),
                     ),
-                    if (!model.isReadOnly) ...[
+                    if (!model.isReadOnly &&
+                        model.taskType == TaskType.multipleOptions) ...[
                       model.options.isEmpty
                           ? const SizedBox()
                           : const SizedBox(height: kBottomPadding),
@@ -237,9 +241,6 @@ class ImaginaryOptionToAddNewOne extends StatelessWidget {
                     ),
                   ),
                 ),
-                // child: Container(
-                //   height: 44,
-                // ),
               ),
               const SizedBox(width: kBottomPadding),
               SvgPicture.asset(
@@ -267,6 +268,7 @@ class QuestionOptionComponent extends StatelessWidget {
     required this.isCheckbox,
     this.onChange,
   });
+
   final int index;
   final VoidCallback onDeleteOption;
   final QuestionOptionComponentVM model;
@@ -280,95 +282,162 @@ class QuestionOptionComponent extends StatelessWidget {
       child: Form(
         key: model.formKey,
         child: Consumer<QuestionOptionComponentVM>(
-          builder: (context, model, _) => Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                '${AppLocale.option.getString(context)} $index'.toUpperCase(),
-                style: TextStyles.InterGrey400S12W600,
-              ),
-              const SizedBox(height: 2),
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Expanded(
-                    child: CustomQuestionOptionTextField(
-                      key: UniqueKey(),
-                      text: model.optionString,
-                      isReadOnly: model.isReadOnly,
-                      initialOptionSate: model.isCorrect ?? false,
-                      onChanged: (input) {
-                        model.optionString = input;
-                        if (onChange != null) {
-                          if (model.option != null) model.option!.name = input;
-                          if (onChange != null) onChange!();
-                        }
-                      },
-                      onTrueOptionToggleCallback: (isSelected) {
-                        if (model.onSelectItem != null) model.onSelectItem!();
-                        if (onChange != null) onChange!();
-                        model.isCorrect = isSelected;
-                        model.option?.isCorrect = isSelected;
-                      },
+          builder: (context, model, _) => model.tasktype ==
+                  TaskType.multipleOptions
+              ? Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      '${AppLocale.option.getString(context)} $index'
+                          .toUpperCase(),
+                      style: TextStyles.InterGrey400S12W600,
                     ),
-                  ),
-                  const SizedBox(width: kBottomPadding),
-                  MediaPickerWidget(
-                      height: 44,
-                      width: 50,
-                      isReadOnly: model.isReadOnly,
-                      maxMediaCount: 1,
-                      canUploadVideos: false,
-                      // isExternallyControlledAndSmallPreviewed: true,
-                      initialList: model.image != null ? [model.image!] : null,
-                      customDesignWithoutSelection: DefaultContainer(
-                        height: 44,
-                        width: 50,
-                        border:
-                            Border.all(color: AppColors.grey300, width: 0.5),
-                        padding: const EdgeInsets.all(kInternalPadding),
-                        child: SvgPicture.asset(
-                          "assets/svg/customOptionsEmptyImage.svg",
-                          height: 24,
-                          width: 24,
-                        ),
-                      ),
-                      mediaCallBack: (mediaFileList) {
-                        // if (model.questionVM != null) {
-                        //   model.questionVM!.imageFile =
-                        //       mediaFileList != null &&
-                        //               mediaFileList.length != 0
-                        //           ? mediaFileList.first
-                        //           : null;
-                        // }
-                        model.image =
-                            mediaFileList != null && mediaFileList.isNotEmpty
-                                ? mediaFileList.first
-                                : null;
-                      }),
-                  if (isCheckbox && !model.isReadOnly)
-                    InkWell(
-                      onTap: onDeleteOption,
-                      child: SizedBox(
-                        height: 44,
-                        child: Align(
-                          child: Padding(
-                            padding: const EdgeInsetsDirectional.only(
-                                start: kBottomPadding),
-                            child: SvgPicture.asset(
-                              "assets/svg/bin.svg",
-                              color: AppColors.primary700,
-                              height: 24,
-                              width: 24,
-                            ),
+                    const SizedBox(height: 2),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          child: CustomQuestionOptionTextField(
+                            key: UniqueKey(),
+                            text: model.optionString,
+                            isReadOnly: model.isReadOnly,
+                            initialOptionSate: model.isCorrect ?? false,
+                            onChanged: (input) {
+                              model.optionString = input;
+                              if (onChange != null) {
+                                if (model.option != null) {
+                                  model.option!.name = input;
+                                }
+                                if (onChange != null) onChange!();
+                              }
+                            },
+                            onTrueOptionToggleCallback: (isSelected) {
+                              if (model.onSelectItem != null) {
+                                model.onSelectItem!();
+                              }
+                              if (onChange != null) onChange!();
+                              model.isCorrect = isSelected;
+                              model.option?.isCorrect = isSelected;
+                            },
                           ),
                         ),
-                      ),
+                        const SizedBox(width: kBottomPadding),
+                        MediaPickerWidget(
+                            height: 44,
+                            width: 50,
+                            isReadOnly: model.isReadOnly,
+                            maxMediaCount: 1,
+                            canUploadVideos: false,
+                            // isExternallyControlledAndSmallPreviewed: true,
+                            initialList:
+                                model.image != null ? [model.image!] : null,
+                            customDesignWithoutSelection: DefaultContainer(
+                              height: 44,
+                              width: 50,
+                              border: Border.all(
+                                  color: AppColors.grey300, width: 0.5),
+                              padding: const EdgeInsets.all(kInternalPadding),
+                              child: SvgPicture.asset(
+                                "assets/svg/customOptionsEmptyImage.svg",
+                                height: 24,
+                                width: 24,
+                              ),
+                            ),
+                            mediaCallBack: (mediaFileList) {
+                              model.image = mediaFileList != null &&
+                                      mediaFileList.isNotEmpty
+                                  ? mediaFileList.first
+                                  : null;
+                            }),
+                        if (isCheckbox && !model.isReadOnly)
+                          InkWell(
+                            onTap: onDeleteOption,
+                            child: SizedBox(
+                              height: 44,
+                              child: Align(
+                                child: Padding(
+                                  padding: const EdgeInsetsDirectional.only(
+                                      start: kBottomPadding),
+                                  child: SvgPicture.asset(
+                                    "assets/svg/bin.svg",
+                                    color: AppColors.primary700,
+                                    height: 24,
+                                    width: 24,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                      ],
                     ),
-                ],
-              ),
-            ],
-          ),
+                  ],
+                )
+              : model.tasktype == TaskType.trueFalse
+                  ? Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        InkWell(
+                          onTap: () {
+                            if (model.onSelectItem != null) {
+                              model.onSelectItem!();
+                            }
+                            if (onChange != null) onChange!();
+                            model.isCorrect = true;
+                            model.option?.isCorrect = true;
+                          },
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              SvgPicture.asset(
+                                (model.isCorrect == true)
+                                    ? 'assets/svg/activeRadioButton.svg'
+                                    : 'assets/svg/inActiveRadioButton.svg',
+                                width: 24,
+                                height: 24,
+                              ),
+                              const SizedBox(width: kInternalPadding),
+                              Text(
+                                AppLocale.trueString
+                                    .getString(context)
+                                    .capitalizeFirstLetter(),
+                                style: TextStyles.InterBlackS16W400,
+                              ),
+                            ],
+                          ),
+                        ),
+                        InkWell(
+                          onTap: () {
+                            if (model.onSelectItem != null) {
+                              model.onSelectItem!();
+                            }
+                            if (onChange != null) onChange!();
+                            model.isCorrect = false;
+                            model.option?.isCorrect = false;
+                          },
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              const SizedBox(width: 22),
+                              SvgPicture.asset(
+                                (model.isCorrect == false)
+                                    ? 'assets/svg/activeRadioButton.svg'
+                                    : 'assets/svg/inActiveRadioButton.svg',
+                                width: 24,
+                                height: 24,
+                              ),
+                              const SizedBox(width: kInternalPadding),
+                              Text(
+                                AppLocale.falseString
+                                    .getString(context)
+                                    .capitalizeFirstLetter(),
+                                style: TextStyles.InterBlackS16W400,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    )
+                  : const SizedBox(),
         ),
       ),
     );
