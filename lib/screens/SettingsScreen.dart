@@ -163,6 +163,7 @@ class SettingsScreen extends StatelessWidget {
                               AppUtility.getArrowAssetLocalized(),
                               height: 14,
                               colorFilter: const ColorFilter.mode(
+                                // AppColors.red600,
                                 AppColors.grey400,
                                 BlendMode.srcIn,
                               ),
