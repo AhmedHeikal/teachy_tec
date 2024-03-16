@@ -1,3 +1,5 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -31,6 +33,10 @@ class HiveInjector {
       await Hive.openBox(Store.activitiesBoxName);
       await Hive.openBox(Store.activityStudentsBoxName);
     } catch (e) {
+      FirebaseCrashlytics.instance.recordError(e, null,
+          fatal: false,
+          reason:
+              "Heikal - Hive Initialization failed to in hiveInjector.dart  \ncurrentUID ${serviceLocator<FirebaseAuth>().currentUser?.uid} ");
       if (kDebugMode) {
         print('Heikal - Hive boxes didn\'t open');
       }

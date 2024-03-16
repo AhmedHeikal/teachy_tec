@@ -1,6 +1,8 @@
 import 'dart:io';
 import 'package:excel/excel.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -305,6 +307,11 @@ class StudentsComponentVM extends ChangeNotifier {
       if (kDebugMode) {
         print('Error downloading file: $e');
       }
+
+      FirebaseCrashlytics.instance.recordError(e, null,
+          fatal: false,
+          reason:
+              "Heikal - downloadFileFromAssets in StudentsComponentVM \ncurrentUID ${serviceLocator<FirebaseAuth>().currentUser?.uid} ");
     }
   }
 

@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:teachy_tec/hive/controllers/activityController.dart';
@@ -36,6 +37,10 @@ class AppNetworkProvider {
         final Uint8List? data = await storageRef.child(imageId).getData();
         return data;
       } catch (e) {
+        FirebaseCrashlytics.instance.recordError(e, null,
+            fatal: false,
+            reason:
+                "Heikal - GetImage failed in AppNetworkProvider \ncurrentUID ${serviceLocator<FirebaseAuth>().currentUser?.uid} ");
         // debugPrint("$e");
       } finally {
         // await EasyLoading.dismiss(animation: true);
@@ -62,14 +67,22 @@ class AppNetworkProvider {
 
   Future<AppConfiguration?> getAppConfiguration() async {
     try {
+      if (!serviceLocator.isRegistered<FirebaseAuth>() ||
+          serviceLocator<FirebaseAuth>().currentUser?.uid == null) {
+        return null;
+      }
       var studentsJson = await serviceLocator<FirebaseFirestore>()
           .collection(FirestoreConstants.applicationConfiguration)
-          .doc(serviceLocator<FirebaseAuth>().currentUser!.uid)
+          .doc(serviceLocator<FirebaseAuth>().currentUser?.uid)
           .get();
       var currentAppConfiguration = AppConfiguration.fromJson(
           (studentsJson.data() as Map<String, dynamic>));
       return currentAppConfiguration;
     } catch (e) {
+      FirebaseCrashlytics.instance.recordError(e, null,
+          fatal: false,
+          reason:
+              "Heikal - getAppConfiguration failed in AppNetworkProvider \ncurrentUID ${serviceLocator<FirebaseAuth>().currentUser?.uid} ");
       var appConfiguration = AppConfiguration(
           closeApp: false, resetCache: false, updateRequired: false);
       await UpdateAppConfiguration(appConfiguration);
@@ -95,7 +108,12 @@ class AppNetworkProvider {
           .onError((e, _) => debugPrint("Error writing document: $e"));
 
       return currentAppConfiguration;
-    } catch (e) {}
+    } catch (e) {
+      FirebaseCrashlytics.instance.recordError(e, null,
+          fatal: false,
+          reason:
+              "Heikal - UpdateAppConfiguration failed in AppNetworkProvider \ncurrentUID ${serviceLocator<FirebaseAuth>().currentUser?.uid} ");
+    }
     return null;
   }
 
@@ -170,6 +188,11 @@ class AppNetworkProvider {
       debugPrint('New class and students added to Firestore successfully');
     } catch (e) {
       debugPrint('Error occurred while adding new class and students: $e');
+
+      FirebaseCrashlytics.instance.recordError(e, null,
+          fatal: false,
+          reason:
+              "Heikal - onAddNewClass failed in AppNetworkProvider \ncurrentUID ${serviceLocator<FirebaseAuth>().currentUser?.uid} ");
     }
     return currentClass;
   }
@@ -409,6 +432,10 @@ class AppNetworkProvider {
         }
       });
     } catch (e) {
+      FirebaseCrashlytics.instance.recordError(e, null,
+          fatal: false,
+          reason:
+              "Heikal - getAllStudentsForTeacher failed in AppNetworkProvider \ncurrentUID ${serviceLocator<FirebaseAuth>().currentUser?.uid} ");
       print('Error retrieving students: $e');
     }
 
@@ -531,6 +558,10 @@ class AppNetworkProvider {
         debugPrint('Error during batch write: $error');
       });
     } catch (e) {
+      FirebaseCrashlytics.instance.recordError(e, null,
+          fatal: false,
+          reason:
+              "Heikal - deleteActivity failed in AppNetworkProvider \ncurrentUID ${serviceLocator<FirebaseAuth>().currentUser?.uid} ");
       debugPrint('Error occurred while deleting activity and data: $e');
     }
   }
@@ -641,9 +672,17 @@ class AppNetworkProvider {
               '${serviceLocator<FirebaseAuth>().currentUser!.uid}/Activities/${activity.id}');
         });
       }).catchError((error) {
+        FirebaseCrashlytics.instance.recordError(error, null,
+            fatal: false,
+            reason:
+                "Heikal - deleteClass Commit failed in AppNetworkProvider \ncurrentUID ${serviceLocator<FirebaseAuth>().currentUser?.uid} ");
         debugPrint('Error during batch write: $error');
       });
     } catch (e) {
+      FirebaseCrashlytics.instance.recordError(e, null,
+          fatal: false,
+          reason:
+              "Heikal - deleteClass failed in AppNetworkProvider \ncurrentUID ${serviceLocator<FirebaseAuth>().currentUser?.uid} ");
       debugPrint('Error occurred while deleting activity and data: $e');
     }
   }
@@ -699,9 +738,17 @@ class AppNetworkProvider {
         debugPrint('Activities and related data deleted successfully');
       }).catchError((error) {
         debugPrint('Error during batch write: $error');
+        FirebaseCrashlytics.instance.recordError(error, null,
+            fatal: false,
+            reason:
+                "Heikal - deleteActivities Commit failed in AppNetworkProvider \ncurrentUID ${serviceLocator<FirebaseAuth>().currentUser?.uid} ");
       });
     } catch (e) {
       debugPrint('Error occurred while deleting activities and data: $e');
+      FirebaseCrashlytics.instance.recordError(e, null,
+          fatal: false,
+          reason:
+              "Heikal - deleteActivities in AppNetworkProvider \ncurrentUID ${serviceLocator<FirebaseAuth>().currentUser?.uid} ");
     }
   }
 
@@ -839,6 +886,10 @@ class AppNetworkProvider {
         debugPrint('New task added successfully');
       }).catchError((error) {
         debugPrint('Error during batch write: $error');
+        FirebaseCrashlytics.instance.recordError(error, null,
+            fatal: false,
+            reason:
+                "Heikal - addNewTaskToActivity Commit in AppNetworkProvider \ncurrentUID ${serviceLocator<FirebaseAuth>().currentUser?.uid} ");
       });
 
       return TaskViewModel(
@@ -863,6 +914,10 @@ class AppNetworkProvider {
       );
     } catch (e) {
       debugPrint('Error occurred while adding new task: $e');
+      FirebaseCrashlytics.instance.recordError(e, null,
+          fatal: false,
+          reason:
+              "Heikal - addNewTaskToActivity in AppNetworkProvider \ncurrentUID ${serviceLocator<FirebaseAuth>().currentUser?.uid} ");
     }
 
     return null;
@@ -885,6 +940,10 @@ class AppNetworkProvider {
       return downloadUrl;
     } catch (e) {
       // Handle errors here
+      FirebaseCrashlytics.instance.recordError(e, null,
+          fatal: false,
+          reason:
+              "Heikal - uploadActivityFile in AppNetworkProvider \ncurrentUID ${serviceLocator<FirebaseAuth>().currentUser?.uid} ");
       print('Error uploading file: $e');
       return '';
     }
@@ -908,6 +967,10 @@ class AppNetworkProvider {
 
       return newDownloadUrl;
     } catch (e) {
+      FirebaseCrashlytics.instance.recordError(e, null,
+          fatal: false,
+          reason:
+              "Heikal - uploadActivityFileWithURL in AppNetworkProvider \ncurrentUID ${serviceLocator<FirebaseAuth>().currentUser?.uid} ");
       // Handle errors here
       print('Error uploading file: $e');
       return '';
@@ -943,6 +1006,11 @@ class AppNetworkProvider {
       if (kDebugMode) {
         print('Error deleting folder from storage: $error');
       }
+
+      FirebaseCrashlytics.instance.recordError(error, null,
+          fatal: false,
+          reason:
+              "Heikal - deleteFolderFromStorage in AppNetworkProvider \ncurrentUID ${serviceLocator<FirebaseAuth>().currentUser?.uid} ");
     }
   }
 
@@ -1122,6 +1190,10 @@ class AppNetworkProvider {
       if (kDebugMode) {
         print('Heikal - an error occured $e');
       }
+      FirebaseCrashlytics.instance.recordError(e, null,
+          fatal: false,
+          reason:
+              "Heikal - saveActivityStudents in AppNetworkProvider \ncurrentUID ${serviceLocator<FirebaseAuth>().currentUser?.uid} ");
     } finally {
       if (kDebugMode) {
         print('Heikal - Batch completed');
@@ -1264,6 +1336,10 @@ class AppNetworkProvider {
       // Commit the batch
       await batch.commit();
     } catch (e) {
+      FirebaseCrashlytics.instance.recordError(e, null,
+          fatal: false,
+          reason:
+              "Heikal - deleteStudentClassStudentsAndActivityStudents in AppNetworkProvider \ncurrentUID ${serviceLocator<FirebaseAuth>().currentUser?.uid} ");
       await EasyLoading.dismiss(animation: true);
     }
   }

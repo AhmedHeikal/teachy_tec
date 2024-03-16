@@ -37,6 +37,7 @@ Future setupServiceLocator() async {
     return object;
   }, dependsOn: [FirebaseFirestore, FirebaseAuth]);
 
+
   serviceLocator.registerSingletonAsync<AppConfiguration>(() async {
     var currentAppConfiguration =
         await serviceLocator<AppNetworkProvider>().getAppConfiguration() ??
@@ -44,7 +45,7 @@ Future setupServiceLocator() async {
                 closeApp: false, resetCache: false, updateRequired: false);
     final object = currentAppConfiguration;
     return object;
-  }, dependsOn: [AppNetworkProvider]);
+  }, dependsOn: [AppNetworkProvider, FirebaseAuth]);
 
   serviceLocator.registerSingletonAsync<Store>(() async {
     await HiveInjector.setup();

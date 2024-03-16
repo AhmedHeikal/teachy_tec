@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:teachy_tec/hive/injector/hiveInjector.dart';
@@ -56,6 +57,10 @@ Future<void> deleteUserAccount() async {
       // Handle other Firebase exceptions
     }
   } catch (e) {
+    FirebaseCrashlytics.instance.recordError(e, null,
+        fatal: false,
+        reason:
+            "Heikal - deleteUserAccount in AppAuthenticationService \ncurrentUID ${serviceLocator<FirebaseAuth>().currentUser?.uid} ");
     debugPrint(e.toString());
     // Handle general exception
   } finally {
@@ -81,6 +86,10 @@ Future<void> _reauthenticateAndDelete() async {
 
     await serviceLocator<FirebaseAuth>().currentUser?.delete();
   } catch (e) {
+    FirebaseCrashlytics.instance.recordError(e, null,
+        fatal: false,
+        reason:
+            "Heikal - _reauthenticateAndDelete in AppAuthenticationService \ncurrentUID ${serviceLocator<FirebaseAuth>().currentUser?.uid} ");
     // Handle exceptions
   }
 }

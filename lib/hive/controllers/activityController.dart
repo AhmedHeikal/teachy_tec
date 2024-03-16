@@ -1,3 +1,5 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:teachy_tec/Services/hiveStore.dart';
@@ -37,6 +39,13 @@ class ActivityController {
 
       return List<Activity>.from(currentItems as List);
     } catch (e) {
+      FirebaseCrashlytics.instance.recordError(e, null,
+          fatal: false,
+          reason:
+              "Heikal - getActivitiesForCertainDate failed to load in HIVE Activity controller \ncurrentUID ${serviceLocator<FirebaseAuth>().currentUser?.uid} ");
+      FirebaseCrashlytics.instance.recordError(e, null,
+          fatal: false, reason: 'Heikal - getActivities failed to load');
+
       await updateAllActivitiesFromServer();
       didUpdateInThisSession = true;
       return getActivities();
@@ -65,6 +74,10 @@ class ActivityController {
       }
       return List<Activity>.from(currentItems as List);
     } catch (e) {
+      FirebaseCrashlytics.instance.recordError(e, null,
+          fatal: false,
+          reason:
+              "Heikal - getActivitiesForCertainDate failed to load in HIVE Activity controller \ncurrentUID ${serviceLocator<FirebaseAuth>().currentUser?.uid} parameters currentDate in millisecodsn ${currentDate.millisecondsSinceEpoch} ");
       await updateAllActivitiesFromServer();
       didUpdateInThisSession = true;
       await getActivitiesForCertainDate(currentDate);
@@ -100,6 +113,10 @@ class ActivityController {
       }
       return List<Activity>.from(currentItems as List);
     } catch (e) {
+      FirebaseCrashlytics.instance.recordError(e, null,
+          fatal: false,
+          reason:
+              "Heikal - getActivitiesForCertainDate failed to load in HIVE Activity controller \ncurrentUID ${serviceLocator<FirebaseAuth>().currentUser?.uid} \n parameters: startDate ${startDate.millisecondsSinceEpoch} endDate ${endDate.millisecondsSinceEpoch} ");
       await updateAllActivitiesFromServer();
       didUpdateInThisSession = true;
       return getActivitiesForDateRange(startDate, endDate);

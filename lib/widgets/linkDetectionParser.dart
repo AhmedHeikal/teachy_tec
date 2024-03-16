@@ -1,12 +1,15 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart' hide Element;
 // import 'package:flutter_chat_types/flutter_chat_types.dart'
 //     show PreviewData, PreviewDataImage;
 import 'package:html/dom.dart' show Document, Element;
 import 'package:html/parser.dart' as parser show parse;
 import 'package:http/http.dart' as http show get;
+import 'package:teachy_tec/utils/serviceLocator.dart';
 import 'package:teachy_tec/widgets/PreviewData.dart';
 
 // import 'types.dart';
@@ -258,6 +261,10 @@ Future<PreviewData> getPreviewData(
     );
   } catch (e) {
     // debugPrint('Heikal - preview title error $previewDataTitle');
+    FirebaseCrashlytics.instance.recordError(e, null,
+        fatal: false,
+        reason:
+            "Heikal - getPreviewData in linkDetectionParser \ncurrentUID ${serviceLocator<FirebaseAuth>().currentUser?.uid} ");
     return PreviewData(
       description: previewDataDescription,
       image: previewDataImage,

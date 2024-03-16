@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:flutter_localization/flutter_localization.dart';
@@ -32,7 +33,12 @@ class ClassesScreenVM extends ChangeNotifier {
           .toList();
       isInitialized = true;
       notifyListeners();
-    } catch (e) {}
+    } catch (e) {
+      FirebaseCrashlytics.instance.recordError(e, null,
+          fatal: false,
+          reason:
+              "Heikal - getClasses failed in ClassesScreenVM \ncurrentUID ${serviceLocator<FirebaseAuth>().currentUser?.uid} ");
+    }
 
     await EasyLoading.dismiss(animation: true);
 

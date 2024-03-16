@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:ui';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
 import 'package:teachy_tec/hive/controllers/activityController.dart';
@@ -344,12 +345,21 @@ class ActivityFormVM extends ChangeNotifier with FormParentClass {
         );
       }).catchError((error) {
         debugPrint('Error during batch write: $error');
+        FirebaseCrashlytics.instance.recordError(error, null,
+            fatal: false,
+            reason:
+                "Heikal - addNewActivityToTeacher failed in ActivityFormVM \ncurrentUID ${serviceLocator<FirebaseAuth>().currentUser?.uid} ");
       });
 
       debugPrint(
           'New activity and related data added to Firestore successfully');
     } catch (e) {
       debugPrint('Error occurred while adding new activity and data: $e');
+
+      FirebaseCrashlytics.instance.recordError(e, null,
+          fatal: false,
+          reason:
+              "Heikal - addNewActivityToTeacher failed in ActivityFormVM \ncurrentUID ${serviceLocator<FirebaseAuth>().currentUser?.uid} ");
     } finally {
       EasyLoading.dismiss(animation: true);
     }
@@ -613,6 +623,10 @@ class ActivityFormVM extends ChangeNotifier with FormParentClass {
       debugPrint(
           'Existing activity and related data updated in Firestore successfully');
     } catch (e) {
+      FirebaseCrashlytics.instance.recordError(e, null,
+          fatal: false,
+          reason:
+              "Heikal - onEditModel (EditActivity) failed in ActivityFormVM \ncurrentUID ${serviceLocator<FirebaseAuth>().currentUser?.uid} ");
       debugPrint(
           'Error occurred while updating existing activity and data: $e');
     } finally {

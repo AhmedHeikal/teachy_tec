@@ -1,4 +1,7 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:hive/hive.dart';
+import 'package:teachy_tec/utils/serviceLocator.dart';
 
 class Store {
   static const activitiesBoxName = 'activitiesBox';
@@ -70,6 +73,11 @@ class Store {
       );
 
       return returnedItem;
+    } catch (e) {
+      FirebaseCrashlytics.instance.recordError(e, null,
+          fatal: false,
+          reason:
+              "Heikal - getValue in HiveStore \ncurrentUID ${serviceLocator<FirebaseAuth>().currentUser?.uid} ");
     } finally {
       if (currentBox.isOpen) {
         await currentBox.close();
@@ -142,6 +150,11 @@ class Store {
             : _activityStudentsBox;
       }
       await currentBox.put(key, value);
+    } catch (e) {
+      FirebaseCrashlytics.instance.recordError(e, null,
+          fatal: false,
+          reason:
+              "Heikal - setValue in HiveStore \ncurrentUID ${serviceLocator<FirebaseAuth>().currentUser?.uid} ");
     } finally {
       if (currentBox.isOpen) {
         await currentBox.close();
@@ -164,6 +177,11 @@ class Store {
             : _activityStudentsBox;
       }
       await currentBox.delete(key);
+    } catch (e) {
+      FirebaseCrashlytics.instance.recordError(e, null,
+          fatal: false,
+          reason:
+              "Heikal - deleteValue in HiveStore \ncurrentUID ${serviceLocator<FirebaseAuth>().currentUser?.uid} ");
     } finally {
       if (currentBox.isOpen) {
         await currentBox.close();

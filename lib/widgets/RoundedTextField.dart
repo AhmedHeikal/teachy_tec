@@ -1,5 +1,7 @@
 import 'dart:math';
 import 'package:detectable_text_field/widgets/detectable_text_field.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_localization/flutter_localization.dart';
@@ -12,6 +14,7 @@ import 'package:teachy_tec/styles/TextStyles.dart';
 import 'package:teachy_tec/utils/AppConstants.dart';
 import 'package:teachy_tec/utils/AppExtensions.dart';
 import 'package:teachy_tec/utils/TextFieldEnsureVisibleWhenFocused.dart';
+import 'package:teachy_tec/utils/serviceLocator.dart';
 import 'package:teachy_tec/widgets/CustomCheckbox.dart';
 import 'package:teachy_tec/widgets/CustomizedDropdown.dart';
 import 'package:teachy_tec/widgets/RadioButtonGroup.dart';
@@ -204,7 +207,12 @@ class CustomQuestionOptionTextFieldState
             });
           }
           // Return Text Error If Required => It won't appear becasue error style set to 0
-        } catch (error) {}
+        } catch (error) {
+          FirebaseCrashlytics.instance.recordError(e, null,
+              fatal: false,
+              reason:
+                  "Heikal - getPreviewData in linkDetectionParser \ncurrentUID ${serviceLocator<FirebaseAuth>().currentUser?.uid} ");
+        }
       }
       return '';
     } else if (!checkedCondition && !isValid) {

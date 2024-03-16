@@ -6,6 +6,7 @@ import 'package:animated_splash_screen/animated_splash_screen.dart';
 import 'package:colorful_safe_area/colorful_safe_area.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -34,7 +35,14 @@ Future<void> main() async {
 
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   final _ = await setupServiceLocator();
+  FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
+  PlatformDispatcher.instance.onError = (error, stack) {
+    FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
+    return true;
+  };
+
   runApp(const MyApp());
+  // FirebaseCrashlytics.instance.crash();
   // }, (error, stackTrace) {
   //   // Handle the error
   //   print('Zone Error: $error');
@@ -72,7 +80,7 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     debugPrint(
-        'Heikal - current userID ${serviceLocator<FirebaseAuth>().currentUser!.uid}');
+        'Heikal - current userID ${serviceLocator<FirebaseAuth>().currentUser?.uid}');
     serviceLocator<FlutterLocalization>().init(
       mapLocales: [
         const MapLocale(

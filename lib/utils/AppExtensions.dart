@@ -1,11 +1,18 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:teachy_tec/utils/AppConstants.dart';
+import 'package:teachy_tec/utils/serviceLocator.dart';
 
 extension GetElementOrNull<T> on List<T> {
   T? elementAtOrNull(int index) {
     try {
       return elementAt(index);
     } catch (e) {
+      FirebaseCrashlytics.instance.recordError(e, null,
+          fatal: false,
+          reason:
+              "Heikal - elementAtOrNull in AppExtensions \ncurrentUID ${serviceLocator<FirebaseAuth>().currentUser?.uid} ");
       return null;
     }
   }

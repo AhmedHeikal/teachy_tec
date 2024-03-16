@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:crypto/crypto.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_easyloading/flutter_easyloading.dart';
@@ -10,7 +11,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:teachy_tec/utils/AppConstants.dart';
 import 'package:teachy_tec/utils/UIRouter.dart';
 import 'package:teachy_tec/utils/serviceLocator.dart';
-import 'package:teachy_tec/widgets/showSpecificNotifications.dart';
+// import 'package:teachy_tec/widgets/showSpecificNotifications.dart';
 
 class SignInScreenVM extends ChangeNotifier {
   Future<void> signUpByGmail() async {
@@ -25,9 +26,12 @@ class SignInScreenVM extends ChangeNotifier {
           await FirebaseAuth.instance.signInWithCredential(credential);
       await signInWithCredentials(userCredential);
     } catch (e) {
-      showErrorNotification(
-        errorText: e.toString(),
-      );
+      FirebaseCrashlytics.instance.recordError(e, null,
+          fatal: false,
+          reason: "Heikal - Sign up failed in SignInScreenVM in signupByGmail");
+      // showErrorNotification(
+      //   errorText: e.toString(),
+      // );
       await EasyLoading.dismiss(animation: true);
     }
   }
@@ -39,7 +43,7 @@ class SignInScreenVM extends ChangeNotifier {
       FirestoreConstants.name: credential.user?.displayName,
       FirestoreConstants.email: credential.user?.email,
     };
-    
+
     final newAppConfiguration = <String, bool?>{
       FirestoreConstants.closeApp: false,
       FirestoreConstants.resetCache: false,
@@ -93,6 +97,10 @@ class SignInScreenVM extends ChangeNotifier {
       await signInWithCredentials(userCredentials);
       debugPrint('Heikal - currentUserCredentials in apple');
     } catch (e) {
+      FirebaseCrashlytics.instance.recordError(e, null,
+          fatal: false,
+          reason:
+              "Heikal - Sign up failed in SignInScreenVM in signupByApple ");
       await EasyLoading.dismiss(animation: true);
     }
   }

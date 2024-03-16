@@ -4,6 +4,8 @@ import 'dart:ui' as ui;
 // import 'package:flutter/material.dart';
 // import 'package:flutter_localization/flutter_localization.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localization/flutter_localization.dart';
 import 'package:html/parser.dart' as parser;
@@ -407,7 +409,12 @@ class AppUtility {
           try {
             await loadSingleMedia(mediaFiles
                 .firstWhere((element) => element.fileName == fileName));
-          } catch (error) {}
+          } catch (error) {
+            FirebaseCrashlytics.instance.recordError(error, null,
+                fatal: false,
+                reason:
+                    "Heikal - loadSingleMedia in AppUtility \ncurrentUID ${serviceLocator<FirebaseAuth>().currentUser?.uid} ");
+          }
         },
       ).then((value) {
         // setting the model loaded height and width
@@ -526,7 +533,12 @@ class AppUtility {
                   model.notifyListenersOverriden();
               }
             }
-          } catch (error) {}
+          } catch (error) {
+            FirebaseCrashlytics.instance.recordError(error, null,
+                fatal: false,
+                reason:
+                    "Heikal - loadNormalMediaOfEntityWithMedia in AppUtility \ncurrentUID ${serviceLocator<FirebaseAuth>().currentUser?.uid} ");
+          }
         },
       ).then(
         (value) => model.notifyListenersOverriden(),
