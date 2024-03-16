@@ -69,6 +69,32 @@ class AppNetworkProvider {
       var currentAppConfiguration = AppConfiguration.fromJson(
           (studentsJson.data() as Map<String, dynamic>));
       return currentAppConfiguration;
+    } catch (e) {
+      var appConfiguration = AppConfiguration(
+          closeApp: false, resetCache: false, updateRequired: false);
+      await UpdateAppConfiguration(appConfiguration);
+      return appConfiguration;
+    }
+    // return null;
+  }
+
+  Future<AppConfiguration?> UpdateAppConfiguration(
+      AppConfiguration currentAppConfiguration) async {
+    try {
+      final newAppConfiguration = <String, bool?>{
+        FirestoreConstants.closeApp: currentAppConfiguration.closeApp,
+        FirestoreConstants.resetCache: currentAppConfiguration.resetCache,
+        FirestoreConstants.updateRequired:
+            currentAppConfiguration.updateRequired,
+      };
+
+      await serviceLocator<FirebaseFirestore>()
+          .collection(FirestoreConstants.applicationConfiguration)
+          .doc(serviceLocator<FirebaseAuth>().currentUser!.uid)
+          .set(newAppConfiguration)
+          .onError((e, _) => debugPrint("Error writing document: $e"));
+
+      return currentAppConfiguration;
     } catch (e) {}
     return null;
   }
@@ -1018,13 +1044,15 @@ class AppNetworkProvider {
         .collection(FirestoreConstants.activities)
         .get();
 
-    var currentActivities =
-        activitiesJson.docs.cast().map((e) => e.data()).toList();
+    var currentActivities = activitiesJson.docs
+        .cast()
+        .map((e) => Map<String, dynamic>.from({"id": e.id, ...e.data()}))
+        .toList();
     List<ActivityStudents> activityStudents = [];
 
     List<Activity> activities = [];
     // List<String>.from(teacherClassesSnapshot['classes']);
-
+// List<Activity>.from(currentItems as List)
     activities = ((currentActivities)).map((e) {
       return Activity.fromJson((e as Map<String, dynamic>));
     }).toList();

@@ -5,6 +5,10 @@ import 'package:teachy_tec/models/Student.dart';
 import 'package:teachy_tec/models/Task.dart';
 import 'package:teachy_tec/models/TaskViewModel.dart';
 import 'package:teachy_tec/screens/Activity/DayTableVM.dart';
+import 'package:teachy_tec/screens/Activity/MultioptionsPracticePage.dart';
+import 'package:teachy_tec/screens/Activity/TextOnlyPracticePage.dart';
+import 'package:teachy_tec/screens/Activity/TrueFalsePracticePage.dart';
+import 'package:teachy_tec/screens/Activity/TrueFalsePracticePageVM.dart';
 import 'package:teachy_tec/utils/AppEnums.dart';
 import 'package:teachy_tec/utils/SoundService.dart';
 import 'package:collection/collection.dart';
@@ -13,12 +17,15 @@ import 'package:teachy_tec/widgets/BoardEmojisSelector.dart';
 class PracticeMainPageVM extends ChangeNotifier {
   DayTableVM dayTableModel;
   String? currentAnswerValue;
+  bool? selectedCorrectAnswerValue;
   CustomQuestionOptionModel? currentSelectedOption;
   PracticeMainPageVM({required this.dayTableModel}) {
     updateSelectedOptionOnPageStart();
     dayTableModel.selectedShuffledStudent
         .addListener(updateSelectedOptionOnPageStart);
   }
+
+  Key currentTaskKey = UniqueKey();
 
   ValueNotifier<bool> isFeedBackShown = ValueNotifier(false);
 
@@ -36,11 +43,6 @@ class PracticeMainPageVM extends ChangeNotifier {
         ?.firstWhereOrNull(
             (task_) => task_.task == dayTableModel.currentSelectedTask!.task);
 
-    // if (getSelectedTask()?.taskType == TaskType.textOnly) {
-    //   dayTableModel.selectedEmoji =
-    //       getEmojiById(currentTaskForThisStudent?.emoji_id);
-    // }
-
     if (getSelectedTask()?.taskType == TaskType.textOnly) {
       if (currentTaskForThisStudent?.emoji_id != null) {
         dayTableModel.selectedEmoji =
@@ -48,14 +50,14 @@ class PracticeMainPageVM extends ChangeNotifier {
       }
 
       currentAnswerValue = currentTaskForThisStudent?.enteredTextForCurrentTask;
-
+      currentTaskKey = UniqueKey();
+      getCurrentPracticeWidget();
       notifyListeners();
       return;
+    } else if (getSelectedTask()?.taskType == TaskType.trueFalse) {
+      selectedCorrectAnswerValue =
+          currentTaskForThisStudent?.isCorrectAnswerChosen;
     }
-
-    // if (currentTaskForThisStudent?.selectedOption == currentSelectedOption) {
-    //   return;
-    // }
 
     currentSelectedOption = currentTaskForThisStudent?.selectedOption;
     // currentSelectedOption = currentTaskForThisStudent?.selectedOption;
@@ -66,6 +68,10 @@ class PracticeMainPageVM extends ChangeNotifier {
           getEmojiById(currentTaskForThisStudent?.emoji_id);
       // }
     }
+
+    currentTaskKey = UniqueKey();
+
+    getCurrentPracticeWidget();
     notifyListeners();
   }
 
@@ -91,6 +97,7 @@ class PracticeMainPageVM extends ChangeNotifier {
         ));
     task.enteredTextForCurrentTask = null;
     currentAnswerValue = null;
+    selectedCorrectAnswerValue = null;
     task.isCorrectAnswerChosen = null;
     task.selectedOption = null;
     await dayTableModel.updateCommentForStudet(
@@ -98,13 +105,46 @@ class PracticeMainPageVM extends ChangeNotifier {
       task: task,
       comment: null,
     );
+    getCurrentPracticeWidget();
 
+    notifyListeners();
+  }
+
+  Widget? currentPracticeWidget;
+  getCurrentPracticeWidget() {
+    switch (getSelectedTask()?.taskType ?? TaskType.multipleOptions) {
+      case TaskType.textOnly:
+        currentPracticeWidget = TextOnlyPracticePage(
+          key: currentTaskKey,
+          model: this,
+          currentTask: getSelectedTask()!,
+        );
+
+        break;
+      case TaskType.trueFalse:
+        currentPracticeWidget = TrueFalsePracticePage(
+            key: currentTaskKey,
+            model: TrueFalsePracticePageVM(
+              currentTask: getSelectedTask()!,
+              model: this,
+            ));
+        break;
+      default:
+        currentPracticeWidget = MultioptionsPracticePage(
+          key: currentTaskKey,
+          model: this,
+          currentTask: getSelectedTask()!,
+        );
+        break;
+    }
     notifyListeners();
   }
 
   void onSelectOption(CustomQuestionOptionModel? newlySelectedOption,
       {bool? selectedCorrectAnswer, String? text}) async {
+    dayTableModel.setEmojiForActivityTable(null);
     currentSelectedOption = newlySelectedOption;
+    selectedCorrectAnswerValue = selectedCorrectAnswer;
     if (currentSelectedOption != null) {
       await Future.delayed(const Duration(milliseconds: 500), () async {
         isFeedBackShown.value = true;
@@ -116,14 +156,24 @@ class PracticeMainPageVM extends ChangeNotifier {
         });
 
         if (dayTableModel.selectedShuffledStudent.value == null) return;
+
         var returnedEmoji = await dayTableModel.showEmojisPicker(
-          answerSubmittedType: currentSelectedOption?.isCorrect == true
-              ? AnswerSubmittedType.showCorrectAnswerOptions
-              : currentSelectedOption?.isCorrect == false
-                  ? AnswerSubmittedType.showWrongAnswerOptions
-                  : null,
+          answerSubmittedType:
+              (getSelectedTask()?.taskType == TaskType.trueFalse &&
+                          selectedCorrectAnswerValue == true) ||
+                      (getSelectedTask()?.taskType != TaskType.trueFalse &&
+                          currentSelectedOption?.isCorrect == true)
+                  ? AnswerSubmittedType.showCorrectAnswerOptions
+                  : (getSelectedTask()?.taskType == TaskType.trueFalse &&
+                              selectedCorrectAnswerValue == false) ||
+                          (getSelectedTask()?.taskType != TaskType.trueFalse &&
+                              currentSelectedOption?.isCorrect == false)
+                      //  currentSelectedOption?.isCorrect == false
+                      ? AnswerSubmittedType.showWrongAnswerOptions
+                      : null,
           hideSpecifiedButtons: true,
         );
+
         setEmojiForCurrentTaskAndCurrentUser(
           returnedEmoji,
           isCorrectAnswerChosen: selectedCorrectAnswer,
@@ -217,29 +267,35 @@ class PracticeMainPageVM extends ChangeNotifier {
   }
 
   AnswerSubmittedType? getAnswerTypeForCurrentTask() {
-    return dayTableModel.selectedShuffledStudent.value == null
-        ? null
-        : (dayTableModel.currentSelectedTask?.taskType == TaskType.textOnly &&
-                    getSelectedTaskForCurrentStudent()?.emoji_id != null) ||
-                (currentSelectedOption?.isCorrect == null &&
-                    getSelectedTaskForCurrentStudent()?.emoji_id != null)
-            ? AnswerSubmittedType.showFullAnswerOptions
-            : currentSelectedOption?.isCorrect == true
-                ? AnswerSubmittedType.showCorrectAnswerOptions
-                : currentSelectedOption?.isCorrect == false
-                    ? AnswerSubmittedType.showWrongAnswerOptions
-                    : null;
-    // return dayTableModel.selectedShuffledStudent.value == null
-    //     ? null
-    //     : currentSelectedOption?.isCorrect == true
-    //         ? AnswerSubmittedType.showCorrectAnswerOptions
-    //         : currentSelectedOption?.isCorrect == false
-    //             ? AnswerSubmittedType.showWrongAnswerOptions
-    //             : dayTableModel.currentSelectedTask?.taskType ==
-    //                         TaskType.textOnly &&
-    //                     getSelectedTaskForCurrentStudent()?.emoji_id != null
-    //                 ? AnswerSubmittedType.showFullAnswerOptions
-    //                 : null;
+    if (dayTableModel.selectedShuffledStudent.value == null) return null;
+
+    if ((dayTableModel.currentSelectedTask?.taskType == TaskType.textOnly &&
+            getSelectedTaskForCurrentStudent()?.emoji_id != null) ||
+        (currentSelectedOption?.isCorrect == null &&
+            getSelectedTaskForCurrentStudent()?.emoji_id != null)) {
+      return AnswerSubmittedType.showFullAnswerOptions;
+    }
+
+    if (getSelectedTask()?.taskType == TaskType.trueFalse) {
+      if (getSelectedTaskForCurrentStudent()?.isCorrectAnswerChosen == true ||
+          selectedCorrectAnswerValue == true) {
+        return AnswerSubmittedType.showCorrectAnswerOptions;
+      } else if (getSelectedTaskForCurrentStudent()?.isCorrectAnswerChosen ==
+              false ||
+          selectedCorrectAnswerValue == false) {
+        return AnswerSubmittedType.showWrongAnswerOptions;
+      }
+    }
+
+    if (getSelectedTask()?.taskType == TaskType.multipleOptions) {
+      if (currentSelectedOption?.isCorrect == true) {
+        return AnswerSubmittedType.showCorrectAnswerOptions;
+      } else if (currentSelectedOption?.isCorrect == false) {
+        return AnswerSubmittedType.showWrongAnswerOptions;
+      }
+    }
+
+    return null;
   }
 
   bool isPreviousQuestionButtonActive() {

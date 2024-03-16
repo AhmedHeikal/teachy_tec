@@ -11,6 +11,7 @@ import 'package:teachy_tec/utils/AppExtensions.dart';
 import 'package:teachy_tec/utils/UIRouter.dart';
 import 'package:teachy_tec/widgets/AppButtons.dart';
 import 'package:teachy_tec/widgets/FormParentClass.dart';
+import 'package:teachy_tec/widgets/showSpecificNotifications.dart';
 import 'package:uuid/uuid.dart';
 
 class AddTaskPopup extends StatelessWidget {
@@ -97,8 +98,11 @@ class AddTaskPopupVM extends ChangeNotifier with FormParentClass {
   void submitForm() {
     Object? currentItem;
     if (addSingleTaskFormVM.validateForm_()) {
-      if (taskLists
-          .any((element) => element == addSingleTaskFormVM.question)) {}
+      if (taskLists.any((element) => element == addSingleTaskFormVM.question)) {
+        showSpecificNotificaiton(
+            notifcationDetails: AppNotifcationsItems.customQuestionnDuplicated);
+        return;
+      }
       currentItem = TaskViewModel(
         id: const Uuid().v1(),
         task: addSingleTaskFormVM.question ?? '',

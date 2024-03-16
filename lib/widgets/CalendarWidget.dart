@@ -1,5 +1,7 @@
 import 'package:dotted_border/dotted_border.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_localization/flutter_localization.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:table_calendar/table_calendar.dart';
@@ -68,13 +70,21 @@ class _CalendarWidgetState extends State<CalendarWidget> {
         }
         if (isMultiSelectionActive) {
           _onRangeSelected(
+            widget.rangeStartDate ??
+                (_selectedDay != null
+                    ? _selectedDay!.subtract(const Duration(days: 4))
+                    : AppUtility.removeTime(
+                        DateTime.now().subtract(const Duration(days: 4)))),
+            widget.rangeEndDate ??
+                _selectedDay ??
+                AppUtility.removeTime(DateTime.now()),
             _selectedDay != null
                 ? _selectedDay!.subtract(const Duration(days: 4))
-                : DateTime.now().toUtc().subtract(const Duration(days: 4)),
-            _selectedDay ?? DateTime.now().toUtc(),
-            _selectedDay != null
-                ? _selectedDay!.subtract(const Duration(days: 4))
-                : DateTime.now().toUtc().subtract(const Duration(days: 4)),
+                : AppUtility.removeTime(
+                    DateTime.now().subtract(
+                      const Duration(days: 4),
+                    ),
+                  ),
           );
         } else {
           _selectedDay = DateTime.now().toUtc();
@@ -115,6 +125,22 @@ class _CalendarWidgetState extends State<CalendarWidget> {
                   ? RangeSelectionMode.toggledOn
                   : RangeSelectionMode.toggledOff,
           lastDay: kLastDay,
+          headerStyle: const HeaderStyle(
+            formatButtonTextStyle: TextStyles.InterYellow700S16W600,
+            formatButtonDecoration: BoxDecoration(
+                border: Border.fromBorderSide(
+                    BorderSide(color: AppColors.primary700, width: 2)),
+                borderRadius: BorderRadius.all(Radius.circular(12.0))),
+            formatButtonShowsNext: false,
+            leftChevronIcon: Icon(
+              Icons.chevron_left,
+              color: AppColors.black,
+            ),
+            rightChevronIcon: Icon(
+              Icons.chevron_right,
+              color: AppColors.black,
+            ),
+          ),
           focusedDay: _focusedDay,
           calendarFormat: _calendarFormat,
           availableCalendarFormats: {

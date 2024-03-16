@@ -654,7 +654,6 @@ class _DayTableState extends State<DayTable> {
                                           Row(
                                             children: <Widget>[
                                               SingleChildScrollView(
-                                                
                                                 controller: _columnController,
                                                 scrollDirection: Axis.vertical,
                                                 physics:
@@ -807,10 +806,9 @@ class _DayTableState extends State<DayTable> {
                                                           Text(
                                                               AppUtility.appTimeFormat(
                                                                   DateTime.fromMillisecondsSinceEpoch(widget
-                                                                          .model
-                                                                          .currentActivity
-                                                                          .timestamp *
-                                                                      1000)),
+                                                                      .model
+                                                                      .currentActivity
+                                                                      .timestamp)),
                                                               style: TextStyles
                                                                   .InterWhiteS16W400),
                                                           const Spacer(),

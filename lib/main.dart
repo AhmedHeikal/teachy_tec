@@ -23,7 +23,6 @@ import 'package:teachy_tec/styles/AppColors.dart';
 import 'package:teachy_tec/utils/Routing/TabItem.dart';
 import 'package:teachy_tec/utils/UIRouter.dart';
 import 'package:teachy_tec/utils/serviceLocator.dart';
-import 'package:teachy_tec/widgets/showSpecificNotifications.dart';
 
 Future<void> main() async {
   BindingBase.debugZoneErrorsAreFatal = false;

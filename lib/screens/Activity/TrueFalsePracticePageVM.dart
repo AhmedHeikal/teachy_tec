@@ -3,8 +3,6 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:teachy_tec/models/TaskViewModel.dart';
 import 'package:teachy_tec/screens/Activity/PracticeMainPageVM.dart';
 import 'package:teachy_tec/styles/AppColors.dart';
-import 'package:teachy_tec/styles/TextStyles.dart';
-import 'package:teachy_tec/utils/AppConstants.dart';
 
 class TrueFalsePracticePageVM extends ChangeNotifier {
   TaskViewModel currentTask;
@@ -109,16 +107,16 @@ class TrueFalsePracticePageVM extends ChangeNotifier {
     notifyListeners();
   }
 
-  Widget getQuestionHeader() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: kMainPadding),
-      child: Text(
-        currentTask.task.trim(),
-        style: TextStyles.InterBlackS18W600,
-        textAlign: TextAlign.center,
-      ),
-    );
-  }
+  // Widget getQuestionHeader() {
+  //   return Padding(
+  //     padding: const EdgeInsets.symmetric(horizontal: kMainPadding),
+  //     child: Text(
+  //       currentTask.task.trim(),
+  //       style: TextStyles.InterBlackS18W600,
+  //       textAlign: TextAlign.center,
+  //     ),
+  //   );
+  // }
 
   Widget getGridEmptyAlternative() {
     return Container(

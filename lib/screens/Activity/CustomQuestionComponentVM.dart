@@ -10,6 +10,7 @@ import 'package:teachy_tec/utils/AppConstants.dart';
 import 'package:teachy_tec/utils/AppEnums.dart';
 import 'package:teachy_tec/utils/AppExtensions.dart';
 import 'package:teachy_tec/utils/UIRouter.dart';
+import 'package:teachy_tec/widgets/showSpecificNotifications.dart';
 import 'package:uuid/uuid.dart';
 
 class CustomQuestionComponentVM extends ChangeNotifier {
@@ -133,17 +134,26 @@ class CustomQuestionComponentVM extends ChangeNotifier {
     notifyListeners();
   }
 
-  // onAddMultipleAnswersQuestion() {
-  //   if (validateAllForms()) {
-  //     questions.add(
-  //       CustomQuestionFormVM.add(),
-  //     );
-  //     notifyListeners();
-  //   }
-  // }
-
   validateAllForms() {
-    if (questions.any((element) => !element.validateForm_())) return false;
+    bool textWasAddedBefore = false;
+    for (int i = 0; i < questions.length; i++) {
+      for (int j = i + 1; j < questions.length; j++) {
+        if (questions[i].question?.isNotEmpty == true &&
+            questions[j].question?.isNotEmpty == true &&
+            questions[i].question?.trim().toLowerCase() ==
+                questions[j].question?.trim().toLowerCase()) {
+          textWasAddedBefore = true;
+          break;
+        }
+      }
+    }
+
+    if (questions.any((element) => (!element.validateForm_()))) return false;
+    if (textWasAddedBefore) {
+      showSpecificNotificaiton(
+          notifcationDetails: AppNotifcationsItems.customQuestionnDuplicated);
+      return false;
+    }
     return true;
   }
 

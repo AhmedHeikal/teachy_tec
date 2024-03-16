@@ -279,6 +279,13 @@ class QuestionOptionComponentVM extends ChangeNotifier with FormParentClass {
     isCorrect = option!.isCorrect;
   }
 
+  void onselectTrueOrFalseInTrueFalseQuestion(bool answerSelcted) {
+    isCorrect = answerSelcted;
+    option?.isCorrect = answerSelcted;
+
+    notifyListeners();
+  }
+
   void updateReadOnlyStatus(bool isReadOnly) async {
     this.isReadOnly = isReadOnly;
     notifyListeners();

@@ -1,9 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_localization/flutter_localization.dart';
 import 'package:get_it/get_it.dart';
 import 'package:teachy_tec/Services/hiveStore.dart';
 import 'package:teachy_tec/hive/injector/hiveInjector.dart';
+import 'package:teachy_tec/models/AppConfiguration.dart';
 import 'package:teachy_tec/screens/networking/AppNetworkProvider.dart';
 import 'package:teachy_tec/utils/UIRouter.dart';
 
@@ -35,11 +37,20 @@ Future setupServiceLocator() async {
     return object;
   }, dependsOn: [FirebaseFirestore, FirebaseAuth]);
 
+  serviceLocator.registerSingletonAsync<AppConfiguration>(() async {
+    var currentAppConfiguration =
+        await serviceLocator<AppNetworkProvider>().getAppConfiguration() ??
+            AppConfiguration(
+                closeApp: false, resetCache: false, updateRequired: false);
+    final object = currentAppConfiguration;
+    return object;
+  }, dependsOn: [AppNetworkProvider]);
+
   serviceLocator.registerSingletonAsync<Store>(() async {
     await HiveInjector.setup();
     final object = Store();
     return object;
-  });
+  }, dependsOn: [AppConfiguration]);
 
   // serviceLocator.registerSingletonAsync<ConnectionStatusSingleton>(() async {
   //   final object = ConnectionStatusSingleton.getInstance();
@@ -68,6 +79,22 @@ Future setupServiceLocator() async {
 
   await serviceLocator.allReady();
 
+  return;
+}
+
+Future updateAppConfiguration(AppConfiguration appConfiguration,
+    {BuildContext? context}) async {
+  // await userModel.getRestuarants();
+
+  if (serviceLocator.isRegistered<AppConfiguration>()) {
+    serviceLocator.unregister<AppConfiguration>();
+  }
+
+  serviceLocator.registerSingleton<AppConfiguration>(appConfiguration);
+
+  // var currentUser = await serviceLocator<LocalStorage>().getSignedInUser();
+  // await serviceLocator<TomatoNetworkProvider>()
+  //     .EnablePushNotificationsForDevice();
   return;
 }
 

@@ -10,7 +10,9 @@ import 'package:teachy_tec/models/CustomQuestionOptionModel.dart';
 import 'package:teachy_tec/models/Student.dart';
 import 'package:teachy_tec/models/Task.dart';
 import 'package:teachy_tec/models/TaskViewModel.dart';
+import 'package:teachy_tec/screens/networking/AppNetworkProvider.dart';
 import 'package:teachy_tec/utils/AppEnums.dart';
+import 'package:teachy_tec/utils/serviceLocator.dart';
 // import 'package:teachy_tec/widgets/showSpecificNotifications.dart';
 
 class HiveInjector {
@@ -18,7 +20,14 @@ class HiveInjector {
     try {
       await Hive.initFlutter();
       _registerAdapters();
-      await cleanHiveDatabaseLocally();
+      if (serviceLocator<AppConfiguration>().resetCache) {
+        await cleanHiveDatabaseLocally();
+        var currentAppConfiguration = serviceLocator<AppConfiguration>();
+        currentAppConfiguration.resetCache = false;
+        await serviceLocator<AppNetworkProvider>()
+            .UpdateAppConfiguration(currentAppConfiguration);
+        await updateAppConfiguration(currentAppConfiguration);
+      }
       await Hive.openBox(Store.activitiesBoxName);
       await Hive.openBox(Store.activityStudentsBoxName);
     } catch (e) {

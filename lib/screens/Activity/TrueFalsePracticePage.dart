@@ -40,6 +40,7 @@ class _TrueFalsePracticePageState extends State<TrueFalsePracticePage> {
 
   @override
   Widget build(BuildContext context) {
+    // UIRouter.showEasyLoader();
     return ChangeNotifierProvider.value(
       value: widget.model,
       child: Container(
@@ -49,173 +50,107 @@ class _TrueFalsePracticePageState extends State<TrueFalsePracticePage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // if (widget.model.isInNewsFeed) ...[
-
-              Align(
-                child: widget.model.getQuestionHeader(),
-              ),
-              const SizedBox(height: kBottomPadding),
-
+              if (widget.model.currentTask.downloadUrl != null) ...[
+                Align(
+                    child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: kMainPadding),
+                  child: Text(
+                    widget.model.currentTask.task.trim(),
+                    style: TextStyles.InterBlackS18W600,
+                    textAlign: TextAlign.center,
+                  ),
+                )),
+                const SizedBox(height: kBottomPadding),
+              ],
               SizedBox(
                 height: 343,
                 // width: 343,
                 child: Stack(
                   fit: StackFit.expand,
                   children: [
-                    // Container(
-                    //   constraints: const BoxConstraints(minHeight: 375),
-                    //   child: ClipRRect(
-                    //     borderRadius: BorderRadius.circular(50),
-                    //     child: Stack(
-                    //       fit: StackFit.expand,
-                    //       children: [
-                    //         // Consumer<TrueFalsePracticePageVM>(
-                    //         //   builder: (context, model, child) => model
-                    //         //               .selectedValue ==
-                    //         //           null
-                    //         //       ? Container()
-                    //         //       : Container(
-                    //         //           height: 343,
-                    //         //           decoration: BoxDecoration(
-                    //         //             // color: model.selectedValue
-                    //         //             //     ? TomatoColors.Green50
-                    //         //             //     : TomatoColors.Red50,
-                    //         //             borderRadius: BorderRadius.circular(50),
-                    //         //           ),
-                    //         //           margin: const EdgeInsets.symmetric(
-                    //         //               horizontal: kMainPadding),
-                    //         //           child: Stack(
-                    //         //             alignment: Alignment.center,
-                    //         //             children: [
-                    //         //               Positioned.fill(
-                    //         //                 child: ClipRRect(
-                    //         //                   borderRadius:
-                    //         //                       BorderRadius.circular(50),
-                    //         //                   child: DefaultContainer(
-                    //         //                     height: 220,
-                    //         //                     width: double.infinity,
-                    //         //                     child: PhotoView(
-                    //         //                       disableGestures: true,
-                    //         //                       imageProvider: NetworkImage(
-                    //         //                         model.currentTask
-                    //         //                                 .downloadUrl ??
-                    //         //                             "",
-                    //         //                         scale: 1,
-                    //         //                       ),
-                    //         //                       loadingBuilder:
-                    //         //                           (context, event) {
-                    //         //                         final expectedBytes = event
-                    //         //                             ?.expectedTotalBytes;
-                    //         //                         final loadedBytes = event
-                    //         //                             ?.cumulativeBytesLoaded;
-                    //         //                         final value =
-                    //         //                             loadedBytes != null &&
-                    //         //                                     expectedBytes !=
-                    //         //                                         null
-                    //         //                                 ? loadedBytes /
-                    //         //                                     expectedBytes
-                    //         //                                 : null;
-
-                    //         //                         return Center(
-                    //         //                           child: SizedBox(
-                    //         //                             width: 20.0,
-                    //         //                             height: 20.0,
-                    //         //                             child:
-                    //         //                                 CircularProgressIndicator(
-                    //         //                               value: value,
-                    //         //                               color: AppColors
-                    //         //                                   .primary700,
-                    //         //                             ),
-                    //         //                           ),
-                    //         //                         );
-                    //         //                       },
-                    //         //                       initialScale:
-                    //         //                           PhotoViewComputedScale
-                    //         //                               .contained,
-                    //         //                     ),
-                    //         //                   ),
-                    //         //                 ),
-                    //         //               ),
-                    //         //               ClipRRect(
-                    //         //                 borderRadius:
-                    //         //                     BorderRadius.circular(50),
-                    //         //                 child: Container(
-                    //         //                   color: AppColors.black
-                    //         //                       .withOpacity(0.6),
-                    //         //                   height: double.infinity,
-                    //         //                   width: double.infinity,
-                    //         //                 ),
-                    //         //               ),
-                    //         //               Column(
-                    //         //                 crossAxisAlignment:
-                    //         //                     CrossAxisAlignment.center,
-                    //         //                 children: [
-                    //         //                   const SizedBox(
-                    //         //                       height: kBottomPadding),
-                    //         //                   model.selectedValue
-                    //         //                       ? Image.asset(
-                    //         //                           'assets/loaders/loader.gif',
-                    //         //                           height: 220,
-                    //         //                         )
-                    //         //                       : Image.asset(
-                    //         //                           'assets/loaders/Sad.gif',
-                    //         //                           height: 220,
-                    //         //                         ),
-                    //         //                   // Spacer(),
-                    //         //                   // if (!widget.model.isInNewsFeed) ...[
-                    //         //                   const SizedBox(height: 10),
-                    //         //                   // Flexible(
-                    //         //                   //   child: Container(
-                    //         //                   //     padding:
-                    //         //                   //         const EdgeInsets.symmetric(
-                    //         //                   //             horizontal:
-                    //         //                   //                 kHelpingPadding),
-                    //         //                   //     child: Text(
-                    //         //                   //       model.selectedValue
-                    //         //                   //           ? AppLocalizations.of(
-                    //         //                   //                   context)
-                    //         //                   //               .wowAnserIsCorrect
-                    //         //                   //               .capitalizeFirstLetter()
-                    //         //                   //           // 'Wow...Answer is correct!'
-                    //         //                   //           : AppLocalizations.of(
-                    //         //                   //                   context)
-                    //         //                   //               .answerISNotCorrect
-                    //         //                   //               .capitalizeFirstLetter(),
-                    //         //                   //       // 'Answer is not correct...',
-                    //         //                   //       style: TextStyles
-                    //         //                   //           .InterWhiteS18W700,
-                    //         //                   //       textAlign: TextAlign.center,
-                    //         //                   //     ),
-                    //         //                   //   ),
-                    //         //                   // ),
-                    //         //                   const SizedBox(height: 4),
-                    //         //                   Text(
-                    //         //                     AppLocale
-                    //         //                         .yourResponseIsOnPointTrulyMotivational
-                    //         //                         .getString(context)
-                    //         //                         .capitalizeFirstLetter(),
-                    //         //                     // 'Your response is on point and truly motivational.',
-                    //         //                     style: TextStyles
-                    //         //                         .InterWhiteS14W400,
-                    //         //                     textAlign: TextAlign.center,
-                    //         //                   ),
-                    //         //                   const SizedBox(height: 30),
-                    //         //                 ],
-                    //         //                 // ],
-                    //         //               ),
-                    //         //             ],
-                    //         //           ),
-                    //         //         ),
-                    //         // ),
-                    //       ],
-                    //     ),
-                    //   ),
-                    // ),
+                    Consumer<TrueFalsePracticePageVM>(
+                      builder: (context, model, child) => model.selectedValue ==
+                              null
+                          ? Container()
+                          : Container(
+                              constraints: const BoxConstraints(minHeight: 375),
+                              margin: const EdgeInsets.symmetric(
+                                  horizontal: kMainPadding),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(50),
+                                child: Stack(
+                                  fit: StackFit.expand,
+                                  children: [
+                                    model.currentTask.downloadUrl == null
+                                        ? DefaultContainer(
+                                            height: 220,
+                                            padding: const EdgeInsets.all(
+                                                kInternalPadding),
+                                            color: AppColors.black,
+                                            width: double.infinity,
+                                            child: Center(
+                                              child: Text(
+                                                model.currentTask.task,
+                                                style: TextStyles
+                                                    .InterWhiteS18W700,
+                                                textAlign: TextAlign.center,
+                                              ),
+                                            ))
+                                        : DefaultContainer(
+                                            height: 220,
+                                            width: double.infinity,
+                                            child: PhotoView(
+                                              disableGestures: true,
+                                              imageProvider: NetworkImage(
+                                                model.currentTask.downloadUrl ??
+                                                    "",
+                                              ),
+                                              loadingBuilder: (context, event) {
+                                                final expectedBytes =
+                                                    event?.expectedTotalBytes;
+                                                final loadedBytes = event
+                                                    ?.cumulativeBytesLoaded;
+                                                final value = loadedBytes !=
+                                                            null &&
+                                                        expectedBytes != null
+                                                    ? loadedBytes /
+                                                        expectedBytes
+                                                    : null;
+                                                return Center(
+                                                  child: SizedBox(
+                                                    width: 20.0,
+                                                    height: 20.0,
+                                                    child:
+                                                        CircularProgressIndicator(
+                                                      value: value,
+                                                      color:
+                                                          AppColors.primary700,
+                                                    ),
+                                                  ),
+                                                );
+                                              },
+                                              initialScale:
+                                                  PhotoViewComputedScale
+                                                      .contained,
+                                            ),
+                                          ),
+                                    Container(
+                                      color: AppColors.grey200.withOpacity(0.3),
+                                      height: double.infinity,
+                                      width: double.infinity,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                    ),
                     // if (!isFinishedByTapping)
                     SizedBox(
                       height: 143,
                       child: Consumer<TrueFalsePracticePageVM>(
                         builder: (context, model, child) => model
-                                .isFinishedByTapping
+                                    .isFinishedByTapping ||
+                                model.selectedValue != null
                             ? Container()
                             : GestureDetector(
                                 onPanStart: model.startPosition,
@@ -223,8 +158,8 @@ class _TrueFalsePracticePageState extends State<TrueFalsePracticePage> {
                                 onPanEnd: (details) {
                                   bool? isFalseSelected = model.endPosition();
                                   if (isFalseSelected != null) {
-                                    model.submitAnswer(!isFalseSelected);
-                                    bool selectedValue = !isFalseSelected ==
+                                    model.submitAnswer(isFalseSelected);
+                                    bool selectedValue = isFalseSelected ==
                                         widget.model.getAnswerValue();
                                     model.model.onSelectOption(
                                         model.currentTask.options!.first,
@@ -255,44 +190,72 @@ class _TrueFalsePracticePageState extends State<TrueFalsePracticePage> {
                                       ),
                                       transform: rotatedMatrix
                                         ..translate(position.dx, position.dy),
-                                      child: ClipRRect(
-                                        borderRadius: BorderRadius.circular(50),
-                                        child: DefaultContainer(
-                                          height: 220,
-                                          width: double.infinity,
-                                          child: PhotoView(
-                                            disableGestures: true,
-                                            imageProvider: NetworkImage(
-                                              model.currentTask.downloadUrl ??
-                                                  "",
-                                            ),
-                                            loadingBuilder: (context, event) {
-                                              final expectedBytes =
-                                                  event?.expectedTotalBytes;
-                                              final loadedBytes =
-                                                  event?.cumulativeBytesLoaded;
-                                              final value = loadedBytes !=
-                                                          null &&
-                                                      expectedBytes != null
-                                                  ? loadedBytes / expectedBytes
-                                                  : null;
-                                              return Center(
-                                                child: SizedBox(
-                                                  width: 20.0,
-                                                  height: 20.0,
-                                                  child:
-                                                      CircularProgressIndicator(
-                                                    value: value,
-                                                    color: AppColors.primary700,
+                                      child: model.currentTask.downloadUrl ==
+                                              null
+                                          ? ClipRRect(
+                                              borderRadius:
+                                                  BorderRadius.circular(50),
+                                              child: DefaultContainer(
+                                                  height: 220,
+                                                  padding: const EdgeInsets.all(
+                                                      kInternalPadding),
+                                                  color: AppColors.black,
+                                                  width: double.infinity,
+                                                  child: Center(
+                                                    child: Text(
+                                                      model.currentTask.task,
+                                                      style: TextStyles
+                                                          .InterWhiteS18W700,
+                                                      textAlign:
+                                                          TextAlign.center,
+                                                    ),
+                                                  )),
+                                            )
+                                          : ClipRRect(
+                                              borderRadius:
+                                                  BorderRadius.circular(50),
+                                              child: DefaultContainer(
+                                                height: 220,
+                                                width: double.infinity,
+                                                child: PhotoView(
+                                                  disableGestures: true,
+                                                  imageProvider: NetworkImage(
+                                                    model.currentTask
+                                                            .downloadUrl ??
+                                                        "",
                                                   ),
+                                                  loadingBuilder:
+                                                      (context, event) {
+                                                    final expectedBytes = event
+                                                        ?.expectedTotalBytes;
+                                                    final loadedBytes = event
+                                                        ?.cumulativeBytesLoaded;
+                                                    final value =
+                                                        loadedBytes != null &&
+                                                                expectedBytes !=
+                                                                    null
+                                                            ? loadedBytes /
+                                                                expectedBytes
+                                                            : null;
+                                                    return Center(
+                                                      child: SizedBox(
+                                                        width: 20.0,
+                                                        height: 20.0,
+                                                        child:
+                                                            CircularProgressIndicator(
+                                                          value: value,
+                                                          color: AppColors
+                                                              .primary700,
+                                                        ),
+                                                      ),
+                                                    );
+                                                  },
+                                                  initialScale:
+                                                      PhotoViewComputedScale
+                                                          .contained,
                                                 ),
-                                              );
-                                            },
-                                            initialScale: PhotoViewComputedScale
-                                                .contained,
-                                          ),
-                                        ),
-                                      ),
+                                              ),
+                                            ),
                                     );
                                   },
                                 ),
@@ -336,7 +299,13 @@ class _TrueFalsePracticePageState extends State<TrueFalsePracticePage> {
                               // widget.goToNextPage(selectedValue);
                             },
                       model.selectedValue != null,
-                      true == widget.model.getAnswerValue(),
+                      // true == widget.model.getAnswerValue(),
+                      // model.selectedValue == widget.model.getAnswerValue(),
+
+                      (model.selectedValue == true &&
+                              widget.model.getAnswerValue() == true) ||
+                          (model.selectedValue == false &&
+                              widget.model.getAnswerValue() == false),
                     ),
                     const SizedBox(width: kBottomPadding),
                     // if (selectedValue == null)
@@ -357,7 +326,11 @@ class _TrueFalsePracticePageState extends State<TrueFalsePracticePage> {
                               // widget.goToNextPage(selectedValue);
                             },
                       model.selectedValue != null,
-                      false == widget.model.getAnswerValue(),
+                      // false == widget.model.getAnswerValue(),
+                      (model.selectedValue == true &&
+                              widget.model.getAnswerValue() == false) ||
+                          (model.selectedValue == false &&
+                              widget.model.getAnswerValue() == true),
                     ),
                     const SizedBox(width: kBottomPadding),
                   ],
@@ -376,7 +349,8 @@ class _TrueFalsePracticePageState extends State<TrueFalsePracticePage> {
     Color color,
     VoidCallback submissionFunction,
     bool isAnswerSubmitted,
-    bool isTrueAnswer,
+    // bool isTrueAnswer,
+    bool isThisButtonSelected,
   ) {
     return Expanded(
       child: InkWell(
@@ -385,16 +359,17 @@ class _TrueFalsePracticePageState extends State<TrueFalsePracticePage> {
           height: 80,
           padding: const EdgeInsets.all(22),
           decoration: BoxDecoration(
-              color:
-                  isAnswerSubmitted && !isTrueAnswer ? AppColors.white : color,
+              color: !isAnswerSubmitted || isThisButtonSelected
+                  ? color
+                  : AppColors.white,
               borderRadius: BorderRadius.circular(20)),
           child: SvgPicture.asset(
             'assets/svg/$iconName.svg',
-            color: isAnswerSubmitted && !isTrueAnswer
-                ? AppColors.grey300
-                : isTrueButton
+            color: !isAnswerSubmitted || isThisButtonSelected
+                ? isTrueButton
                     ? AppColors.deepBlue700
-                    : AppColors.red600,
+                    : AppColors.red600
+                : AppColors.grey300,
             height: isTrueButton ? 20 : 26,
             width: 26,
           ),

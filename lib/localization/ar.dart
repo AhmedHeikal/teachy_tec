@@ -269,4 +269,8 @@ const AR = {
   "false": "خاطى",
   "youCanSwipeLeftRight": "يمكنك التمرير لليسار/اليمين",
   "yourResponseIsOnPointTrulyMotivational": "ردك دقيق ومُلهِم حقًا",
+  "update": "تحديث",
+  "youCurrentlyHaveOlderVersion":
+      "لديك حاليًا نسخة أقدم من تطبيق تقنية التعليم. \n قم بتحديث إلى تقنية التعليم الآن!",
+  "isHere": "هنا!",
 };

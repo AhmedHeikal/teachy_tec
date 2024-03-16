@@ -382,8 +382,9 @@ class QuestionOptionComponent extends StatelessWidget {
                               model.onSelectItem!();
                             }
                             if (onChange != null) onChange!();
-                            model.isCorrect = true;
-                            model.option?.isCorrect = true;
+                            model.onselectTrueOrFalseInTrueFalseQuestion(true);
+                            // model.isCorrect = true;
+                            // model.option?.isCorrect = true;
                           },
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.start,
@@ -411,8 +412,9 @@ class QuestionOptionComponent extends StatelessWidget {
                               model.onSelectItem!();
                             }
                             if (onChange != null) onChange!();
-                            model.isCorrect = false;
-                            model.option?.isCorrect = false;
+                            model.onselectTrueOrFalseInTrueFalseQuestion(false);
+                            // model.isCorrect = false;
+                            // model.option?.isCorrect = false;
                           },
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.start,

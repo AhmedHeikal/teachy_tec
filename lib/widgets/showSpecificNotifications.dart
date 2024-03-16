@@ -338,6 +338,15 @@ class AppNotifcationsItems {
         color: NotificationColors.Requirement,
       );
 
+  static AppNotifcation customQuestionnDuplicated(BuildContext context) =>
+      AppNotifcation(
+        text: AppLocale.questionsShouldBeDifferent
+            .getString(context)
+            .capitalizeFirstLetter(),
+        icon: NotificationIcons.Require,
+        color: NotificationColors.Requirement,
+      );
+
   static AppNotifcation CustomQuestionOptionsNotComplete(
           BuildContext context) =>
       AppNotifcation(
@@ -349,16 +358,16 @@ class AppNotifcationsItems {
         icon: NotificationIcons.Require,
         color: NotificationColors.Requirement,
       );
-  static AppNotifcation CustomQuestionOptionDuplicated(BuildContext context) =>
-      AppNotifcation(
-        text: AppLocale.answerShouldBeDifferent
-            .getString(context)
-            .capitalizeFirstLetter(),
+  // static AppNotifcation CustomQuestionOptionDuplicated(BuildContext context) =>
+  //     AppNotifcation(
+  //       text: AppLocale.answerShouldBeDifferent
+  //           .getString(context)
+  //           .capitalizeFirstLetter(),
 
-        // text: 'Should be two options at least',
-        icon: NotificationIcons.Require,
-        color: NotificationColors.Requirement,
-      );
+  //       // text: 'Should be two options at least',
+  //       icon: NotificationIcons.Require,
+  //       color: NotificationColors.Requirement,
+  //     );
 
   static AppNotifcation CustomQuestionNoCorrectOption(BuildContext context) =>
       AppNotifcation(

@@ -40,9 +40,11 @@ class _MainScaffoldState extends State<MainScaffold> {
                 return SignInScreen(model: SignInScreenVM());
               }
 
-              if(widget.model.currentUserAppConfiguration != null){
-                
-              }
+              // if (widget.model.currentUserAppConfiguration != null) {
+              //   if (widget.model.currentUserAppConfiguration!.updateRequired) {
+              //      return const OutOfDateScreen();
+              //   }
+              // }
 
               return Stack(
                 children: [

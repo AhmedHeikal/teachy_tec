@@ -39,10 +39,11 @@ class SignInScreenVM extends ChangeNotifier {
       FirestoreConstants.name: credential.user?.displayName,
       FirestoreConstants.email: credential.user?.email,
     };
-    final newAppConfiguration = <String, String?>{
-      FirestoreConstants.closeApp: 'false',
-      FirestoreConstants.resetCache: 'false',
-      FirestoreConstants.updateRequired: 'false',
+    
+    final newAppConfiguration = <String, bool?>{
+      FirestoreConstants.closeApp: false,
+      FirestoreConstants.resetCache: false,
+      FirestoreConstants.updateRequired: false,
     };
 
     await serviceLocator<FirebaseFirestore>()

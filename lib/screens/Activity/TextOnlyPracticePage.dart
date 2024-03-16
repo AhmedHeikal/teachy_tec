@@ -107,6 +107,7 @@ class TextOnlyPracticePage extends StatelessWidget {
                 model.onSelectOption(null, text: model.currentAnswerValue),
             text: AppLocale.save.getString(context).capitalizeFirstLetter(),
           ),
+        const SizedBox(height: kMainPadding),
       ],
     );
   }

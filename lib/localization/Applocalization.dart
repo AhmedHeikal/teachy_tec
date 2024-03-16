@@ -280,6 +280,10 @@ class AppLocale {
   static const yourResponseIsOnPointTrulyMotivational =
       "yourResponseIsOnPointTrulyMotivational";
 
+  static const update = "update";
+  static const youCurrentlyHaveOlderVersion = "youCurrentlyHaveOlderVersion";
+  static const isHere = "isHere";
+
   static const Map<String, dynamic> en = EN;
   static const Map<String, dynamic> ar = AR;
 }

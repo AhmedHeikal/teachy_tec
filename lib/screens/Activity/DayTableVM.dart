@@ -377,7 +377,6 @@ class DayTableVM extends ChangeNotifier {
       child: Container(
         constraints: const BoxConstraints(maxHeight: 400),
         decoration: BoxDecoration(
-          // color: backgroundColor,
           borderRadius: BorderRadius.circular(20),
         ),
         child: Column(
@@ -574,7 +573,7 @@ class DayTableVM extends ChangeNotifier {
                                       bottomPadding: 30,
                                       child: AddTaskPopup(
                                         model: AddTaskPopupVM(
-                                          taskType: TaskType.textOnly,
+                                          taskType: TaskType.trueFalse,
                                           taskLists: (currentActivity.tasks ??
                                                   [])
                                               .map((element) => element.task)
@@ -702,7 +701,6 @@ class DayTableVM extends ChangeNotifier {
             student: student,
             task: task,
             comment: null,
-            
           );
           UIRouter.popScreen(rootNavigator: true);
           EasyLoading.dismiss(animation: true);
@@ -799,7 +797,7 @@ class DayTableVM extends ChangeNotifier {
         answerSubmittedType: answerSubmittedType,
         hideSpecifiedButtons: hideSpecifiedButtons,
         onSelectEmoji: (selectedEmoji) {
-          this.selectedEmoji = selectedEmoji;
+          // this.selectedEmoji = selectedEmoji;
           if (onEmojiSelected != null) {
             onEmojiSelected(selectedEmoji);
           }
@@ -807,11 +805,17 @@ class DayTableVM extends ChangeNotifier {
           // as if there was an emoji that was already chosen to not be returned;
           returnedEmoji = selectedEmoji;
           UIRouter.popScreen(rootNavigator: true);
-          notifyListeners();
+          setEmojiForActivityTable(selectedEmoji);
+          // notifyListeners();
         },
       ),
     );
     return returnedEmoji;
+  }
+
+  void setEmojiForActivityTable(Emoji? currentEmoji) {
+    selectedEmoji = currentEmoji;
+    notifyListeners();
   }
 
   void toggleTimerOpen({bool? isTimerOpen}) {

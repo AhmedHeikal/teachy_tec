@@ -42,7 +42,6 @@ abstract class PreviewData {
   final String? title;
 
   /// Equatable props.
-  @override
   List<Object?> get props => [description, image, link, title];
 
   /// Creates a copy of the preview data with an updated data.
@@ -117,7 +116,6 @@ class PreviewDataImage {
   final double width;
 
   /// Equatable props.
-  @override
   List<Object> get props => [height, url, width];
 
   /// Converts preview data image to the map representation, encodable to JSON.

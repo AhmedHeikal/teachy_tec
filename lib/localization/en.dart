@@ -273,4 +273,8 @@ const EN = {
   "youCanSwipeLeftRight": "You can swipe left/right",
   "yourResponseIsOnPointTrulyMotivational":
       "Your response is on point and truly motivational.",
+  "update": "update",
+  "youCurrentlyHaveOlderVersion":
+      "You currently have an older version of TeachyTec. Update to new TeachyTec now!",
+  "isHere": "Is Here!",
 };
