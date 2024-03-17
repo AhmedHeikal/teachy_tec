@@ -33,7 +33,8 @@ Future<void> main() async {
     DeviceOrientation.portraitUp,
   ]);
 
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  await Firebase.initializeApp(
+      name: 'teachytec-dev', options: DefaultFirebaseOptions.currentPlatform);
   final _ = await setupServiceLocator();
   FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
   PlatformDispatcher.instance.onError = (error, stack) {

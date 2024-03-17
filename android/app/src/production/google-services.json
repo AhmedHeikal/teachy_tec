@@ -1,0 +1,63 @@
+{
+  "project_info": {
+    "project_number": "189657694988",
+    "firebase_url": "https://teachytec-default-rtdb.firebaseio.com",
+    "project_id": "teachytec",
+    "storage_bucket": "teachytec.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:189657694988:android:eac5bbea9844e47122bf29",
+        "android_client_info": {
+          "package_name": "com.teachytec.catchytec"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "189657694988-ns20q1j0p7ukrhkftjdtvu1nb9trlma2.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.teachytec.catchytec",
+            "certificate_hash": "900f25b2aa110e8b4af4d384cb2decda4a99f520"
+          }
+        },
+        {
+          "client_id": "189657694988-vaj8r8q2113oha2f97hkhgr0avaintam.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.teachytec.catchytec",
+            "certificate_hash": "608d6482742134cbba5e4c30db3a62ea7b65bb99"
+          }
+        },
+        {
+          "client_id": "189657694988-v64kecqri4rajg2sace4qhror57htbep.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC_sDS3Q3QDFAe1Dcf6Wh-vCplaZ0TrwNg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "189657694988-v64kecqri4rajg2sace4qhror57htbep.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "189657694988-10e0fcdcu6qgda98qmjqu97te4o2cd3o.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.teachyTec"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

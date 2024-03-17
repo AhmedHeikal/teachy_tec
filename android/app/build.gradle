@@ -36,7 +36,7 @@ if (flutterVersionName == null) {
 }
 
 android {
-    namespace "com.teachytec.catchytec"
+    namespace "com.teachytec.catchytec.dev"
     compileSdkVersion flutter.compileSdkVersion
     ndkVersion flutter.ndkVersion
 
@@ -64,7 +64,7 @@ android {
 
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId "com.teachytec.catchytec"
+        applicationId "com.teachytec.catchytec.dev"
         // You can update the following values to match your application needs.
         // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-gradle-build-configuration.
         minSdkVersion 21
@@ -80,6 +80,24 @@ android {
             signingConfig signingConfigs.release
             shrinkResources false
             minifyEnabled false
+        }
+    }
+
+    flavorDimensions "default"
+    
+    productFlavors{
+        development{
+            dimension "default"
+            applicationId "com.teachytec.catchytec.dev"
+            versionCode buildVersionCode
+            versionName "$versionMajor.$versionMinor.$versionPatch"
+        }
+         production{
+            dimension "default"
+            applicationId "com.teachytec.catchytec"
+            applicationIdSuffix ""
+            versionCode buildVersionCode
+            versionName "$versionMajor.$versionMinor.$versionPatch"
         }
     }
 }

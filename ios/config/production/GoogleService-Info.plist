@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>189657694988-aifo7i5lgfln2g0tgc55m8i3d0j6efsi.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.189657694988-aifo7i5lgfln2g0tgc55m8i3d0j6efsi</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>189657694988-nf5snp5a4kt6d97rgglogmge86uhc61l.apps.googleusercontent.com</string>
+	<key>API_KEY</key>
+	<string>AIzaSyCL5bQX6TZIc7CQLBzHiE9diA-lR04P3Nw</string>
+	<key>GCM_SENDER_ID</key>
+	<string>189657694988</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.catchytec.teachyTec</string>
+	<key>PROJECT_ID</key>
+	<string>teachytec</string>
+	<key>STORAGE_BUCKET</key>
+	<string>teachytec.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:189657694988:ios:7959b1e0fc368e7a22bf29</string>
+	<key>DATABASE_URL</key>
+	<string>https://teachytec-default-rtdb.firebaseio.com</string>
+</dict>
+</plist>

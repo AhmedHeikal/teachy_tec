@@ -28,9 +28,7 @@ class HomeScreen extends StatelessWidget {
   final HomeScreenVM model;
   @override
   Widget build(BuildContext context) {
-    // UIRouter.showEasyLoader();
     var size = MediaQuery.sizeOf(context);
-
     return Scaffold(
       body: Column(
         children: [
@@ -71,11 +69,11 @@ class HomeScreen extends StatelessWidget {
                                   style: TextStyles.InterBlackS32W700,
                                   children: [
                                     TextSpan(
-                                        text: serviceLocator<FirebaseAuth>()
-                                            .currentUser!
-                                            .displayName,
-                                        style:
-                                            TextStyles.InterYellow700S32W700),
+                                      text: serviceLocator<FirebaseAuth>()
+                                          .currentUser!
+                                          .displayName,
+                                      style: TextStyles.InterYellow700S32W700,
+                                    ),
                                   ],
                                 ),
                               ),
@@ -102,8 +100,10 @@ class HomeScreen extends StatelessWidget {
                                         .capitalizeFirstLetter(),
                                     onTapCallBack: () => UIRouter.pushScreen(
                                       StudentsScreen(
-                                          model: StudentsScreenVM(
-                                              currentClass: null)),
+                                        model: StudentsScreenVM(
+                                          currentClass: null,
+                                        ),
+                                      ),
                                       showNavigator: true,
                                       pageName:
                                           AppAnalyticsConstants.DashboardScreen,
@@ -118,9 +118,7 @@ class HomeScreen extends StatelessWidget {
                                         .getString(context)
                                         .capitalizeFirstLetter(),
                                     onTapCallBack: () => UIRouter.pushScreen(
-                                      ClassesScreen(
-                                        model: ClassesScreenVM(),
-                                      ),
+                                      ClassesScreen(model: ClassesScreenVM()),
                                       showNavigator: true,
                                       pageName:
                                           AppAnalyticsConstants.DashboardScreen,

@@ -37,7 +37,6 @@ Future setupServiceLocator() async {
     return object;
   }, dependsOn: [FirebaseFirestore, FirebaseAuth]);
 
-
   serviceLocator.registerSingletonAsync<AppConfiguration>(() async {
     var currentAppConfiguration =
         await serviceLocator<AppNetworkProvider>().getAppConfiguration() ??

@@ -1,4 +1,4 @@
-package com.teachytec.catchytec
+package com.teachytec.catchytec.dev
 
 import io.flutter.embedding.android.FlutterActivity
 

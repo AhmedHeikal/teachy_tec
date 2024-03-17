@@ -44,38 +44,42 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyDfHHAbcNDR30jdDgJGTY_d0Npn44Z_MpI',
-    appId: '1:189657694988:web:f5210022901db2b922bf29',
-    messagingSenderId: '189657694988',
-    projectId: 'teachytec',
-    authDomain: 'teachytec.firebaseapp.com',
-    storageBucket: 'teachytec.appspot.com',
-    measurementId: 'G-G0P83B68FG',
+    apiKey: 'AIzaSyA5-Dnod5H4P6pCYzJFl1nrJqvT-E4LsmQ',
+    appId: '1:662985789457:web:773e7d5b70139a9fdae1b0',
+    messagingSenderId: '662985789457',
+    projectId: 'teachytec-dev',
+    authDomain: 'teachytec-dev.firebaseapp.com',
+    storageBucket: 'teachytec-dev.appspot.com',
+    measurementId: 'G-W64WKMRL0B',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyC_sDS3Q3QDFAe1Dcf6Wh-vCplaZ0TrwNg',
-    appId: '1:189657694988:android:63fc6fa70ab337e822bf29',
-    messagingSenderId: '189657694988',
-    projectId: 'teachytec',
-    storageBucket: 'teachytec.appspot.com',
+    apiKey: 'AIzaSyBNS130IUULgjnK53YIGeYfvdcOt73vYqs',
+    appId: '1:662985789457:android:50f0fa46733b4198dae1b0',
+    messagingSenderId: '662985789457',
+    projectId: 'teachytec-dev',
+    storageBucket: 'teachytec-dev.appspot.com',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyCL5bQX6TZIc7CQLBzHiE9diA-lR04P3Nw',
-    appId: '1:189657694988:ios:8a427e821b9216b622bf29',
-    messagingSenderId: '189657694988',
-    projectId: 'teachytec',
-    storageBucket: 'teachytec.appspot.com',
-    iosBundleId: 'com.example.teachyTec',
+    apiKey: 'AIzaSyAgGqG9E8PUvnB8UvXLGyczV1XU3ve5LR8',
+    appId: '1:662985789457:ios:523acf40cdd87f66dae1b0',
+    messagingSenderId: '662985789457',
+    projectId: 'teachytec-dev',
+    storageBucket: 'teachytec-dev.appspot.com',
+    iosClientId:
+        '662985789457-41f5si6mf05ei94jto3pf3bkqctkai60.apps.googleusercontent.com',
+    iosBundleId: 'com.catchytec.teachyTec.dev',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'AIzaSyCL5bQX6TZIc7CQLBzHiE9diA-lR04P3Nw',
-    appId: '1:189657694988:ios:7e2e2b3637ee016b22bf29',
-    messagingSenderId: '189657694988',
-    projectId: 'teachytec',
-    storageBucket: 'teachytec.appspot.com',
+    apiKey: 'AIzaSyAgGqG9E8PUvnB8UvXLGyczV1XU3ve5LR8',
+    appId: '1:662985789457:ios:b2524f4878d7ee12dae1b0',
+    messagingSenderId: '662985789457',
+    projectId: 'teachytec-dev',
+    storageBucket: 'teachytec-dev.appspot.com',
+    iosClientId:
+        '662985789457-l1smkc8ntrh9t79fpafvtpm0vluk4ng3.apps.googleusercontent.com',
     iosBundleId: 'com.example.teachyTec.RunnerTests',
   );
 }

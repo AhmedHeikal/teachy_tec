@@ -113,11 +113,11 @@ dev_dependencies:
   # rules and activating additional ones.
   flutter_lints: ^3.0.1
 
-flutter_launcher_icons:
-  android: "ic_launcher"
-  ios: true
-  image_path: "assets/logo/logo.png"
-  # android min sdk min:16, default 21
+# flutter_launcher_icons:
+#   android: "ic_launcher"
+#   ios: true
+#   image_path: "assets/logo/logo.png"
+# android min sdk min:16, default 21
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
