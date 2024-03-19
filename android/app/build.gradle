@@ -11,7 +11,7 @@ ext {
     versionMajor = 1
     versionMinor = 6
     versionPatch = 0
-    buildVersionCode = 9
+    buildVersionCode = 10
     apiVersion = 0
     client = '"android"'
     client_version = 0.0
