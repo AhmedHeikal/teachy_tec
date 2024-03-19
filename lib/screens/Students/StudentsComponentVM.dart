@@ -298,6 +298,9 @@ class StudentsComponentVM extends ChangeNotifier {
 
       // Write the bytes to the file
       await file.writeAsBytes(bytes);
+
+      showSpecificNotificaiton(
+          notifcationDetails: AppNotifcationsItems.fileDownloadedSuccessfully);
       await OpenFile.open(file.path);
 
       if (kDebugMode) {

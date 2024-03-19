@@ -277,4 +277,5 @@ const EN = {
   "youCurrentlyHaveOlderVersion":
       "You currently have an older version of TeachyTec. Update to new TeachyTec now!",
   "isHere": "Is Here!",
+  "fileDownloadedSuccessfully": "File downloaded succesfully!",
 };

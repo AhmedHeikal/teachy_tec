@@ -116,7 +116,7 @@ class _AppNotificationState extends State<_AppNotification>
                 border: Border.all(
                     color: widget.notifcationDetails.color ==
                             NotificationColors.Successful
-                        ? AppColors.primary300
+                        ? AppColors.green300
                         : widget.notifcationDetails.color ==
                                 NotificationColors.Requirement
                             ? AppColors.grey200
@@ -424,6 +424,14 @@ class AppNotifcationsItems {
         icon: NotificationIcons.Warning,
         color: NotificationColors.Warning,
       );
+  static AppNotifcation fileDownloadedSuccessfully(BuildContext context) =>
+      AppNotifcation(
+        text: AppLocale.fileDownloadedSuccessfully
+            .getString(context)
+            .capitalizeFirstLetter(),
+        icon: NotificationIcons.Successful,
+        color: NotificationColors.Successful,
+      );
 
   static AppNotifcation didntFindNamesColumn(BuildContext context) =>
       AppNotifcation(
@@ -462,7 +470,7 @@ class AppNotifcationsItems {
 }
 
 enum NotificationColors {
-  Successful(colorValue: AppColors.primary50),
+  Successful(colorValue: AppColors.green50),
   Requirement(colorValue: AppColors.grey50),
   Warning(colorValue: AppColors.red50);
 

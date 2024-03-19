@@ -273,4 +273,5 @@ const AR = {
   "youCurrentlyHaveOlderVersion":
       "لديك حاليًا نسخة أقدم من تطبيق تقنية التعليم. \n قم بتحديث إلى تقنية التعليم الآن!",
   "isHere": "هنا!",
+  "fileDownloadedSuccessfully": "تم تحميل الملف بنجاح!",
 };
