@@ -572,6 +572,14 @@ class AppNotifcationsItems {
         icon: NotificationIcons.Warning,
         color: NotificationColors.Warning,
       );
+  static AppNotifcation fileDownloadedSuccessfully(BuildContext context) =>
+      AppNotifcation(
+        text: AppLocale.fileDownloadedSuccessfully
+            .getString(context)
+            .capitalizeFirstLetter(),
+        icon: NotificationIcons.Successful,
+        color: NotificationColors.Successful,
+      );
 
   static AppNotifcation didntFindNamesColumn(BuildContext context) =>
       AppNotifcation(

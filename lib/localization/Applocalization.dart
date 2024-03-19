@@ -317,6 +317,7 @@ class AppLocale {
   static const update = "update";
   static const youCurrentlyHaveOlderVersion = "youCurrentlyHaveOlderVersion";
   static const isHere = "isHere";
+  static const fileDownloadedSuccessfully = "fileDownloadedSuccessfully";
 
   static const Map<String, dynamic> en = EN;
   static const Map<String, dynamic> ar = AR;

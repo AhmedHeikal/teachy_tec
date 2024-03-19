@@ -307,4 +307,5 @@ const EN = {
   "supersectionNamesShouldBeDifferent":
       "Supersection names should be different.",
   "sectorNamesShouldBeDifferent": "Sector names should be different.",
+  "fileDownloadedSuccessfully": "File downloaded succesfully!",
 };

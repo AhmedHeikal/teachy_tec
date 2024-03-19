@@ -303,4 +303,5 @@ const AR = {
   "supersectionNamesShouldBeDifferent":
       "يجب أن تكون أسماء الأقسام الفائقة مختلفة.",
   "sectorNamesShouldBeDifferent": "يجب أن تكون أسماء القطاعات مختلفة.",
+  "fileDownloadedSuccessfully": "تم تحميل الملف بنجاح!",
 };

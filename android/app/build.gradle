@@ -106,6 +106,18 @@ flutter {
     source '../..'
 }
 
+
+subprojects {
+    project.configurations.all {
+        resolutionStrategy.eachDependency { details ->
+            if (details.requested.group == 'com.android.support'
+                    && !details.requested.name.contains('multidex') ) {
+                details.useVersion "27.1.1"
+            }
+        }
+    }
+}
+
 dependencies {
     implementation "androidx.activity:activity:1.6.0-alpha05"
     implementation platform('com.google.firebase:firebase-bom:32.7.0')
