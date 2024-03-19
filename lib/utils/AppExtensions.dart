@@ -18,6 +18,19 @@ extension GetElementOrNull<T> on List<T> {
   }
 }
 
+extension GlobalKeyExtension on GlobalKey {
+  Rect? get globalPaintBounds {
+    final renderObject = currentContext?.findRenderObject() as RenderBox?;
+    final matrix = renderObject?.getTransformTo(null);
+    if (matrix != null && renderObject?.paintBounds != null) {
+      final rect = MatrixUtils.transformRect(matrix, renderObject!.paintBounds);
+      return rect;
+    } else {
+      return null;
+    }
+  }
+}
+
 extension FileExtensionChecker on String {
   bool get isVideo => kVideoExtensions
       .any((extension) => this.toLowerCase().endsWith(extension));
@@ -51,19 +64,6 @@ extension ColorFromHex on Color {
   static Color fromHex(String hexCode) {
     if (hexCode.contains('#')) hexCode = hexCode.substring(1, hexCode.length);
     return Color(int.parse("0xFF$hexCode"));
-  }
-}
-
-extension GlobalKeyExtension on GlobalKey {
-  Rect? get globalPaintBounds {
-    final renderObject = currentContext?.findRenderObject() as RenderBox?;
-    final matrix = renderObject?.getTransformTo(null);
-    if (matrix != null && renderObject?.paintBounds != null) {
-      final rect = MatrixUtils.transformRect(matrix, renderObject!.paintBounds);
-      return rect;
-    } else {
-      return null;
-    }
   }
 }
 

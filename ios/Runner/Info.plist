@@ -29,7 +29,7 @@
 	<string>$(MARKETING_VERSION)</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
-	<key>CFBundleURLTypes</key>
+	<!-- <key>CFBundleURLTypes</key>
 	<array>
 		<dict>
 			<key>CFBundleTypeRole</key>
@@ -44,6 +44,19 @@
 			<string>Editor</string>
 			<key>CFBundleURLIconFile</key>
 			<string>Eu</string>
+		</dict>
+	</array> -->
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<!-- TODO Replace this value: -->
+				<!-- Copied from GoogleService-Info.plist key REVERSED_CLIENT_ID -->
+				<string>com.googleusercontent.apps.662985789457-41f5si6mf05ei94jto3pf3bkqctkai60</string>
+			</array>
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>

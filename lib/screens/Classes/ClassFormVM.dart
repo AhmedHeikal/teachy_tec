@@ -42,7 +42,7 @@ class ClassFormVM extends ChangeNotifier with FormParentClass {
     if (!validateForm()) return;
     UIRouter.showEasyLoader();
     var currentStudents = studentsComponentVM.getStudentsList();
-    var newClass = serviceLocator<AppNetworkProvider>().onAddNewClass(
+    var newClass = await serviceLocator<AppNetworkProvider>().onAddNewClass(
         currentStudents: currentStudents,
         currentClass: Class(
             id: null,

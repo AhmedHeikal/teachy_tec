@@ -254,6 +254,12 @@ class TextStyles {
     fontSize: 20,
     color: AppColors.black,
   );
+  static const InterBlackS20W500 = TextStyle(
+    fontFamily: _interFontFamily,
+    fontWeight: FontWeight.w500,
+    fontSize: 20,
+    color: AppColors.black,
+  );
   static const InterBlackS14W400 = TextStyle(
     fontFamily: _interFontFamily,
     fontWeight: FontWeight.w400,

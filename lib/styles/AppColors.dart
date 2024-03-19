@@ -76,4 +76,22 @@ class AppColors {
 
   // Pure White
   static const Color appBackgroundColor = Color.fromRGBO(255, 255, 255, 1.0);
+
+  static const List<int> sectionColors = [
+    0xFFFFFFFF,
+    0xFFF5A0A5,
+    0xFF8B5CF6,
+    0xFFFF9B4C,
+    0xFFEC4899,
+    0xFF3B82F6,
+  ];
+
+  static const List<int> superSectionColors = [
+    0xFFFFFFFF,
+    0xFF458446,
+    0xFFB16345,
+    0xFF4E5D7B,
+    0xFFD4B11E,
+    0xFF52525B,
+  ];
 }

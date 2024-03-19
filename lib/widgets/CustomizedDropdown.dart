@@ -123,7 +123,7 @@ class CustomDropdownState<T> extends State<CustomizedDropdown>
           link: this._layerLink,
           child: DefaultContainer(
             // width: double.infinity,
-            height: 40,
+            height: 44,
             padding: const EdgeInsets.symmetric(horizontal: kHelpingPadding),
             decoration: BoxDecoration(
               color: widget.isEnabled ? AppColors.white : AppColors.white,
@@ -642,16 +642,358 @@ class _CountryPhoneCodesDropDownState<T>
   }
 }
 
-/// DropdownItem is just a wrapper for each child in the dropdown list.\n
-/// It holds the value of the item.
-// class DropdownItem<T> extends StatelessWidget {
-//   final T value;
-//   final Widget child;
+class ColorDropdown extends StatefulWidget {
+  /// the child widget for the button, this will be ignored if text is supplied
+  final int? chosenItem;
 
-//   const DropdownItem({Key? key, required this.value, required this.child})
-//       : super(key: key);
-//   @override
-//   Widget build(BuildContext context) {
-//     return child;
-//   }
-// }
+  /// onChange is called when the selected option is changed.;
+  /// It will pass back the value and the index of the option.
+  final void Function(int, int) onChange;
+
+  /// list of DropdownItems
+  final List<int> items;
+  // DropdownStyle? dropdownStyle;
+
+  /// dropdownButtonStyles passes styles to OutlineButton.styleFrom()
+  // final DropdownButtonStyle? dropdownButtonStyle;
+
+  /// dropdown button icon defaults to caret
+  final Icon? icon;
+  final bool hideIcon;
+  final int? emptyChoiceColor;
+  final String? emptyChoiceChosenText;
+  final double bottomTapHeight;
+  // final String Function(String input)? shownItemFormat;
+  // final GlobalKey? globalKey;
+
+  /// if true the dropdown icon will as a leading icon, default to false
+  final bool leadingIcon;
+  final bool isEnabled;
+  const ColorDropdown({
+    super.key,
+    this.isEnabled = true,
+    this.hideIcon = false,
+    this.bottomTapHeight = 0,
+    // this.shownItemFormat,
+    this.chosenItem,
+    this.emptyChoiceColor,
+    this.emptyChoiceChosenText,
+    this.items = AppColors.sectionColors,
+    required this.onChange,
+    this.icon,
+    this.leadingIcon = false,
+  });
+
+  @override
+  ColorDropdownState createState() => ColorDropdownState();
+}
+
+class ColorDropdownState<T> extends State<ColorDropdown>
+    with TickerProviderStateMixin {
+  final LayerLink _layerLink = LayerLink();
+  OverlayEntry? _overlayEntry;
+  bool _isOpen = false;
+  int _currentIndex = 0;
+
+  late AnimationController _animationController;
+  late Animation<double> _expandAnimation;
+  late Animation<double> _rotateAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.emptyChoiceColor != null) {
+      widget.items.insert(0, widget.emptyChoiceColor!);
+    }
+
+    _currentIndex = widget.chosenItem != null
+        ? widget.items.indexWhere((element) => element == widget.chosenItem)
+        : 0;
+
+    _currentIndex = _currentIndex == -1 ? 0 : _currentIndex;
+    _animationController = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 200));
+    _expandAnimation = CurvedAnimation(
+      parent: _animationController,
+      curve: Curves.easeInOut,
+    );
+
+    _rotateAnimation = Tween(begin: 0.0, end: 0.5).animate(CurvedAnimation(
+      parent: _animationController,
+      curve: Curves.easeInOut,
+    ));
+
+    if (widget.emptyChoiceColor == null ||
+        widget.items[_currentIndex] != widget.emptyChoiceColor) {
+      widget.onChange(widget.items[_currentIndex], _currentIndex);
+    }
+  }
+
+  @override
+  void didUpdateWidget(covariant ColorDropdown oldWidget) {
+    _currentIndex = widget.chosenItem != null
+        ? widget.items.indexWhere((element) => element == widget.chosenItem)
+        : 0;
+
+    super.didUpdateWidget(oldWidget);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // link the overlay to the button
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        CompositedTransformTarget(
+          link: this._layerLink,
+          child: DefaultContainer(
+            height: 44,
+            padding: const EdgeInsets.symmetric(horizontal: kHelpingPadding),
+            decoration: BoxDecoration(
+              color: widget.isEnabled ? AppColors.white : AppColors.white,
+              borderRadius: BorderRadius.circular(8),
+              border: !widget.isEnabled
+                  ? Border.all(color: AppColors.grey300)
+                  : isValid
+                      ? Border.all(color: AppColors.grey200)
+                      : Border.all(color: AppColors.red500),
+            ),
+            child: InkWell(
+              onTap: widget.isEnabled ? _toggleDropdown : null,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Color(widget.items[_currentIndex]),
+                        borderRadius: BorderRadius.circular(12),
+                        border:
+                            Border.all(width: 2, color: AppColors.primary700),
+                      ),
+                      height: 30,
+                    ),
+                  ),
+                  // Text(
+                  //   widget.items.isNotEmpty ? widget.items[_currentIndex] : "",
+                  //   style: !widget.isEnabled
+                  //       ? TextStyles.InterGrey400S14W400
+                  //       : isValid
+                  //           ? TextStyles.InterGrey700S14W400
+                  //           : TextStyles.InterRed700S14W400,
+                  //   // ),
+                  // ),
+                  const SizedBox(width: kInternalPadding),
+                  if (widget.isEnabled && !widget.hideIcon)
+                    Padding(
+                      padding: const EdgeInsets.all(4),
+                      child: RotationTransition(
+                        turns: _rotateAnimation,
+                        child: Transform.rotate(
+                          angle: 0.5 * pi,
+                          child: SvgPicture.asset(
+                            'assets/svg/rightArrow.svg',
+                            height: 10,
+                            color:
+                                isValid ? AppColors.grey400 : AppColors.red700,
+                          ),
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+            ),
+          ),
+        ),
+        if (!isValid && widget.emptyChoiceChosenText != null) ...[
+          const SizedBox(height: 2),
+          Row(
+            children: [
+              SvgPicture.asset(
+                'assets/svg/warning.svg',
+                color: AppColors.grey400,
+                height: 16,
+              ),
+              const SizedBox(width: 2),
+              Text(
+                widget.emptyChoiceChosenText!,
+              ),
+            ],
+          )
+        ],
+      ],
+    );
+  }
+
+  bool isValid = true;
+
+  bool validateInput() {
+    if (widget.items[_currentIndex] == widget.emptyChoiceColor) {
+      if (mounted && isValid) {
+        setState(() {
+          isValid = false;
+        });
+      }
+      return false;
+    }
+    if (mounted && !isValid) {
+      setState(() {
+        isValid = true;
+      });
+    }
+    return true;
+  }
+
+  OverlayEntry _createOverlayEntry() {
+    // find the size and position of the current widget
+    RenderBox renderBox = context.findRenderObject() as RenderBox;
+    var screenSize = MediaQuery.sizeOf(context);
+    var size = renderBox.size;
+    var offset = renderBox.localToGlobal(Offset.zero);
+    // var height = screenSize.height - offset.dy;
+    var topOffset = offset.dy + size.height + 5;
+    return OverlayEntry(
+      // full screen GestureDetector to register when a
+      // user has clicked away from the dropdown
+      builder: (context) => GestureDetector(
+        onTap: () => _toggleDropdown(close: true),
+        behavior: HitTestBehavior.translucent,
+        // full screen container to register taps anywhere and close drop down
+        child: SizedBox(
+          height: screenSize.height,
+          width: screenSize.width,
+          child: Stack(
+            children: [
+              Positioned(
+                left: offset.dx,
+                top: topOffset,
+                width: size.width,
+                child: CompositedTransformFollower(
+                  offset: Offset(
+                      0,
+                      screenSize.height - topOffset >
+                              50 + widget.bottomTapHeight
+                          ? size.height + 1
+                          : -(widget.items.length > 5
+                                  ? 200
+                                  : widget.items.length * 40) -
+                              5),
+                  link: this._layerLink,
+                  showWhenUnlinked: false,
+                  child: DefaultContainer(
+                    decoration: BoxDecoration(
+                        boxShadow: [
+                          BoxShadow(
+                            color: AppColors.grey400.withOpacity(0.15),
+                            spreadRadius: 1,
+                            blurRadius: 20,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                        // color: AppColors.white,
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(
+                          color: AppColors.grey200,
+                        )),
+                    child: SizeTransition(
+                      axisAlignment: 1,
+                      sizeFactor: _expandAnimation,
+                      child: ConstrainedBox(
+                        constraints: BoxConstraints(
+                          maxHeight: screenSize.height - topOffset >
+                                  50 + widget.bottomTapHeight
+                              ? screenSize.height - topOffset - 15
+                              : widget.items.length > 5
+                                  ? 200
+                                  : widget.items.length * 40,
+                        ),
+                        child: ListView.separated(
+                          physics: const ClampingScrollPhysics(),
+                          itemCount: widget.items.length,
+                          padding: const EdgeInsets.all(4),
+                          shrinkWrap: true,
+                          itemBuilder: (context, index) {
+                            var item = widget.items[index];
+                            return InkWell(
+                              onTap: () {
+                                if (mounted) {
+                                  setState(() => _currentIndex = index);
+                                }
+                                if (widget.emptyChoiceColor == null ||
+                                    widget.items[_currentIndex] !=
+                                        widget.emptyChoiceColor) {
+                                  widget.onChange(item, index);
+                                }
+                                _toggleDropdown();
+                              },
+                              child: Container(
+                                margin:
+                                    const EdgeInsets.symmetric(horizontal: 2),
+                                decoration: BoxDecoration(
+                                    color: Color(item),
+                                    border: Border.all(
+                                      width: 2,
+                                      color: index == _currentIndex
+                                          ? AppColors.primary700
+                                          : Color(item),
+                                    ),
+                                    borderRadius: BorderRadius.circular(12)),
+                                height: 30,
+                              ),
+
+                              // const Padding(
+                              //   padding: EdgeInsets.symmetric(
+                              //       horizontal: kMainPadding,
+                              //       vertical: kBottomPadding),
+                              //   // child: Text(
+                              //   //   widget.shownItemFormat != null
+                              //   //       ? widget.shownItemFormat!(item)
+                              //   //       : item,
+                              //   // item,
+                              //   // style: TextStyles.InterGrey700S16W600
+                              //   //     .copyWith(
+                              //   //         color: index == _currentIndex
+                              //   //             ? TomatoColors.Blue700
+                              //   //             : null),
+                              //   // ),
+                              // ),
+                            );
+                          },
+                          separatorBuilder: (context, index) => Container(
+                            margin: const EdgeInsets.symmetric(
+                              horizontal: kMainPadding,
+                              vertical: 2,
+                            ),
+                            color: AppColors.grey100,
+                            height: 1,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _toggleDropdown({bool close = false}) async {
+    if (_isOpen || close) {
+      await _animationController.reverse();
+      this._overlayEntry!.remove();
+      if (mounted) {
+        setState(() {
+          _isOpen = false;
+        });
+      }
+    } else {
+      this._overlayEntry = this._createOverlayEntry();
+      Overlay.of(context).insert(this._overlayEntry!);
+      if (mounted) setState(() => _isOpen = true);
+      _animationController.forward();
+    }
+  }
+}

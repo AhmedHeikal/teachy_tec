@@ -706,11 +706,6 @@ class MediaPickerWidgetState
             .getString(UIRouter.getCurrentContext())
             .capitalizeFirstLetter(),
       );
-      // 'Mr. Tomato requires permissions for camera and microphone to capture photos and videos');
-
-      // tomatoAskForPhotoAndVideoCapturingPermissionModal(
-      //     isCamera: true);
-
       if (acceptedToGivePermission) {
         var permissionAccepted = await requestPhotoAndVideoPermissions();
         if (!permissionAccepted) return;
@@ -1494,7 +1489,8 @@ Future<bool> requestPhotoAndVideoPermissions() async {
     // openAppSettings();
     return false;
   } else if (statuses.values
-      .any((element) => !(element.isLimited || element.isGranted)))
+      .any((element) => !(element.isLimited || element.isGranted))) {
     return false;
+  }
   return true;
 }

@@ -24,12 +24,10 @@ class CustomQuestionComponent extends StatelessWidget {
       child: Column(
         children: [
           Consumer<CustomQuestionComponentVM>(
-            builder: (context, model, _) => model.questions.isEmpty
-                ? Container()
-                : const SizedBox(height: kBottomPadding),
-          ),
-          Consumer<CustomQuestionComponentVM>(
             builder: (context, model, _) => DefaultContainer(
+              margin: EdgeInsets.only(
+                top: model.questions.isEmpty ? 0 : kBottomPadding,
+              ),
               color: AppColors.grey50,
               child: ListView.separated(
                 padding: EdgeInsets.zero,

@@ -1,5 +1,5 @@
 class AutoCompleteViewModel {
-  int? id;
+  String? id;
   String name;
   String? image;
 

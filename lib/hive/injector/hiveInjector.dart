@@ -9,7 +9,11 @@ import 'package:teachy_tec/models/ActivityStudents.dart';
 import 'package:teachy_tec/models/AppConfiguration.dart';
 import 'package:teachy_tec/models/Class.dart';
 import 'package:teachy_tec/models/CustomQuestionOptionModel.dart';
+import 'package:teachy_tec/models/GradesSchema.dart';
+import 'package:teachy_tec/models/Section.dart';
+import 'package:teachy_tec/models/Sector.dart';
 import 'package:teachy_tec/models/Student.dart';
+import 'package:teachy_tec/models/SuperSection.dart';
 import 'package:teachy_tec/models/Task.dart';
 import 'package:teachy_tec/models/TaskViewModel.dart';
 import 'package:teachy_tec/screens/networking/AppNetworkProvider.dart';
@@ -62,5 +66,9 @@ class HiveInjector {
     Hive.registerAdapter(TaskTypeAdapter());
     Hive.registerAdapter(ActivityStudentsAdapter());
     Hive.registerAdapter(CustomQuestionOptionModelAdapter());
+    Hive.registerAdapter(SectionAdapter());
+    Hive.registerAdapter(SectorAdapter());
+    Hive.registerAdapter(GradesSchemaAdapter());
+    Hive.registerAdapter(SuperSectionAdapter());
   }
 }
