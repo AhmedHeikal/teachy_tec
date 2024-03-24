@@ -19,7 +19,7 @@ class SuperSectionAdapter extends TypeAdapter<SuperSection> {
     return SuperSection(
       id: fields[0] as String,
       name: fields[1] as String,
-      colorHex: fields[2] as String?,
+      colorHex: fields[2] as int?,
       sections: (fields[3] as List).cast<Section>(),
     );
   }
@@ -56,7 +56,7 @@ class SuperSectionAdapter extends TypeAdapter<SuperSection> {
 SuperSection _$SuperSectionFromJson(Map<String, dynamic> json) => SuperSection(
       id: json['id'] as String,
       name: json['name'] as String,
-      colorHex: json['colorHex'] as String?,
+      colorHex: json['colorHex'] as int?,
       sections: (json['sections'] as List<dynamic>)
           .map((e) => Section.fromJson(e as Map<String, dynamic>))
           .toList(),

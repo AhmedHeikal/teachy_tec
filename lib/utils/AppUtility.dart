@@ -547,6 +547,10 @@ class AppUtility {
     }
   }
 
+  static num doubleWithoutDecimalToInt(num val) {
+    return val % 1 == 0 ? val.toInt() : val;
+  }
+
   static String getNumberRank(int number) {
     if (number == 1) {
       return '1st';

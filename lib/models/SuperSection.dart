@@ -12,7 +12,7 @@ class SuperSection {
   @HiveField(1)
   String name;
   @HiveField(2)
-  String? colorHex;
+  int? colorHex;
   @HiveField(3)
   List<Section> sections;
 

@@ -445,7 +445,8 @@ class RoundedInputField extends StatefulWidget {
   // To Add % or $ or other sufix after <Numbers Only>
   String? suffixTextForNumericalValues;
   TextEditingController? controller;
-  int? validateLargerThan;
+  num? validateLargerThan;
+  num? validateSmallerThan;
   FocusNode? focusNode;
   VoidCallback? onCancelSearchFunction;
   VoidCallback? onFocusCallBack;
@@ -454,6 +455,7 @@ class RoundedInputField extends StatefulWidget {
   String? errorHintText;
   final ValueChanged<String> onChanged;
   List<String>? classesNames;
+  // bool? allowMaximumValuesInNumberedFieldsButShowErrorInsteadOfPreventing;
 
   /// It must take two values only, [nim, max]
   List<int>? validateBetween;
@@ -464,12 +466,14 @@ class RoundedInputField extends StatefulWidget {
     required this.hintText,
     this.hintTextStyle,
     this.addBorder = true,
+    // this.allowMaximumValuesInNumberedFieldsButShowErrorInsteadOfPreventing,
     this.height = 44,
     this.onFocusCallBack,
     this.textStyle,
     this.isReadOnly = false,
     this.textInputAction,
     this.validateLargerThan,
+    this.validateSmallerThan,
     this.errorHintText,
     this.text,
     this.prefixIcon,
@@ -506,6 +510,7 @@ class RoundedInputField extends StatefulWidget {
     this.isReadOnly = false,
     this.textInputAction,
     this.validateLargerThan,
+    this.validateSmallerThan,
     this.errorHintText,
     this.text,
     this.prefixIcon,
@@ -613,6 +618,8 @@ class _RoundedInputFieldState extends State<RoundedInputField>
           isActive = focusNode.hasFocus;
           if (isActive) {
             if (widget.onFocusCallBack != null) widget.onFocusCallBack!();
+            _controller.selection = TextSelection.fromPosition(
+                TextPosition(offset: _controller.text.length));
           }
         },
       );
@@ -624,11 +631,13 @@ class _RoundedInputFieldState extends State<RoundedInputField>
       required List<bool Function(String)> checkConditionFunctions}) {
     bool checkedCondition = false;
 
-    for (var func in checkConditionFunctions) {
-      if (func(input)) {
-        checkedCondition = true;
-      }
-    }
+    checkedCondition = checkConditionFunctions.any((func) => func(input));
+
+    // for (var func in checkConditionFunctions) {
+    //   if (func(input)) {
+    //     checkedCondition = true;
+    //   }
+    // }
 
     if (checkedCondition) {
       // Try catch is required because the moment of transition; it rebuilds the widget
@@ -674,6 +683,18 @@ class _RoundedInputFieldState extends State<RoundedInputField>
 
     if (widget.text != oldWidget.text) {
       _controller = TextEditingController(text: widget.text);
+      _controller.selection = TextSelection.fromPosition(
+          TextPosition(offset: _controller.text.length));
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (validateFunction != null) validateFunction!(_controller.text);
+      });
+    } else if (oldWidget.validateSmallerThan != widget.validateSmallerThan ||
+        oldWidget.validateLargerThan != widget.validateLargerThan ||
+        widget.max != oldWidget.max ||
+        widget.min != oldWidget.min) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (validateFunction != null) validateFunction!(_controller.text);
+      });
     }
   }
 
@@ -718,7 +739,11 @@ class _RoundedInputFieldState extends State<RoundedInputField>
     if (widget.isEmailValidation ?? false) {
       validationConditionsList.add((String input) {
         var check = !isEmail(input);
-        if (check && errorHintText == null) {
+        if (check &&
+            (errorHintText?.toLowerCase() !=
+                AppLocale.emailFormatIsIncorrect
+                    .getString(context)
+                    .toLowerCase())) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
             if (mounted) {
               setState(() {
@@ -738,7 +763,11 @@ class _RoundedInputFieldState extends State<RoundedInputField>
     if (widget.isEmptyValidation ?? false) {
       validationConditionsList.add((String input) {
         var check = isFieldEmpty(input);
-        if (check && errorHintText == null) {
+        if (check &&
+            (errorHintText?.toLowerCase() !=
+                AppLocale.pleaseFillInTheEmptyField
+                    .getString(context)
+                    .toLowerCase())) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
             if (mounted) {
               setState(() {
@@ -758,7 +787,11 @@ class _RoundedInputFieldState extends State<RoundedInputField>
     if (widget.inputFieldType == InputFieldTypeEnum.Password) {
       validationConditionsList.add((String input) {
         var check = !isPasswordCorrect(input);
-        if (check && errorHintText == null) {
+        if (check &&
+            (errorHintText?.toLowerCase() !=
+                AppLocale.passwordShouldBeAtLeast8Characters
+                    .getString(context)
+                    .toLowerCase())) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
             if (mounted) {
               setState(() {
@@ -779,7 +812,11 @@ class _RoundedInputFieldState extends State<RoundedInputField>
     if (widget.inputFieldType == InputFieldTypeEnum.ClassField) {
       validationConditionsList.add((String input) {
         var check = isClassNameExists(input, widget.classesNames ?? []);
-        if (check && errorHintText == null) {
+        if (check &&
+            (errorHintText?.toLowerCase() !=
+                AppLocale.classNamesShouldBeUnique
+                    .getString(context)
+                    .toLowerCase())) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
             if (mounted) {
               setState(() {
@@ -799,7 +836,10 @@ class _RoundedInputFieldState extends State<RoundedInputField>
     if (widget.validateLargerThan != null) {
       validationConditionsList.add((String input) {
         var check = isLargerThan(input, widget.validateLargerThan!);
-        if (check && errorHintText == null) {
+        if (check &&
+            (errorHintText?.toLowerCase() !=
+                "${AppLocale.numbersMustBeLagrerThan.getString(context)} ${widget.validateLargerThan}"
+                    .toLowerCase())) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
             if (mounted) {
               setState(() {
@@ -816,11 +856,37 @@ class _RoundedInputFieldState extends State<RoundedInputField>
       });
     }
 
+    if (widget.validateSmallerThan != null) {
+      validationConditionsList.add((String input) {
+        var check = isSmallerThan(input, widget.validateSmallerThan!);
+        if (check &&
+            (errorHintText?.toLowerCase() !=
+                "${AppLocale.numbersMustBeSmallerThan.getString(context)} ${widget.validateSmallerThan}"
+                    .toLowerCase())) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (mounted) {
+              setState(() {
+                errorHintText =
+                    ("${AppLocale.numbersMustBeSmallerThan.getString(context)} ${widget.validateSmallerThan}")
+                        .capitalizeFirstLetter();
+                // 'Numbers must be larger than ${widget.validateLargerThan}';
+              });
+            }
+          });
+        }
+
+        return check;
+      });
+    }
+
     if (widget.validateBetween != null) {
       validationConditionsList.add((String input) {
         var check = isBetween(
             input, widget.validateBetween![0], widget.validateBetween![1]);
-        if (check && errorHintText == null) {
+        if (check &&
+            (errorHintText?.toLowerCase() !=
+                "${AppLocale.numbersMustBeInaRangeBetween.getString(context)} ${widget.validateBetween![0]}-${widget.validateBetween![0]}"
+                    .toLowerCase())) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
             if (mounted) {
               setState(() {
@@ -1049,6 +1115,7 @@ class _RoundedInputFieldState extends State<RoundedInputField>
                     children: [
                       const SizedBox(height: 1),
                       Row(
+                        // crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           SvgPicture.asset(
                             'assets/svg/warning.svg',
@@ -1120,6 +1187,8 @@ class _SearchTextFieldState extends State<SearchTextField>
         isActive = focusNode.hasFocus;
         if (isActive) {
           if (widget.onFocusCallBack != null) widget.onFocusCallBack!();
+          _controller.selection = TextSelection.fromPosition(
+              TextPosition(offset: _controller.text.length));
         }
       });
     }
@@ -2699,8 +2768,11 @@ mixin InputValidationMixin {
   //         (element) => element.toLowerCase() == input.toLowerCase()) ==
   //     null;
 
-  bool isLargerThan(String input, int value) =>
-      (int.tryParse(input) ?? 0) < value;
+  bool isLargerThan(String input, num value) =>
+      (num.tryParse(input) ?? 0) <= value;
+
+  bool isSmallerThan(String input, num value) =>
+      (num.tryParse(input) ?? 0) > value;
   bool isBetween(String input, int min, int max) =>
       input.isNotEmpty &&
       ((int.tryParse(input) ?? 0) < min || (int.tryParse(input) ?? min) > max);

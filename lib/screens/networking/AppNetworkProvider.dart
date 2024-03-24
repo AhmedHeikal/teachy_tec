@@ -12,9 +12,11 @@ import 'package:teachy_tec/models/ActivityStudents.dart';
 import 'package:teachy_tec/models/AppConfiguration.dart';
 import 'package:teachy_tec/models/Class.dart';
 import 'package:teachy_tec/models/CustomQuestionOptionModel.dart';
+import 'package:teachy_tec/models/Schema.dart';
 import 'package:teachy_tec/models/Student.dart';
 import 'package:teachy_tec/models/Task.dart';
 import 'package:teachy_tec/models/TaskViewModel.dart';
+import 'package:teachy_tec/models/classSchema.dart';
 import 'package:teachy_tec/utils/AppConstants.dart';
 import 'package:teachy_tec/utils/AppEnums.dart';
 import 'package:teachy_tec/utils/serviceLocator.dart';
@@ -578,15 +580,6 @@ class AppNetworkProvider {
       var activitiesList = ((activitiesData as List)).map((e) {
         return Activity.fromJson((e as Map<String, dynamic>));
       }).toList();
-      // if (activitiesData == null) {
-      //   return null;
-      // }
-
-      // activities = ((currentActivities)).map((e) {
-      //   return Activity.fromJson((e as Map<String, dynamic>));
-      // }).toList();
-      // await ActivityController()
-      //     .deleteClassDetailsInActivities(classId: classId);
 
       WriteBatch batch = FirebaseFirestore.instance.batch();
 
@@ -1102,6 +1095,57 @@ class AppNetworkProvider {
     );
   }
 
+  Future<List<Schema>?> getSchemasList() async {
+    try {
+      var schemasJson = await serviceLocator<FirebaseFirestore>()
+          .collection(FirestoreConstants.schema)
+          .doc(serviceLocator<FirebaseAuth>().currentUser!.uid)
+          .collection(FirestoreConstants.schemas)
+          .get();
+      // var schemasData = schemasJson.docs;
+
+      var currentScehmas = schemasJson.docs
+          .cast()
+          .map((e) => Map<String, dynamic>.from({...e.data()}))
+          .toList();
+      List<Schema> schemas = [];
+
+      // List<String>.from(teacherClassesSnapshot['classes']);
+// List<Activity>.from(currentItems as List)
+      schemas = ((currentScehmas)).map((e) {
+        return Schema.fromJson(e);
+      }).toList();
+
+      return schemas;
+    } catch (e) {}
+    return null;
+    // if (schemasData == null) {
+    //   return null;
+    // }
+
+    // var schemasMap = schemasData[FirestoreConstants.schemas];
+    // if (schemasMap == null || schemasMap is! Map) {
+    //   // Handle invalid or missing data structure
+    //   return null;
+    // }
+
+    // Parse the data into the expected type
+    // Map<String, List<Task>> parsedSchemas = {};
+    // schemasMap.forEach((key, value) {
+    //   if (value is List && value.every((element) => element is Map)) {
+    //     parsedSchemas[key] =
+    //         value.map<Task>((json) => Task.fromJson(json)).toList();
+    //   }
+    // });
+
+    // return ActivityStudents(
+    //   id: activityId,
+    //   classId: classId,
+    //   timestamp: timestamp,
+    //   studentTasks: parsedActivities,
+    // );
+  }
+
   Future<List<ActivityStudents>?> getAllActivityStudentsForTeacher() async {
     // Create a list to store document snapshots
     // List<DocumentSnapshot> documentSnapshots = [];
@@ -1385,5 +1429,248 @@ class AppNetworkProvider {
 
     // Commit the batch
     await batch.commit();
+  }
+
+  Future<Schema?> addNewSchema(Schema schema) async {
+    DocumentReference schemaDocRef = FirebaseFirestore.instance
+        .collection(FirestoreConstants.schema)
+        .doc(serviceLocator<FirebaseAuth>().currentUser!.uid)
+        .collection(FirestoreConstants.schemas)
+        .doc();
+    schema.id = schemaDocRef.id;
+    var schemaJson = schema.toJson();
+    for (var element in schema.classes) {
+      element.schemaId = schemaDocRef.id;
+    }
+    // var questionEvaluations = [];
+    // var studentsData = {};
+
+    // // TODO change for newTask details
+    // var tasks = customQuestionVM.submitForms();
+
+    // // var questionEvaluations = [];
+    // var tasksIndex = 0;
+    // for (var task in tasks) {
+    //   Map<String, dynamic> taskData = {
+    //     FirestoreConstants.id: task.id,
+    //     FirestoreConstants.task: task.task,
+    //     FirestoreConstants.taskType: task.taskType?.jsonValue,
+    //     // Add other task data here if needed
+    //   };
+
+    //   // Upload media file associated with option, if any
+    //   if (task.imagePathLocally != null) {
+    //     String optionMediaUrl = await serviceLocator<AppNetworkProvider>()
+    //         .uploadActivityFile(activityDocRef.id, 'tasks${task.id}$tasksIndex',
+    //             File(task.imagePathLocally!));
+    //     taskData[FirestoreConstants.downloadUrl] = optionMediaUrl;
+    //     task.downloadUrl = optionMediaUrl;
+    //   } else if (isInDuplicateMood && task.downloadUrl != null) {
+    //     String optionMediaUrl = await serviceLocator<AppNetworkProvider>()
+    //         .uploadActivityFileWithURL(activityDocRef.id,
+    //             'tasks${task.id}$tasksIndex', task.downloadUrl!);
+    //     taskData[FirestoreConstants.downloadUrl] = optionMediaUrl;
+    //     task.downloadUrl = optionMediaUrl;
+    //   }
+
+    //   // Store options data
+    //   var optionsData = [];
+    //   var optionIndex = 0;
+    //   for (CustomQuestionOptionModel option in task.options ?? []) {
+    //     var optionData = {
+    //       FirestoreConstants.name: option.name,
+    //       FirestoreConstants.isCorrect: option.isCorrect,
+    //       FirestoreConstants.id: option.id,
+    //       // Add other option data here if needed
+    //     };
+
+    //     // Upload media file associated with option, if any
+    //     if (option.filePathLocally != null) {
+    //       String optionMediaUrl = await serviceLocator<AppNetworkProvider>()
+    //           .uploadActivityFile(
+    //               activityDocRef.id,
+    //               'options${task.id}$optionIndex',
+    //               File(option.filePathLocally!));
+    //       optionData[FirestoreConstants.downloadUrl] = optionMediaUrl;
+    //       option.downloadUrl = optionMediaUrl;
+    //     } else if (isInDuplicateMood && option.downloadUrl != null) {
+    //       String optionMediaUrl = await serviceLocator<AppNetworkProvider>()
+    //           .uploadActivityFileWithURL(activityDocRef.id,
+    //               'options${task.id}$optionIndex', option.downloadUrl!);
+    //       optionData[FirestoreConstants.downloadUrl] = optionMediaUrl;
+    //       option.downloadUrl = optionMediaUrl;
+    //     }
+
+    //     optionsData.add(optionData);
+    //     optionIndex++;
+    //   }
+
+    //   taskData[FirestoreConstants.options] = optionsData;
+    //   questionEvaluations.add(taskData);
+    //   tasksIndex++;
+    // }
+
+    // var newActivity = {
+    //   FirestoreConstants.id: activityDocRef.id,
+    //   FirestoreConstants.Kclass: selectedClass?.toJson(),
+    //   FirestoreConstants.timestamp:
+    //       DateTime.fromMillisecondsSinceEpoch(pageDate).toString(),
+    //   FirestoreConstants.time: selectedTimeInUTC,
+    //   FirestoreConstants.tasks: questionEvaluations,
+    // };
+
+    // List<Map<String, dynamic>> studentsQuestionEvaluations = [];
+    // // TODO change for newTask details
+    // for (var task in tasks) {
+    //   studentsQuestionEvaluations.add({
+    //     FirestoreConstants.id: task.id,
+    //     FirestoreConstants.task: task.task,
+    //     FirestoreConstants.taskType: task.taskType?.jsonValue,
+    //     FirestoreConstants.selectedOption: '',
+    //     FirestoreConstants.gradeValue: '',
+    //     FirestoreConstants.emojId: '',
+    //     FirestoreConstants.comment: '',
+    //   });
+    // }
+
+    // var studentsInClass = await serviceLocator<AppNetworkProvider>()
+    //     .getStudentsInClass(classId: selectedClass?.id ?? '');
+
+    try {
+      WriteBatch batch = FirebaseFirestore.instance.batch();
+
+      // Step 2: Add the new activity to the 'activity' collection
+      batch.set(schemaDocRef, schemaJson);
+
+      // // Step 3: Add the activity to the 'classActivities' collection
+      // batch.set(
+      //   FirebaseFirestore.instance
+      //       .collection(FirestoreConstants.classActivities)
+      //       .doc(selectedClass!.id),
+      //   {
+      //     FirestoreConstants.activities: FieldValue.arrayUnion([newActivity]),
+      //   },
+      //   SetOptions(merge: true), // Add this line
+      // );
+
+      // Step 3: Add the Schema to the 'Schema Class' collection
+
+      // Iterate through each class schema
+      for (var schemaData in schema.classes) {
+        String classId = schemaData.id!;
+        String schemaId = schemaData.schemaId;
+
+        DocumentReference classRef = FirebaseFirestore.instance
+            .collection(FirestoreConstants.classSchemas)
+            .doc(classId);
+        DocumentReference schemaRef =
+            classRef.collection(FirestoreConstants.schemas).doc(schemaId);
+
+        try {
+          await FirebaseFirestore.instance.runTransaction((transaction) async {
+            DocumentSnapshot classSnapshot = await transaction.get(classRef);
+
+            if (classSnapshot.exists) {
+              // Class document exists, add schema to classSchemas subcollection
+              batch.set(schemaRef, schemaData.toJson());
+            } else {
+              // // Class document doesn't exist, create class document and add schema
+              // batch.set(classRef, {
+              //   'id': classId, /* other class data */
+              // });
+              batch.set(schemaRef, schemaData.toJson());
+            }
+          });
+        } catch (e) {
+          // Handle transaction error
+          print('Error saving class schema: $e');
+        }
+      }
+
+      // batch.set(
+      //   FirebaseFirestore.instance
+      //       .collection(FirestoreConstants.classSchemas)
+      //       .doc(schemaDocRef.id),
+      //   {
+      //     FirestoreConstants.classes: FieldValue.arrayUnion([newActivity]),
+      //   },
+      //   SetOptions(merge: true), // Add this line
+      // );
+
+      // // Get a reference to the Firestore document
+      // DocumentReference teacherActivitiesDocRef = FirebaseFirestore.instance
+      //     .collection(FirestoreConstants.teacherActivities)
+      //     .doc(serviceLocator<FirebaseAuth>().currentUser!.uid);
+
+      // // Create a reference to the new collection inside the document
+      // // CollectionReference newCollection =
+      // //     teacherActivitiesDocRef.collection(((pageDate) ~/ 1000).toString());
+      // CollectionReference newCollection =
+      //     teacherActivitiesDocRef.collection(((pageDate)).toString());
+
+      // // Add documents to the new collection
+      // batch.set(newCollection.doc(activityDocRef.id),
+      //     {activityDocRef.id: newActivity});
+
+      // // Step 4: Add student-specific data to 'activityStudents' collection
+      // for (Student student in studentsInClass) {
+      //   studentsData[student.id!] = studentsQuestionEvaluations;
+      // }
+
+      // var activityStudentsDocRef = FirebaseFirestore.instance
+      //     .collection(FirestoreConstants.activityStudents)
+      //     .doc(activityDocRef.id);
+
+      // batch.set(
+      //   activityStudentsDocRef,
+      //   {
+      //     FirestoreConstants.activityId: activityDocRef.id,
+      //     FirestoreConstants.students: FieldValue.arrayUnion([studentsData]),
+      //     FirestoreConstants.classId: selectedClass?.id,
+      //     FirestoreConstants.timestamp: pageDate,
+      //   },
+      //   SetOptions(merge: true),
+      // );
+      // Commit the batched write
+      await batch.commit().then((_) async {
+        debugPrint('Batch write successful');
+
+        // var activity = Activity(
+        //   id: activityDocRef.id,
+        //   tasks: tasks,
+        //   students: studentsInClass,
+        //   currentClass: selectedClass,
+        //   timestamp: pageDate,
+        //   time: selectedTimeInUTC,
+        // );
+
+        // ActivityController activityController = ActivityController();
+        // await activityController.updateSingleActivty(singleActivity: activity);
+        // if (onAddNewActivity != null) onAddNewActivity!(activity);
+        // UIRouter.pushReplacementScreen(
+        //   DayTable(model: DayTableVM(currentActivity: activity)),
+        //   pageName: AppAnalyticsConstants.DayTableScreen,
+        // );
+      }).catchError((error) {
+        debugPrint('Error during batch write: $error');
+        FirebaseCrashlytics.instance.recordError(error, null,
+            fatal: false,
+            reason:
+                "Heikal - addNewActivityToTeacher failed in ActivityFormVM \ncurrentUID ${serviceLocator<FirebaseAuth>().currentUser?.uid} ");
+      });
+
+      debugPrint(
+          'New activity and related data added to Firestore successfully');
+    } catch (e) {
+      debugPrint('Error occurred while adding new activity and data: $e');
+
+      FirebaseCrashlytics.instance.recordError(e, null,
+          fatal: false,
+          reason:
+              "Heikal - addNewActivityToTeacher failed in ActivityFormVM \ncurrentUID ${serviceLocator<FirebaseAuth>().currentUser?.uid} ");
+    } finally {
+      EasyLoading.dismiss(animation: true);
+    }
+    return null;
   }
 }

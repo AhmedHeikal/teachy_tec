@@ -12,6 +12,8 @@ import 'package:teachy_tec/screens/Classes/ClassesScreen.dart';
 import 'package:teachy_tec/screens/Classes/ClassesScreenVM.dart';
 import 'package:teachy_tec/screens/Grades/GradesForm.dart';
 import 'package:teachy_tec/screens/Grades/GradesFormVM.dart';
+import 'package:teachy_tec/screens/Grades/GradesScreen.dart';
+import 'package:teachy_tec/screens/Grades/GradesScreenVM.dart';
 import 'package:teachy_tec/screens/HomeScreenVM.dart';
 import 'package:teachy_tec/screens/Students/StudentsScreen.dart';
 import 'package:teachy_tec/screens/Students/StudentsScreenVM.dart';
@@ -149,10 +151,16 @@ class HomeScreen extends StatelessWidget {
                                 const SizedBox(width: kHelpingPadding),
                                 Expanded(
                                   child: HomeScreenDetailsButton(
-                                    imageVectorString: 'classes',
+                                    imageVectorString: 'grades',
                                     title: 'Grades'.capitalizeFirstLetter(),
                                     onTapCallBack: () => UIRouter.pushScreen(
-                                      GradesForm(model: GradesFormVM()),
+                                      GradesScreen(
+                                        key: UniqueKey(),
+                                        model: GradesScreenVM(),
+                                      ),
+                                      // GradesForm(
+                                      //     key: UniqueKey(),
+                                      //     model: GradesFormVM()),
                                       showNavigator: true,
                                       pageName:
                                           AppAnalyticsConstants.DashboardScreen,

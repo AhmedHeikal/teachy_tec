@@ -6,7 +6,6 @@ import 'package:teachy_tec/localization/Applocalization.dart';
 import 'package:teachy_tec/models/AutoCompleteViewModel.dart';
 import 'package:teachy_tec/screens/Grades/GradesFormVM.dart';
 import 'package:teachy_tec/screens/Grades/SectionComponent.dart';
-import 'package:teachy_tec/screens/Grades/SectionComponentVM.dart';
 import 'package:teachy_tec/styles/AppColors.dart';
 import 'package:teachy_tec/styles/TextStyles.dart';
 import 'package:teachy_tec/utils/AppConstants.dart';
@@ -22,6 +21,7 @@ import 'package:teachy_tec/widgets/defaultContainer.dart';
 class GradesForm extends StatelessWidget {
   const GradesForm({required this.model, super.key});
   final GradesFormVM model;
+
   @override
   Widget build(BuildContext context) {
     // var keyboardHeight = MediaQuery.viewInsetsOf(context).bottom;
@@ -38,8 +38,11 @@ class GradesForm extends StatelessWidget {
           ),
           bottomNavigationBar: AppBottomNavCustomWidget(
             child: BottomPageButton(
-              onTap: () {},
-              text: AppLocale.create.getString(context).capitalizeFirstLetter(),
+              onTap: model.onSubmittingFirstPage,
+              //  () => UIRouter.pushScreen(
+              //     GradesFormSecondPage(model: model),
+              //     pageName: AppAnalyticsConstants.GradesFormSecondScreen),
+              text: AppLocale.next.getString(context).capitalizeFirstLetter(),
             ),
           ),
           body: SafeArea(
@@ -66,8 +69,9 @@ class GradesForm extends StatelessWidget {
                             RoundedInputField(
                               hintText: 'ex. Primary Class'.capitalizeAllWord(),
                               text: '',
+                              isEmptyValidation: true,
                               textInputAction: TextInputAction.next,
-                              onChanged: (input) {},
+                              onChanged: (input) => model.name = input,
                             ),
                             const SizedBox(height: kMainPadding),
                             InputTitle(
@@ -86,6 +90,8 @@ class GradesForm extends StatelessWidget {
                                           CrossAxisAlignment.start,
                                       children: [
                                         AutocompleteTextFieldComponent(
+                                          key: model.classesGlobalKey,
+                                          isEmptyValidation: true,
                                           onSelectItem:
                                               (AutoCompleteViewModel name) {
                                             model.onSelectClass(name.name);
@@ -146,16 +152,21 @@ class GradesForm extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: kBottomPadding),
+                      const Text('Sections',
+                          style: TextStyles.InterBlackS16W600),
+                      const SizedBox(height: kBottomPadding),
                       Consumer<GradesFormVM>(
                         builder: (context, model, _) => ListView.separated(
                             physics: const NeverScrollableScrollPhysics(),
                             shrinkWrap: true,
                             itemBuilder: (context, index) {
                               var currentItem = model.sections[index];
-                              return DefaultContainer(
-                                padding: const EdgeInsets.all(kInternalPadding),
-                                child: SectionComponent(
-                                    key: UniqueKey(), model: currentItem),
+                              return SectionComponent(
+                                key: UniqueKey(),
+                                model: currentItem,
+                                onDelete: index == 0
+                                    ? null
+                                    : () => model.onDeleteSection(index),
                               );
                             },
                             separatorBuilder: (context, index) {
@@ -168,18 +179,18 @@ class GradesForm extends StatelessWidget {
                         child: Padding(
                           padding: const EdgeInsets.symmetric(
                             horizontal: kBottomPadding,
-                            vertical: 10,
+                            vertical: kMainPadding,
                           ),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.end,
                             children: [
-                              Text('Add Section'.capitalizeFirstLetter(),
-                                  style: TextStyles.InterYellow700S16W600),
-                              const SizedBox(width: kInternalPadding),
                               SvgPicture.asset(
                                 'assets/svg/PlusSVG.svg',
                                 color: AppColors.primary700,
                               ),
+                              const SizedBox(width: kInternalPadding),
+                              Text('Add Section'.capitalizeFirstLetter(),
+                                  style: TextStyles.InterYellow700S16W600),
                             ],
                           ),
                         ),

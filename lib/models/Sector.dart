@@ -11,15 +11,16 @@ class Sector {
   @HiveField(1)
   String name;
   @HiveField(2)
-  double totalGrade;
+  num realWeight;
   @HiveField(3)
-  double? realWeight;
+  num percentageWeight;
 
-  Sector(
-      {required this.id,
-      required this.name,
-      required this.totalGrade,
-      required this.realWeight});
+  Sector({
+    required this.id,
+    required this.name,
+    required this.realWeight,
+    required this.percentageWeight,
+  });
 
   factory Sector.fromJson(Map<String, dynamic> srcJson) =>
       _$SectorFromJson(srcJson);

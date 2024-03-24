@@ -19,6 +19,7 @@ const EN = {
   "pleaseProvideYourLastName": "Please provide your Last Name",
   "numbersMustBeInaRangeBetween": "Numbers must be in a range between",
   "numbersMustBeLagrerThan": "Numbers must be larger than",
+  "numbersMustBeSmallerThan": "Numbers must be Smaller than or equal to",
   "passwordShouldBeAtLeast8Characters":
       "Password should be at least 8 characters",
   "pleaseFillInTheState": "Please fill in the State",
@@ -277,4 +278,33 @@ const EN = {
   "youCurrentlyHaveOlderVersion":
       "You currently have an older version of TeachyTec. Update to new TeachyTec now!",
   "isHere": "Is Here!",
+  "totalGradeCantBeZero":
+      "When you enter or leave the grade as zero, sectors will be disabled until you modify the grade.",
+  "sectionGradeCantBeZero": "Sector Grade Can't be zero",
+  "sectorGradeCantBeZero": "Sector Grade Can't be zero",
+  "superSectionIsLikeBigUmbrella":
+      "A 'Super Section' is like a big umbrella that brings together smaller sections. Let's say your school grades are based on different types of work like quizzes, midterms, and other activities. Instead of seeing them separately, you can group them under one big category, like 'Coursework.' This way, the total grade for 'Coursework' is automatically calculated based on all the smaller sections it includes.",
+  "thereAreNoMoreGradesLeftFromThisSection":
+      "There are no more grades left from this section, please adjust the sectors or modify the total grade.",
+  "yourTotalGradesBelow100_input_p1":
+      "Your total grades are below 100. You're missing",
+  "yourTotalGradesBelow100_input_p2":
+      "marks.\n\nPlease add new section or adjust the current section grades to be exactly 100.",
+  "yourTotalGradesExceed100":
+      "Your total grades exceed 100. Adjust the current section grades to exactly 100.",
+  "yourSectionTotalGradesBelowTotalGrade_input_p1":
+      "Your section total grades are below",
+  "yourSectionTotalGradesBelowTotalGrade_input_p2": ". You're missing",
+  "yourSectionTotalGradesBelowTotalGrade_input_p3":
+      "marks.\n\nPlease add new sector or adjust the current sectors grades to be exactly",
+  "allSectionsHaveBeenChosenDeleteThisSupersection":
+      "All sections have been chosen. Delete this supersection or adjust other supersections to include it.",
+  "allSectionsHaveBeenChosenAdjustOtherSupersectionToCreateNewOne":
+      "All sections have been chosen. Adjust the other supersections to be able to create new one.",
+  "allgradeAllocationsAreCompleteNoAdditionalSectionsAreRequired":
+      "All grade allocations are complete. No additional sections are required. To add a new section, adjust the marks of existing sections accordingly.",
+  "sectionNamesShouldBeDifferent": "Section names should be different.",
+  "supersectionNamesShouldBeDifferent":
+      "Supersection names should be different.",
+  "sectorNamesShouldBeDifferent": "Sector names should be different.",
 };

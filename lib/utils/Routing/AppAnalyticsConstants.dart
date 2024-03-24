@@ -8,6 +8,9 @@ class AppAnalyticsConstants {
   static const String DayTableScreen = "DayTableScreen";
   static const String StudentsScreen = "StudentsScreen";
   static const String ActivityScreen = "ActivityScreen";
+  static const String GradesForm = "GradesForm";
+  static const String GradesFormSecondScreen = "GradesFormSecondScreen";
+  static const String SchemaTableScreen = "SchemaTableScreen";
   static const String ActivityForm = "ActivityForm";
   static const String ClassFormScreen = "ClassFormScreen";
   static const String StudentDetailsScreen = "StudentDetailsScreen";

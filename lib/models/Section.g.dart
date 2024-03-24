@@ -19,8 +19,8 @@ class SectionAdapter extends TypeAdapter<Section> {
     return Section(
       id: fields[0] as String,
       name: fields[1] as String,
-      totalGrade: fields[2] as double,
-      colorHex: fields[3] as String?,
+      totalGrade: fields[2] as num,
+      colorHex: fields[3] as int?,
       sectors: (fields[4] as List?)?.cast<Sector>(),
     );
   }
@@ -59,8 +59,8 @@ class SectionAdapter extends TypeAdapter<Section> {
 Section _$SectionFromJson(Map<String, dynamic> json) => Section(
       id: json['id'] as String,
       name: json['name'] as String,
-      totalGrade: (json['totalGrade'] as num).toDouble(),
-      colorHex: json['colorHex'] as String?,
+      totalGrade: json['totalGrade'] as num,
+      colorHex: json['colorHex'] as int?,
       sectors: (json['sectors'] as List<dynamic>?)
           ?.map((e) => Sector.fromJson(e as Map<String, dynamic>))
           .toList(),

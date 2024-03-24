@@ -116,7 +116,7 @@ class _AppNotificationState extends State<_AppNotification>
                 border: Border.all(
                     color: widget.notifcationDetails.color ==
                             NotificationColors.Successful
-                        ? AppColors.primary300
+                        ? AppColors.green700
                         : widget.notifcationDetails.color ==
                                 NotificationColors.Requirement
                             ? AppColors.grey200
@@ -358,6 +358,153 @@ class AppNotifcationsItems {
         icon: NotificationIcons.Require,
         color: NotificationColors.Requirement,
       );
+  static AppNotifcation totalGradeCantBeZero(BuildContext context) =>
+      AppNotifcation(
+        text: AppLocale.totalGradeCantBeZero
+            .getString(context)
+            .capitalizeFirstLetter(),
+
+        // text: 'Should be two options at least',
+        icon: NotificationIcons.Require,
+        color: NotificationColors.Requirement,
+      );
+  static AppNotifcation sectorGradeCantBeZero(BuildContext context) =>
+      AppNotifcation(
+        text: AppLocale.sectorGradeCantBeZero
+            .getString(context)
+            .capitalizeFirstLetter(),
+
+        // text: 'Should be two options at least',
+        icon: NotificationIcons.Require,
+        color: NotificationColors.Requirement,
+      );
+  static AppNotifcation sectionGradeCantBeZero(BuildContext context) =>
+      AppNotifcation(
+        text: AppLocale.sectionGradeCantBeZero
+            .getString(context)
+            .capitalizeFirstLetter(),
+
+        // text: 'Should be two options at least',
+        icon: NotificationIcons.Require,
+        color: NotificationColors.Requirement,
+      );
+
+  static AppNotifcation sectionNamesShouldBeDifferent(BuildContext context) =>
+      AppNotifcation(
+        text: AppLocale.sectionNamesShouldBeDifferent
+            .getString(context)
+            .capitalizeFirstLetter(),
+
+        // text: 'Should be two options at least',
+        icon: NotificationIcons.Require,
+        color: NotificationColors.Requirement,
+      );
+
+  static AppNotifcation supersectionNamesShouldBeDifferent(
+          BuildContext context) =>
+      AppNotifcation(
+        text: AppLocale.supersectionNamesShouldBeDifferent
+            .getString(context)
+            .capitalizeFirstLetter(),
+
+        // text: 'Should be two options at least',
+        icon: NotificationIcons.Require,
+        color: NotificationColors.Requirement,
+      );
+
+  static AppNotifcation sectorNamesShouldBeDifferent(BuildContext context) =>
+      AppNotifcation(
+        text: AppLocale.sectorNamesShouldBeDifferent
+            .getString(context)
+            .capitalizeFirstLetter(),
+
+        // text: 'Should be two options at least',
+        icon: NotificationIcons.Require,
+        color: NotificationColors.Requirement,
+      );
+
+  static AppNotifcation thereAreNoMoreGradesLeftFromThisSection(
+          BuildContext context) =>
+      AppNotifcation(
+        text: AppLocale.thereAreNoMoreGradesLeftFromThisSection
+            .getString(context)
+            .capitalizeFirstLetter(),
+
+        // text: 'Should be two options at least',
+        icon: NotificationIcons.Require,
+        color: NotificationColors.Requirement,
+      );
+
+  static AppNotifcation
+      allSectionsHaveBeenChosenAdjustOtherSupersectionToCreateNewOne(
+              BuildContext context) =>
+          AppNotifcation(
+            text: AppLocale
+                .allSectionsHaveBeenChosenAdjustOtherSupersectionToCreateNewOne
+                .getString(context)
+                .capitalizeFirstLetter(),
+
+            // text: 'Should be two options at least',
+            icon: NotificationIcons.Require,
+            color: NotificationColors.Requirement,
+          );
+
+  static AppNotifcation
+      allgradeAllocationsAreCompleteNoAdditionalSectionsAreRequired(
+              BuildContext context) =>
+          AppNotifcation(
+            text: AppLocale
+                .allgradeAllocationsAreCompleteNoAdditionalSectionsAreRequired
+                .getString(context)
+                .capitalizeFirstLetter(),
+
+            // text: 'Should be two options at least',
+            icon: NotificationIcons.Require,
+            color: NotificationColors.Requirement,
+          );
+
+  static AppNotifcation Function(BuildContext context) yourTotalGradesBelow100(
+    num leftGrades,
+  ) =>
+      (BuildContext context) => AppNotifcation(
+            text:
+                "${AppLocale.yourTotalGradesBelow100_input_p1.getString(context).capitalizeFirstLetter()} $leftGrades ${AppLocale.yourTotalGradesBelow100_input_p2.getString(context).toLowerCase()}",
+            icon: NotificationIcons.Require,
+            color: NotificationColors.Requirement,
+          );
+
+  static AppNotifcation Function(BuildContext context)
+      yourSectionTotalGradesBelow(
+    num totalGrades,
+    num leftGrades,
+  ) =>
+          (BuildContext context) => AppNotifcation(
+                text:
+                    "${AppLocale.yourSectionTotalGradesBelowTotalGrade_input_p1.getString(context).capitalizeFirstLetter()} $totalGrades${AppLocale.yourSectionTotalGradesBelowTotalGrade_input_p2.getString(context).toLowerCase()} $leftGrades ${AppLocale.yourSectionTotalGradesBelowTotalGrade_input_p3.getString(context).toLowerCase()} $totalGrades.",
+                icon: NotificationIcons.Require,
+                color: NotificationColors.Requirement,
+              );
+  static AppNotifcation yourTotalGradesExceed100(BuildContext context) =>
+      AppNotifcation(
+        text: AppLocale.yourTotalGradesExceed100
+            .getString(context)
+            .capitalizeFirstLetter(),
+
+        // text: 'Should be two options at least',
+        icon: NotificationIcons.Require,
+        color: NotificationColors.Requirement,
+      );
+
+  // static AppNotifcation sectionGradeCantBeZero(BuildContext context) =>
+  //     AppNotifcation(
+  //       text: AppLocale.sectionGradeCantBeZero
+  //           .getString(context)
+  //           .capitalizeFirstLetter(),
+
+  //       // text: 'Should be two options at least',
+  //       icon: NotificationIcons.Require,
+  //       color: NotificationColors.Requirement,
+  //     );
   // static AppNotifcation CustomQuestionOptionDuplicated(BuildContext context) =>
   //     AppNotifcation(
   //       text: AppLocale.answerShouldBeDifferent
@@ -390,6 +537,7 @@ class AppNotifcationsItems {
         icon: NotificationIcons.Require,
         color: NotificationColors.Requirement,
       );
+
   static AppNotifcation activityDeletedSuccessfully(BuildContext context) =>
       AppNotifcation(
         text: AppLocale.activityDeletedSuccessfully
@@ -451,6 +599,7 @@ class AppNotifcationsItems {
             icon: NotificationIcons.Require,
             color: NotificationColors.Requirement,
           );
+
   static AppNotifcation Function(BuildContext) duplicateValuesInAvailability(
           int removedStudents) =>
       (BuildContext context) => AppNotifcation(
@@ -462,7 +611,7 @@ class AppNotifcationsItems {
 }
 
 enum NotificationColors {
-  Successful(colorValue: AppColors.primary50),
+  Successful(colorValue: AppColors.green50),
   Requirement(colorValue: AppColors.grey50),
   Warning(colorValue: AppColors.red50);
 

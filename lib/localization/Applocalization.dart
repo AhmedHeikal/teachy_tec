@@ -22,17 +22,48 @@ class AppLocale {
   static const String numbersMustBeInaRangeBetween =
       "numbersMustBeInaRangeBetween";
   static const String numbersMustBeLagrerThan = "numbersMustBeLagrerThan";
+  static const String numbersMustBeSmallerThan = "numbersMustBeSmallerThan";
   static const String passwordShouldBeAtLeast8Characters =
       "passwordShouldBeAtLeast8Characters";
+  static const String thereAreNoMoreGradesLeftFromThisSection =
+      "thereAreNoMoreGradesLeftFromThisSection";
   static const String classNamesShouldBeUnique = "classNamesShouldBeUnique";
   static const String pleaseFillInTheState = "pleaseFillInTheState";
   static const String pleaseFillInTheEmptyField = "pleaseFillInTheEmptyField";
+  static const String
+      allgradeAllocationsAreCompleteNoAdditionalSectionsAreRequired =
+      "allgradeAllocationsAreCompleteNoAdditionalSectionsAreRequired";
+  static const String
+      allSectionsHaveBeenChosenAdjustOtherSupersectionToCreateNewOne =
+      "allSectionsHaveBeenChosenAdjustOtherSupersectionToCreateNewOne";
+  static const String allSectionsHaveBeenChosenDeleteThisSupersection =
+      "allSectionsHaveBeenChosenDeleteThisSupersection";
+  static const String superSectionIsLikeBigUmbrella =
+      "superSectionIsLikeBigUmbrella";
+
+  static const String yourTotalGradesBelow100_input_p1 =
+      "yourTotalGradesBelow100_input_p1";
+  static const String yourTotalGradesBelow100_input_p2 =
+      "yourTotalGradesBelow100_input_p2";
+  static const String yourTotalGradesExceed100 = "yourTotalGradesExceed100";
+  static const String yourSectionTotalGradesBelowTotalGrade_input_p1 =
+      "yourSectionTotalGradesBelowTotalGrade_input_p1";
+  static const String yourSectionTotalGradesBelowTotalGrade_input_p2 =
+      "yourSectionTotalGradesBelowTotalGrade_input_p2";
+  static const String yourSectionTotalGradesBelowTotalGrade_input_p3 =
+      "yourSectionTotalGradesBelowTotalGrade_input_p3";
   static const String phoneNumberFormatIsIncorrect =
       "phoneNumberFormatIsIncorrect";
   static const String country = "country";
   static const String phoneNumber = "phoneNumber";
   static const String title = "title";
   static const String answerShouldBeDifferent = "answerShouldBeDifferent";
+  static const String sectionNamesShouldBeDifferent =
+      "sectionNamesShouldBeDifferent";
+  static const String supersectionNamesShouldBeDifferent =
+      "supersectionNamesShouldBeDifferent";
+  static const String sectorNamesShouldBeDifferent =
+      "sectorNamesShouldBeDifferent";
   static const String questionsShouldBeDifferent = "questionsShouldBeDifferent";
   static const String studentNamesDuplicated = "studentNamesDuplicated";
   static const String didntFindNamesColumn = "didntFindNamesColumn";
@@ -240,6 +271,9 @@ class AppLocale {
   static const chooseMoreThanNoification_Input_P2 =
       "chooseMoreThanNoification_Input_P2";
   static const twoOptionsAtLeastNotification = "twoOptionsAtLeastNotification";
+  static const totalGradeCantBeZero = "totalGradeCantBeZero";
+  static const sectorGradeCantBeZero = "sectorGradeCantBeZero";
+  static const sectionGradeCantBeZero = "sectionGradeCantBeZero";
   static const shouldBeAtleasetOneCorrect = "shouldBeAtleasetOneCorrect";
   static const choseThisItemBefore = "choseThisItemBefore";
   static const activityDeletedSuccessfully = "activityDeletedSuccessfully";

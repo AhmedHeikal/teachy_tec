@@ -37,6 +37,7 @@ class HomeScreenDetailsButton extends StatelessWidget {
             SvgPicture.asset(
               'assets/svg/$imageVectorString.svg',
               height: 30,
+              color: AppColors.primary700,
             ),
             const SizedBox(width: kInternalPadding),
             Expanded(

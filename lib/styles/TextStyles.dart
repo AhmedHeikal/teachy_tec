@@ -60,6 +60,24 @@ class TextStyles {
     fontSize: 12,
     color: AppColors.black,
   );
+  static const InterBlackS12W600 = TextStyle(
+    fontFamily: _interFontFamily,
+    fontWeight: FontWeight.w600,
+    fontSize: 12,
+    color: AppColors.black,
+  );
+  static const InterBlackS12W800 = TextStyle(
+    fontFamily: _interFontFamily,
+    fontWeight: FontWeight.w800,
+    fontSize: 12,
+    color: AppColors.black,
+  );
+  static const InterBlackS16W800 = TextStyle(
+    fontFamily: _interFontFamily,
+    fontWeight: FontWeight.w800,
+    fontSize: 16,
+    color: AppColors.black,
+  );
   static const InterBlackS10W700 = TextStyle(
     fontFamily: _interFontFamily,
     fontWeight: FontWeight.w700,
@@ -105,6 +123,12 @@ class TextStyles {
   static const InterWhiteS14W400 = TextStyle(
     fontFamily: _interFontFamily,
     fontWeight: FontWeight.w400,
+    fontSize: 14,
+    color: AppColors.white,
+  );
+  static const InterWhiteS14W600 = TextStyle(
+    fontFamily: _interFontFamily,
+    fontWeight: FontWeight.w600,
     fontSize: 14,
     color: AppColors.white,
   );
@@ -274,6 +298,18 @@ class TextStyles {
     fontSize: 10,
     color: AppColors.grey900,
   );
+  static const InterGrey900S10W300 = TextStyle(
+    fontFamily: _interFontFamily,
+    fontWeight: FontWeight.w300,
+    fontSize: 10,
+    color: AppColors.grey900,
+  );
+  static const InterGrey800S16W300 = TextStyle(
+    fontFamily: _interFontFamily,
+    fontWeight: FontWeight.w300,
+    fontSize: 16,
+    color: AppColors.grey800,
+  );
 
   static const InterGrey900S10W500 = TextStyle(
     fontFamily: _interFontFamily,
@@ -322,6 +358,18 @@ class TextStyles {
     fontWeight: FontWeight.w500,
     fontSize: 14,
     color: AppColors.grey400,
+  );
+  static const InterGrey400S14W600 = TextStyle(
+    fontFamily: _interFontFamily,
+    fontWeight: FontWeight.w500,
+    fontSize: 14,
+    color: AppColors.grey600,
+  );
+  static const InterGrey400S14W700 = TextStyle(
+    fontFamily: _interFontFamily,
+    fontWeight: FontWeight.w500,
+    fontSize: 14,
+    color: AppColors.grey700,
   );
   static const InterGrey400S18W400 = TextStyle(
     fontFamily: _interFontFamily,
@@ -377,6 +425,18 @@ class TextStyles {
     fontSize: 16,
     color: AppColors.grey800,
   );
+  static const InterGrey800S16W400 = TextStyle(
+    fontFamily: _interFontFamily,
+    fontWeight: FontWeight.w400,
+    fontSize: 16,
+    color: AppColors.grey800,
+  );
+  static const InterGrey800S18W400 = TextStyle(
+    fontFamily: _interFontFamily,
+    fontWeight: FontWeight.w400,
+    fontSize: 18,
+    color: AppColors.grey800,
+  );
   static const InterGrey800S12W400 = TextStyle(
     fontFamily: _interFontFamily,
     fontWeight: FontWeight.w400,
@@ -427,10 +487,28 @@ class TextStyles {
     fontSize: 14,
     color: AppColors.grey700,
   );
+  static const InterGrey700S12W400 = TextStyle(
+    fontFamily: _interFontFamily,
+    fontWeight: FontWeight.w400,
+    fontSize: 12,
+    color: AppColors.grey700,
+  );
   static const InterRed700S14W400 = TextStyle(
     fontFamily: _interFontFamily,
     fontWeight: FontWeight.w400,
     fontSize: 14,
+    color: AppColors.red700,
+  );
+  static const InterRed700S10W400 = TextStyle(
+    fontFamily: _interFontFamily,
+    fontWeight: FontWeight.w400,
+    fontSize: 10,
+    color: AppColors.red700,
+  );
+  static const InterRed700S12W400 = TextStyle(
+    fontFamily: _interFontFamily,
+    fontWeight: FontWeight.w400,
+    fontSize: 12,
     color: AppColors.red700,
   );
   static const InterGrey400S14W400 = TextStyle(
@@ -471,6 +549,20 @@ class TextStyles {
     color: AppColors.grey600,
   );
 
+  static const InterGrey600S10W400 = TextStyle(
+    fontFamily: _interFontFamily,
+    fontWeight: FontWeight.w400,
+    fontSize: 10,
+    color: AppColors.grey600,
+  );
+
+  static const InterGrey600S10W600 = TextStyle(
+    fontFamily: _interFontFamily,
+    fontWeight: FontWeight.w600,
+    fontSize: 10,
+    color: AppColors.grey600,
+  );
+
   static const InterGrey600S16W600 = TextStyle(
     fontFamily: _interFontFamily,
     fontWeight: FontWeight.w600,
@@ -493,6 +585,12 @@ class TextStyles {
   static const InterWhiteS16W600 = TextStyle(
     fontFamily: _interFontFamily,
     fontWeight: FontWeight.w600,
+    fontSize: 16,
+    color: AppColors.white,
+  );
+  static const InterWhiteS16W800 = TextStyle(
+    fontFamily: _interFontFamily,
+    fontWeight: FontWeight.w800,
     fontSize: 16,
     color: AppColors.white,
   );

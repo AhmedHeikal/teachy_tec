@@ -18,6 +18,7 @@ const AR = {
   "pleaseProvideYourLastName": "يُرجى تقديم اسمك الأخير",
   "numbersMustBeInaRangeBetween": "يجب أن تكون الأرقام في نطاق بين",
   "numbersMustBeLagrerThan": "يجب أن تكون الأرقام أكبر من",
+  "numbersMustBeSmallerThan": "يجب أن تكون الأرقام أصغر من أو",
   "passwordShouldBeAtLeast8Characters":
       "يجب أن تكون كلمة المرور على الأقل 8 أحرف",
   "pleaseFillInTheState": "يُرجى إدخال اسم الولاية",
@@ -273,4 +274,33 @@ const AR = {
   "youCurrentlyHaveOlderVersion":
       "لديك حاليًا نسخة أقدم من تطبيق تقنية التعليم. \n قم بتحديث إلى تقنية التعليم الآن!",
   "isHere": "هنا!",
+  "totalGradeCantBeZero":
+      "عند إدخال قيمة صفر أو تركها فارغة، سيتم تعطيل الأقسام حتى تقوم بتعديل الدرجة.",
+  "sectorGradeCantBeZero": "درجة القسم يجب أن تزيد عن الصفر",
+  "sectionGradeCantBeZero": "درجة القسم يجب أن تزيد عن الصفر",
+  "superSectionIsLikeBigUmbrella":
+      "القسم الرئيسي هو مثل مظلة كبيرة تجمع الأقسام الصغيرة. لنفترض أن درجات مدرستك مبنية على أنواع مختلفة من العمل مثل الاختبارات والامتحانات الفصلية وأنشطة أخرى. بدلاً من رؤيتها بشكل منفصل، يمكنك تجميعها تحت فئة كبيرة واحدة، مثل 'العمل الدراسي'. بهذه الطريقة، يتم حساب الدرجة الإجمالية لـ 'العمل الدراسي' تلقائياً بناءً على جميع الأقسام الصغيرة التي تشملها.",
+  "thereAreNoMoreGradesLeftFromThisSection":
+      "لا توجد درجات متبقية من هذا القسم، يرجى ضبط القطاعات أو تعديل الدرجة الإجمالية",
+  "yourTotalGradesBelow100_input_p1":
+      "لم تصل مجموع درجاتك إلى 100، لا تزال ناقصة",
+  "yourTotalGradesBelow100_input_p2":
+      "درجة. \n\nيرجى إضافة قسم جديد أو ضبط درجات الأقسام الحالية بحيث تكون بالضبط 100.",
+  "yourTotalGradesExceed100":
+      "إجمالي درجاتك يتجاوز ال100. يرجى ضبط درجات الأقسام الحالية بحيث تكون بالضبط 100.",
+  "yourSectionTotalGradesBelowTotalGrade_input_p1":
+      "لم تصل مجموع درجات القسم إلى",
+  "yourSectionTotalGradesBelowTotalGrade_input_p2": "،لا تزال ناقصة",
+  "yourSectionTotalGradesBelowTotalGrade_input_p3":
+      "درجة. يرجى إضافة قطاع جديد أو ضبط درجات القطاعات الحالية بحيث تكون بالضبط .\n\n",
+  "allSectionsHaveBeenChosenDeleteThisSupersection":
+      "تم اختيار جميع الأقسام. احذف هذا القسم الفائق أو قم بتعديل الأقسام الأخرى لتشمله.",
+  "allSectionsHaveBeenChosenAdjustOtherSupersectionToCreateNewOne":
+      "تم اختيار جميع الأقسام. قم بضبط القطاعات الفائقة الأخرى لتمكين إنشاء قسم جديد",
+  "allgradeAllocationsAreCompleteNoAdditionalSectionsAreRequired":
+      "تم استيفاء توزيع الدرجات بالكامل. لا حاجة لمزيد من الأقسام. لإضافة قسم جديد، قم بضبط درجات الأقسام الحالية وفقًا لذلك.",
+  "sectionNamesShouldBeDifferent": "يجب أن تكون أسماء الأقسام مختلفة.",
+  "supersectionNamesShouldBeDifferent":
+      "يجب أن تكون أسماء الأقسام الفائقة مختلفة.",
+  "sectorNamesShouldBeDifferent": "يجب أن تكون أسماء القطاعات مختلفة.",
 };

@@ -12,9 +12,9 @@ class Section {
   @HiveField(1)
   String name;
   @HiveField(2)
-  double totalGrade;
+  num totalGrade;
   @HiveField(3)
-  String? colorHex;
+  int? colorHex;
   @HiveField(4)
   List<Sector>? sectors;
 

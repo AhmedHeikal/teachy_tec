@@ -16,4 +16,13 @@ mixin FormParentClass {
     formKey.currentState?.save();
     return true;
   }
+
+  bool isFormValid() {
+    final result = formKey.currentState?.validate();
+    if (result == false) {
+      return false;
+    }
+    formKey.currentState?.save();
+    return true;
+  }
 }

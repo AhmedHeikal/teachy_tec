@@ -1,22 +1,24 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'Sector.dart';
+part of 'SectorStudentGrade.dart';
 
 // **************************************************************************
 // TypeAdapterGenerator
 // **************************************************************************
 
-class SectorAdapter extends TypeAdapter<Sector> {
+class SectorStudentGradeAdapter extends TypeAdapter<SectorStudentGrade> {
   @override
-  final int typeId = 10;
+  final int typeId = 16;
 
   @override
-  Sector read(BinaryReader reader) {
+  SectorStudentGrade read(BinaryReader reader) {
     final numOfFields = reader.readByte();
     final fields = <int, dynamic>{
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
-    return Sector(
+    return SectorStudentGrade(
+      studentId: fields[4] as String?,
+      gradeScored: fields[5] as num?,
       id: fields[0] as String,
       name: fields[1] as String,
       realWeight: fields[2] as num,
@@ -25,9 +27,13 @@ class SectorAdapter extends TypeAdapter<Sector> {
   }
 
   @override
-  void write(BinaryWriter writer, Sector obj) {
+  void write(BinaryWriter writer, SectorStudentGrade obj) {
     writer
+      ..writeByte(6)
       ..writeByte(4)
+      ..write(obj.studentId)
+      ..writeByte(5)
+      ..write(obj.gradeScored)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -44,7 +50,7 @@ class SectorAdapter extends TypeAdapter<Sector> {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is SectorAdapter &&
+      other is SectorStudentGradeAdapter &&
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }
@@ -53,16 +59,22 @@ class SectorAdapter extends TypeAdapter<Sector> {
 // JsonSerializableGenerator
 // **************************************************************************
 
-Sector _$SectorFromJson(Map<String, dynamic> json) => Sector(
+SectorStudentGrade _$SectorStudentGradeFromJson(Map<String, dynamic> json) =>
+    SectorStudentGrade(
+      studentId: json['studentId'] as String?,
+      gradeScored: json['gradeScored'] as num?,
       id: json['id'] as String,
       name: json['name'] as String,
       realWeight: json['realWeight'] as num,
       percentageWeight: json['percentageWeight'] as num,
     );
 
-Map<String, dynamic> _$SectorToJson(Sector instance) => <String, dynamic>{
+Map<String, dynamic> _$SectorStudentGradeToJson(SectorStudentGrade instance) =>
+    <String, dynamic>{
       'id': instance.id,
       'name': instance.name,
       'realWeight': instance.realWeight,
       'percentageWeight': instance.percentageWeight,
+      'studentId': instance.studentId,
+      'gradeScored': instance.gradeScored,
     };

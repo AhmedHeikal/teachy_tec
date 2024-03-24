@@ -115,8 +115,66 @@ final kLastDay = DateTime(kToday.year, kToday.month + 3, kToday.day);
 //     grade_type: String -> either "emoji" or "text"
 //     comment: String
 
+// Schema Model
+//   id: String
+//   name: String
+//   classes: List<classes>
+//   sections: List<Section>
+//   superSection: List<SuperSection>
+//   timestamp: int -> time in milliseconds
+
+// Section Model
+//   id: String
+//   name: String
+//   colorHex: number
+//   totalGrade: number
+//   sectors: List<Sector>?
+
+// Sector Model
+//   id: String
+//   name: String
+//   realWeight: number
+//   percentageWeight: number
+
+// SuperSection Model
+//   id: String
+//   name: String
+//   colorHex: number
+//   sections: List<Section>
+
+// ClassSchema Model
+//   id: String
+//   SchemaId: String
+//   name: String
+//   department: String
+//   grade_level: String
+//   isActive: bool
+
+// ## class not included in schema
+//  schema
+//    "teacher_id"
+//       schemas
+//          "schemas_id"
+//              Schema Model
+//     question: String
+//     grade_value: String -> Will have values for default evaluation criteria
+//     grade_type: String -> either "emoji" or "text"
+//     comment: String
+
+// schema_classes
+//   "schema_id"
+//      classSchema: List<ClassSchema>
+
+// schema_students
+//    "schema_id"
+//
+
 // Firestore constanst
 class FirestoreConstants {
+  static const String schemas = "schemas";
+  static const String classSchemas = "class_Schemas";
+  static const String schemaActivities = "schema_activities";
+  static const String schemaStudents = "schema_students";
   static const String classes = "classes";
   static const String teachers = "teachers";
   static const String students = "students";
@@ -127,6 +185,8 @@ class FirestoreConstants {
   static const String updateRequired = "updateRequired";
   static const String activityId = "activityId";
   static const String activity = "activity";
+  static const String schema = "schema";
+
   static const String activities = "activities";
   static const String id = "id";
   static const String tasks = "tasks";

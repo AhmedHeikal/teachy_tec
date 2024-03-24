@@ -24,7 +24,7 @@ class DefaultContainer extends StatelessWidget {
       : super(key: key);
 
   double borderRadiusValue;
-  BorderRadius? borderRadius;
+  BorderRadiusGeometry? borderRadius;
   // double borderWidth;
   List<BoxShadow>? boxShadow;
   bool addDefaultBoxShadow;

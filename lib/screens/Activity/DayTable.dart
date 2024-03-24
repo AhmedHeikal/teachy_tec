@@ -1,5 +1,6 @@
 // ignore_for_file: prefer_null_aware_operators
 import 'dart:ui';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -195,10 +196,8 @@ class _DayTableState extends State<DayTable> {
                                     child: Align(
                                       alignment:
                                           AlignmentDirectional.bottomStart,
-                                      child: Text(
+                                      child: AutoSizeText(
                                         student.name,
-                                        //  +
-                                        //     "asd fads f asdl kjlksjkdls jlksadj lajdsl kjsakldj alksjd lkajsd ;kljasd;kl jds;kal",
                                         maxLines: 2,
                                         textAlign: TextAlign.end,
                                         overflow: TextOverflow.ellipsis,

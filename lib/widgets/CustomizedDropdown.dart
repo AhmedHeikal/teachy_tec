@@ -768,21 +768,11 @@ class ColorDropdownState<T> extends State<ColorDropdown>
                       decoration: BoxDecoration(
                         color: Color(widget.items[_currentIndex]),
                         borderRadius: BorderRadius.circular(12),
-                        border:
-                            Border.all(width: 2, color: AppColors.primary700),
+                        border: Border.all(width: 2, color: AppColors.grey400),
                       ),
                       height: 30,
                     ),
                   ),
-                  // Text(
-                  //   widget.items.isNotEmpty ? widget.items[_currentIndex] : "",
-                  //   style: !widget.isEnabled
-                  //       ? TextStyles.InterGrey400S14W400
-                  //       : isValid
-                  //           ? TextStyles.InterGrey700S14W400
-                  //           : TextStyles.InterRed700S14W400,
-                  //   // ),
-                  // ),
                   const SizedBox(width: kInternalPadding),
                   if (widget.isEnabled && !widget.hideIcon)
                     Padding(
@@ -881,6 +871,7 @@ class ColorDropdownState<T> extends State<ColorDropdown>
                   link: this._layerLink,
                   showWhenUnlinked: false,
                   child: DefaultContainer(
+                    // color: AppColors.white,
                     decoration: BoxDecoration(
                         boxShadow: [
                           BoxShadow(
@@ -890,6 +881,7 @@ class ColorDropdownState<T> extends State<ColorDropdown>
                             offset: const Offset(0, 2),
                           ),
                         ],
+                        color: AppColors.white,
                         // color: AppColors.white,
                         borderRadius: BorderRadius.circular(8),
                         border: Border.all(
@@ -932,10 +924,10 @@ class ColorDropdownState<T> extends State<ColorDropdown>
                                 decoration: BoxDecoration(
                                     color: Color(item),
                                     border: Border.all(
-                                      width: 2,
+                                      width: index == _currentIndex ? 2 : 1,
                                       color: index == _currentIndex
-                                          ? AppColors.primary700
-                                          : Color(item),
+                                          ? AppColors.grey400
+                                          : AppColors.grey300,
                                     ),
                                     borderRadius: BorderRadius.circular(12)),
                                 height: 30,

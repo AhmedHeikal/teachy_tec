@@ -10,6 +10,7 @@ import 'package:teachy_tec/models/AppConfiguration.dart';
 import 'package:teachy_tec/models/Class.dart';
 import 'package:teachy_tec/models/CustomQuestionOptionModel.dart';
 import 'package:teachy_tec/models/GradesSchema.dart';
+import 'package:teachy_tec/models/Schema.dart';
 import 'package:teachy_tec/models/Section.dart';
 import 'package:teachy_tec/models/Sector.dart';
 import 'package:teachy_tec/models/Student.dart';
@@ -70,5 +71,6 @@ class HiveInjector {
     Hive.registerAdapter(SectorAdapter());
     Hive.registerAdapter(GradesSchemaAdapter());
     Hive.registerAdapter(SuperSectionAdapter());
+    Hive.registerAdapter(SchemaAdapter());
   }
 }
