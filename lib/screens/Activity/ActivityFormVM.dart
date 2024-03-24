@@ -278,16 +278,13 @@ class ActivityFormVM extends ChangeNotifier with FormParentClass {
       newActivity = newActivity
         ..addAll({FirestoreConstants.id: activityDocRef.id});
 
+      DocumentReference classActivityDocRef = FirebaseFirestore.instance
+          .collection(FirestoreConstants.classActivities)
+          .doc(selectedClass!.id)
+          .collection(FirestoreConstants.activities)
+          .doc(activityDocRef.id);
       // Step 3: Add the activity to the 'classActivities' collection
-      batch.set(
-        FirebaseFirestore.instance
-            .collection(FirestoreConstants.classActivities)
-            .doc(selectedClass!.id),
-        {
-          FirestoreConstants.activities: FieldValue.arrayUnion([newActivity]),
-        },
-        SetOptions(merge: true), // Add this line
-      );
+      batch.set(classActivityDocRef, newActivity);
 
       // Get a reference to the Firestore document
       DocumentReference teacherActivitiesDocRef = FirebaseFirestore.instance
@@ -497,17 +494,25 @@ class ActivityFormVM extends ChangeNotifier with FormParentClass {
       //   },
       // );
 
-      batch.set(
-        FirebaseFirestore.instance
-            .collection(FirestoreConstants.classActivities)
-            .doc(selectedClass!.id),
-        {
-          '${FirestoreConstants.activities}.${oldModel!.id}': updatedActivity,
-        },
-        SetOptions(
-            merge:
-                true), // Merge option ensures that existing data isn't overwritten
-      );
+      DocumentReference classActivityDocRef = FirebaseFirestore.instance
+          .collection(FirestoreConstants.classActivities)
+          .doc(selectedClass!.id)
+          .collection(FirestoreConstants.activities)
+          .doc(oldModel!.id);
+      // Step 3: Add the activity to the 'classActivities' collection
+      batch.set(classActivityDocRef, updatedActivity);
+
+      // batch.set(
+      //   FirebaseFirestore.instance
+      //       .collection(FirestoreConstants.classActivities)
+      //       .doc(selectedClass!.id),
+      //   {
+      //     '${FirestoreConstants.activities}.${oldModel!.id}': updatedActivity,
+      //   },
+      //   SetOptions(
+      //       merge:
+      //           true), // Merge option ensures that existing data isn't overwritten
+      // );
 
       DocumentReference teacherActivitiesDocRef = FirebaseFirestore.instance
           .collection(FirestoreConstants.teacherActivities)

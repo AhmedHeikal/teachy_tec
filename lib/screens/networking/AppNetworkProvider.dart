@@ -160,6 +160,8 @@ class AppNetworkProvider {
           // Create a reference to the students collection
           DocumentReference studentDocRef = FirebaseFirestore.instance
               .collection(FirestoreConstants.students)
+              .doc(serviceLocator<FirebaseAuth>().currentUser!.uid)
+              .collection(FirestoreConstants.students)
               .doc();
 
           // Save the student in the students collection
@@ -199,81 +201,81 @@ class AppNetworkProvider {
     return currentClass;
   }
 
-  Future<void> updateClassDetails({
-    required String classId,
-    required String teacherId,
-    required Class updatedClass,
-  }) async {
-    await ActivityController()
-        .updateClassDetailsInActivities(updatedClass: updatedClass);
+  // Future<void> updateClassDetails({
+  //   required String classId,
+  //   required String teacherId,
+  //   required Class updatedClass,
+  // }) async {
+  //   await ActivityController()
+  //       .updateClassDetailsInActivities(updatedClass: updatedClass);
 
-    FirebaseFirestore firestore = FirebaseFirestore.instance;
-    WriteBatch batch = firestore.batch();
+  //   FirebaseFirestore firestore = FirebaseFirestore.instance;
+  //   WriteBatch batch = firestore.batch();
 
-    // Reference to the "classes" collection
-    DocumentReference classDocRef =
-        firestore.collection(FirestoreConstants.classes).doc(classId);
+  //   // Reference to the "classes" collection
+  //   DocumentReference classDocRef =
+  //       firestore.collection(FirestoreConstants.classes).doc(classId);
 
-    // Update the class details in the "classes" collection
-    batch.update(classDocRef, {
-      FirestoreConstants.name: updatedClass.name,
-      FirestoreConstants.gradeLevel: updatedClass.grade_level,
-      FirestoreConstants.department: updatedClass.department,
-    });
+  //   // Update the class details in the "classes" collection
+  //   batch.update(classDocRef, {
+  //     FirestoreConstants.name: updatedClass.name,
+  //     FirestoreConstants.gradeLevel: updatedClass.grade_level,
+  //     FirestoreConstants.department: updatedClass.department,
+  //   });
 
-    // Reference to the "class_activities" collection
-    CollectionReference classActivitiesCollection =
-        firestore.collection(FirestoreConstants.classActivities);
+  //   // Reference to the "class_activities" collection
+  //   CollectionReference classActivitiesCollection =
+  //       firestore.collection(FirestoreConstants.classActivities);
 
-    // Update the class details in the "class_activities" collection
-    QuerySnapshot classActivitiesSnapshot = await classActivitiesCollection
-        .where('class.id', isEqualTo: classId)
-        .get();
+  //   // Update the class details in the "class_activities" collection
+  //   QuerySnapshot classActivitiesSnapshot = await classActivitiesCollection
+  //       .where('class.id', isEqualTo: classId)
+  //       .get();
 
-    for (var activityDoc in classActivitiesSnapshot.docs) {
-      batch.update(activityDoc.reference, {
-        'class': {
-          'id': updatedClass.id,
-          'name': updatedClass.name,
-          'grade_level': updatedClass.grade_level,
-          'department': updatedClass.department,
-        },
-      });
-    }
+  //   for (var activityDoc in classActivitiesSnapshot.docs) {
+  //     batch.update(activityDoc.reference, {
+  //       'class': {
+  //         'id': updatedClass.id,
+  //         'name': updatedClass.name,
+  //         'grade_level': updatedClass.grade_level,
+  //         'department': updatedClass.department,
+  //       },
+  //     });
+  //   }
 
-    // Reference to the "teacher_classes" collection
-    DocumentReference teacherClassesDocRef =
-        firestore.collection(FirestoreConstants.teacherClasses).doc(teacherId);
+  //   // Reference to the "teacher_classes" collection
+  //   DocumentReference teacherClassesDocRef =
+  //       firestore.collection(FirestoreConstants.teacherClasses).doc(teacherId);
 
-    // Get the current list of classes for the teacher
-    DocumentSnapshot teacherClassesSnapshot = await teacherClassesDocRef.get();
+  //   // Get the current list of classes for the teacher
+  //   DocumentSnapshot teacherClassesSnapshot = await teacherClassesDocRef.get();
 
-    List<dynamic> teacherClasses = List.from((teacherClassesSnapshot.data()
-            as Map<String, dynamic>)[FirestoreConstants.classes] ??
-        []);
+  //   List<dynamic> teacherClasses = List.from((teacherClassesSnapshot.data()
+  //           as Map<String, dynamic>)[FirestoreConstants.classes] ??
+  //       []);
 
-    // Find the index of the class to be updated
-    int indexOfUpdatedClass = teacherClasses
-        .indexWhere((classItem) => classItem[FirestoreConstants.id] == classId);
+  //   // Find the index of the class to be updated
+  //   int indexOfUpdatedClass = teacherClasses
+  //       .indexWhere((classItem) => classItem[FirestoreConstants.id] == classId);
 
-    // If the class is found, update it
-    if (indexOfUpdatedClass != -1) {
-      teacherClasses[indexOfUpdatedClass] = {
-        'id': updatedClass.id,
-        'name': updatedClass.name,
-        'grade_level': updatedClass.grade_level,
-        'department': updatedClass.department,
-      };
+  //   // If the class is found, update it
+  //   if (indexOfUpdatedClass != -1) {
+  //     teacherClasses[indexOfUpdatedClass] = {
+  //       'id': updatedClass.id,
+  //       'name': updatedClass.name,
+  //       'grade_level': updatedClass.grade_level,
+  //       'department': updatedClass.department,
+  //     };
 
-      // Update the entire list of classes for the teacher in Firestore
-      batch.update(teacherClassesDocRef, {
-        'classes': teacherClasses,
-      });
-    }
+  //     // Update the entire list of classes for the teacher in Firestore
+  //     batch.update(teacherClassesDocRef, {
+  //       'classes': teacherClasses,
+  //     });
+  //   }
 
-    // Commit the batch
-    await batch.commit();
-  }
+  //   // Commit the batch
+  //   await batch.commit();
+  // }
 
   Future<void> updateClass(
     Class classVar,
@@ -294,38 +296,19 @@ class AppNetworkProvider {
 
     // Update class activities details in the "class" schema
     // Reference to the "teacher_classes" collection
-    DocumentReference classActivitiesDocRef = firestore
+
+    QuerySnapshot activityStudentsRef = await firestore
         .collection(FirestoreConstants.classActivities)
-        .doc(classVar.id);
+        .doc(classVar.id)
+        .collection(FirestoreConstants.activities)
+        .get();
 
-    // Get the current list of classes for the teacher
-    DocumentSnapshot classActivitiesSnapshot =
-        await classActivitiesDocRef.get();
-    if (classActivitiesSnapshot.data() != null) {
-      List<dynamic> activities = (classActivitiesSnapshot.data()
-          as Map<String, dynamic>)[FirestoreConstants.activities] as List;
-      // Find the index of the class to be updated
-      int indexOfActivities = activities.indexWhere((activity) =>
-          activity[FirestoreConstants.class_][FirestoreConstants.id] ==
-          classVar.id);
-
-      // If the class is found, update it
-      if (indexOfActivities != -1) {
-        Map<String, dynamic> currentActivity = activities[indexOfActivities];
-        currentActivity[FirestoreConstants.class_] = {
-          FirestoreConstants.id: classVar.id,
-          FirestoreConstants.name: classVar.name,
-          FirestoreConstants.gradeLevel: classVar.grade_level,
-          FirestoreConstants.department: classVar.department,
-        };
-        activities[indexOfActivities] = currentActivity;
-
-        // Update the entire list of classes for the teacher in Firestore
-        batch.update(classActivitiesDocRef, {
-          FirestoreConstants.activities: activities,
-        });
-      }
+    // Iterate over each document in the snapshot
+    for (DocumentSnapshot doc in activityStudentsRef.docs) {
+      batch.update(
+          doc.reference, {FirestoreConstants.class_: classVar.toJson()});
     }
+
     // Update class activities details in the "class" schema
     // Reference to the "teacher_classes" collection
     DocumentReference teacherClassesDocRef = firestore
@@ -417,20 +400,22 @@ class AppNetworkProvider {
                 .doc(classVar.id),
           );
 
-          // print(
-          //     'Heikal - StudensSnapshot ${(studentsSnapshot.data()! as Map<String, dynamic>)[FirestoreConstants.students]}');
+          if (studentsSnapshot.data() != null) {
+            // print(
+            //     'Heikal - StudensSnapshot ${(studentsSnapshot.data()! as Map<String, dynamic>)[FirestoreConstants.students]}');
 
-          List<dynamic> studentsData = (studentsSnapshot.data()!
-              as Map<String, dynamic>)[FirestoreConstants.students];
+            List<dynamic> studentsData = (studentsSnapshot.data()!
+                as Map<String, dynamic>)[FirestoreConstants.students];
 
-          // Convert the data to a list of Student
-          List<Student> students = (studentsData as List<dynamic>).map((item) {
-            return Student.fromJson(item as Map<String, dynamic>)
-              ..studentClass = classVar;
-          }).toList();
+            // Convert the data to a list of Student
+            List<Student> students = (studentsData).map((item) {
+              return Student.fromJson(item as Map<String, dynamic>)
+                ..studentClass = classVar;
+            }).toList();
 
-          // Add the students to the overall list
-          allStudents.addAll(students);
+            // Add the students to the overall list
+            allStudents.addAll(students);
+          }
         }
       });
     } catch (e) {
@@ -459,7 +444,13 @@ class AppNetworkProvider {
 
       for (var student in students) {
         // Create a reference to the students collection
+        // DocumentReference studentDocRef = FirebaseFirestore.instance
+        //     .collection(FirestoreConstants.students)
+        //     .doc();
+
         DocumentReference studentDocRef = FirebaseFirestore.instance
+            .collection(FirestoreConstants.students)
+            .doc(serviceLocator<FirebaseAuth>().currentUser!.uid)
             .collection(FirestoreConstants.students)
             .doc();
 
@@ -524,13 +515,12 @@ class AppNetworkProvider {
       );
 
       // Step 2: Delete the activity from the 'classActivities' collection
-      batch.update(
+      batch.delete(
         FirebaseFirestore.instance
             .collection(FirestoreConstants.classActivities)
-            .doc(classId),
-        {
-          FirestoreConstants.activities: FieldValue.arrayRemove([activity.id]),
-        },
+            .doc(classId)
+            .collection(FirestoreConstants.activities)
+            .doc(activity.id),
       );
 
       // Step 3: Delete the activity from the 'teacherActivities' collection
@@ -570,16 +560,17 @@ class AppNetworkProvider {
 
   Future<void> deleteClass({required String classId}) async {
     try {
-      var activitiesJson = await serviceLocator<FirebaseFirestore>()
+      QuerySnapshot activityStudentsRef = await FirebaseFirestore.instance
           .collection(FirestoreConstants.classActivities)
           .doc(classId)
+          .collection(FirestoreConstants.activities)
           .get();
-      var activitiesData =
-          (activitiesJson.data() as Map)[FirestoreConstants.activities];
 
-      var activitiesList = ((activitiesData as List)).map((e) {
-        return Activity.fromJson((e as Map<String, dynamic>));
-      }).toList();
+      List<Activity> activitiesList = [];
+      for (DocumentSnapshot doc in activityStudentsRef.docs) {
+        activitiesList
+            .add(Activity.fromJson((doc.data() as Map<String, dynamic>)));
+      }
 
       WriteBatch batch = FirebaseFirestore.instance.batch();
 
@@ -590,17 +581,17 @@ class AppNetworkProvider {
             .doc(classId),
       );
 
-      // Step 2: Delete the class activities from the 'classActivities' collection
-      batch.delete(
-        FirebaseFirestore.instance
-            .collection(FirestoreConstants.classActivities)
-            .doc(classId),
-      );
-
       // Step 3: Delete the class Students from the 'classesStudents' collection
       batch.delete(
         FirebaseFirestore.instance
             .collection(FirestoreConstants.classesStudents)
+            .doc(classId),
+      );
+
+      // Step 2: Delete the class activities from the 'classActivities' collection
+      batch.delete(
+        FirebaseFirestore.instance
+            .collection(FirestoreConstants.classActivities)
             .doc(classId),
       );
 
@@ -700,14 +691,22 @@ class AppNetworkProvider {
         );
 
         // Step 2: Delete the activity from the 'classActivities' collection
-        batch.update(
+
+        batch.delete(
           FirebaseFirestore.instance
               .collection(FirestoreConstants.classActivities)
-              .doc(classId),
-          {
-            FirestoreConstants.activities: FieldValue.arrayRemove([activityId]),
-          },
+              .doc(classId)
+              .collection(FirestoreConstants.activities)
+              .doc(activityId),
         );
+        // batch.update(
+        //   FirebaseFirestore.instance
+        //       .collection(FirestoreConstants.classActivities)
+        //       .doc(classId),
+        //   {
+        //     FirestoreConstants.activities: FieldValue.arrayRemove([activityId]),
+        //   },
+        // );
 
         // Step 3: Delete the activity from the 'teacherActivities' collection
         DocumentReference teacherActivitiesDocRef = FirebaseFirestore.instance
@@ -849,13 +848,24 @@ class AppNetworkProvider {
       batch.update(
         FirebaseFirestore.instance
             .collection(FirestoreConstants.classActivities)
-            .doc(classId),
+            .doc(classId)
+            .collection(FirestoreConstants.activities)
+            .doc(activityId),
         {
-          '${FirestoreConstants.activities}.${FirestoreConstants.tasks}':
-              currentTasks,
+          FirestoreConstants.tasks: currentTasks,
         },
-        // SetOptions(merge: true),
       );
+
+      // batch.update(
+      //   FirebaseFirestore.instance
+      //       .collection(FirestoreConstants.classActivities)
+      //       .doc(classId).collection(FirestoreConstants.activities).doc(activityId)
+      //   {
+      //     '${FirestoreConstants.activities}.${FirestoreConstants.tasks}':
+      //         currentTasks,
+      //   },
+      // SetOptions(merge: true),
+      // );
 
       // Step 4: Update the tasks in the 'activityStudents' collection
       batch.update(
@@ -1255,8 +1265,8 @@ class AppNetworkProvider {
     FirebaseFirestore firestore = FirebaseFirestore.instance;
 
     // Reference to the "Student" collection
-    CollectionReference studentCollection =
-        firestore.collection(FirestoreConstants.students);
+    // CollectionReference studentCollection =
+    //     firestore.collection(FirestoreConstants.students);
 
     // Reference to the "class_students" collection
     CollectionReference classStudentsCollection =
@@ -1266,7 +1276,13 @@ class AppNetworkProvider {
     WriteBatch batch = firestore.batch();
 
     // Update the student in the "Student" collection
-    DocumentReference studentDocRef = studentCollection.doc(updatedStudent.id);
+    DocumentReference studentDocRef = FirebaseFirestore.instance
+        .collection(FirestoreConstants.students)
+        .doc(serviceLocator<FirebaseAuth>().currentUser!.uid)
+        .collection(FirestoreConstants.students)
+        .doc(updatedStudent.id);
+
+    // DocumentReference studentDocRef = studentCollection.doc(updatedStudent.id);
     batch.update(studentDocRef, {
       FirestoreConstants.name: updatedStudent.name,
       FirestoreConstants.gender: updatedStudent.gender?.jsonValue,
@@ -1312,53 +1328,75 @@ class AppNetworkProvider {
       WriteBatch batch = firestore.batch();
 
       // Reference to the "Student" collection
-      CollectionReference studentCollection =
-          firestore.collection(FirestoreConstants.students);
+      // CollectionReference studentCollection =
+      //     firestore.collection(FirestoreConstants.students);
 
       // Reference to the "class_students" collection
       CollectionReference classStudentsCollection =
           firestore.collection(FirestoreConstants.classesStudents);
 
       // Reference to the "class_activities" collection
-      CollectionReference classActivitiesCollection =
-          firestore.collection(FirestoreConstants.classActivities);
+      // CollectionReference classActivitiesCollection =
+      //     firestore.collection(FirestoreConstants.classActivities);
 
       // Reference to the "activity_students" collection
       CollectionReference activityStudentsCollection =
           firestore.collection(FirestoreConstants.activityStudents);
 
       // Update the student in the "Student" collection
-      DocumentReference studentDocRef =
-          studentCollection.doc(updatedStudent.id);
-      batch.delete(studentDocRef);
+      // DocumentReference studentDocRef =
+      //     studentCollection.doc(updatedStudent.id);
+
+      batch.delete(FirebaseFirestore.instance
+          .collection(FirestoreConstants.students)
+          .doc(serviceLocator<FirebaseAuth>().currentUser!.uid)
+          .collection(FirestoreConstants.students)
+          .doc(updatedStudent.id));
 
       // Update the student in the "class_students" collection
       DocumentReference classDocRef = classStudentsCollection.doc(classId);
-      DocumentReference classActivitiesDocRef =
-          classActivitiesCollection.doc(classId);
-      DocumentSnapshot classActivitiesDocSnapshot =
-          await classActivitiesDocRef.get();
+      // DocumentReference classActivitiesDocRef =
+      //     classActivitiesCollection.doc(classId);
+      // DocumentSnapshot classActivitiesDocSnapshot =
+      //     await classActivitiesDocRef.get();
       DocumentSnapshot classDocSnapshot = await classDocRef.get();
-      List<dynamic> studentsData = List.from((classDocSnapshot.data()
-              as Map<String, dynamic>)[FirestoreConstants.students] ??
-          []);
+      if (classDocSnapshot.data() != null) {
+        List<dynamic> studentsData = List.from((classDocSnapshot.data()
+                as Map<String, dynamic>)[FirestoreConstants.students] ??
+            []);
 
-      // Remove the student from the "class_students" collection
-      studentsData.removeWhere(
-          (student) => student[FirestoreConstants.id] == updatedStudent.id);
+        // Remove the student from the "class_students" collection
+        studentsData.removeWhere(
+            (student) => student[FirestoreConstants.id] == updatedStudent.id);
 
-      batch.update(classDocRef, {
-        FirestoreConstants.students: studentsData,
-      });
+        batch.update(classDocRef, {
+          FirestoreConstants.students: studentsData,
+        });
+      }
 
-      // Get all activities attached to this class
-      List<dynamic> classActivityRefs = List.from((classActivitiesDocSnapshot
-              .data() as Map<String, dynamic>)[FirestoreConstants.activities] ??
-          []);
+      QuerySnapshot activityStudentsRef = await FirebaseFirestore.instance
+          .collection(FirestoreConstants.classActivities)
+          .doc(classId)
+          .collection(FirestoreConstants.activities)
+          .get();
+
+      List<Activity> activitiesList = [];
+      for (DocumentSnapshot doc in activityStudentsRef.docs) {
+        activitiesList
+            .add(Activity.fromJson((doc.data() as Map<String, dynamic>)));
+      }
+
+      // if (classActivitiesDocSnapshot.data() != null) {
+      //   // Get all activities attached to this class
+      //   List<dynamic> classActivityRefs = List.from(
+      //     ((classActivitiesDocSnapshot.data() as List<dynamic>)[0]
+      //             as Map<String, dynamic>)[FirestoreConstants.activities] ??
+      //         [],
+      //   );
 
       // Iterate through all activities from "class_activities" and remove the student from "activity_students"
-      for (Map<String, dynamic> classActivityRef in classActivityRefs) {
-        var currentActivityId = (classActivityRef)[FirestoreConstants.id];
+      for (var activity in activitiesList) {
+        var currentActivityId = activity.id;
         DocumentSnapshot activityStudents =
             await activityStudentsCollection.doc(currentActivityId).get();
 
@@ -1376,6 +1414,7 @@ class AppNetworkProvider {
           });
         }
       }
+      // }
 
       // Commit the batch
       await batch.commit();
@@ -1394,8 +1433,8 @@ class AppNetworkProvider {
     FirebaseFirestore firestore = FirebaseFirestore.instance;
 
     // Reference to the "Student" collection
-    CollectionReference studentCollection =
-        firestore.collection(FirestoreConstants.students);
+    // CollectionReference studentCollection =
+    //     firestore.collection(FirestoreConstants.students);
 
     // Reference to the "class_students" collection
     CollectionReference classStudentsCollection =
@@ -1405,7 +1444,12 @@ class AppNetworkProvider {
     WriteBatch batch = firestore.batch();
 
     // Update the student in the "Student" collection
-    DocumentReference studentDocRef = studentCollection.doc(updatedStudent.id);
+    // DocumentReference studentDocRef = studentCollection.doc(updatedStudent.id);
+    DocumentReference studentDocRef = FirebaseFirestore.instance
+        .collection(FirestoreConstants.students)
+        .doc(serviceLocator<FirebaseAuth>().currentUser!.uid)
+        .collection(FirestoreConstants.students)
+        .doc(updatedStudent.id);
     batch.delete(studentDocRef);
 
     // Update the student in the "class_students" collection
