@@ -216,6 +216,7 @@ class ActivityScreenVM extends ChangeNotifier {
         pageName: AppAnalyticsConstants.ActivityForm);
   }
 
+
   Future<List<Activity>> _getActivities() async {
     UIRouter.showEasyLoader();
 

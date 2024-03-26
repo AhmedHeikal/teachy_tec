@@ -116,17 +116,23 @@ class SingleStudentFormVM extends ChangeNotifier with FormParentClass {
 
   Future<void> addNewstudent() async {
     if (!validateForm()) return;
-    UIRouter.showEasyLoader();
-    var savedStudents = await serviceLocator<AppNetworkProvider>().addStudents(
-        students: [Student(id: null, name: name!, gender: gender)],
-        classId: selectedClass?.id ?? '');
+    try {
+      UIRouter.showEasyLoader();
+      var savedStudents = await serviceLocator<AppNetworkProvider>()
+          .addStudents(
+              students: [Student(id: null, name: name!, gender: gender)],
+              classId: selectedClass?.id ?? '');
 
-    if (onAddStudentCallback != null) {
-      onAddStudentCallback!(savedStudents.first);
+      if (onAddStudentCallback != null) {
+        onAddStudentCallback!(savedStudents.first);
+      }
+      notifyListeners();
+      UIRouter.popScreen(rootNavigator: true);
+      EasyLoading.dismiss(animation: true);
+    } catch (e) {
+    } finally {
+      EasyLoading.dismiss(animation: true);
     }
-    EasyLoading.dismiss(animation: true);
-    notifyListeners();
-    UIRouter.popScreen(rootNavigator: true);
   }
 
   Future<void> editNewStudent() async {

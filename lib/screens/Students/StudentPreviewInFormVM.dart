@@ -3,6 +3,7 @@ import 'package:teachy_tec/models/Student.dart';
 import 'package:teachy_tec/screens/Students/StudentFormVM.dart';
 import 'package:teachy_tec/utils/AppEnums.dart';
 import 'package:teachy_tec/widgets/FormParentClass.dart';
+import 'package:uuid/uuid.dart';
 
 class StudentPreviewInFormVM extends ChangeNotifier with FormParentClass {
   Student currentStudent;

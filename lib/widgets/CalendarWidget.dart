@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -127,6 +128,7 @@ class _CalendarWidgetState extends State<CalendarWidget> {
           lastDay: kLastDay,
           headerStyle: const HeaderStyle(
             formatButtonTextStyle: TextStyles.InterYellow700S16W600,
+            // titleTextStyle: const TextStyle(fontSize: 14.0),
             formatButtonDecoration: BoxDecoration(
                 border: Border.fromBorderSide(
                     BorderSide(color: AppColors.primary700, width: 2)),
@@ -151,6 +153,18 @@ class _CalendarWidgetState extends State<CalendarWidget> {
           },
           onRangeSelected: _onRangeSelected,
           calendarBuilders: CalendarBuilders(
+            // headerTitleBuilder: (context, day) {
+
+            // },
+            dowBuilder: (context, day) {
+              return Center(
+                child: AutoSizeText(
+                  AppUtility.getDayNameFromDateTime(day),
+                  minFontSize: 10,
+                  style: TextStyles.InterBlackS18W700,
+                ),
+              );
+            },
             disabledBuilder: (context, day, focusedDay) {
               return DottedBorder(
                 color: AppColors.white,
@@ -159,11 +173,10 @@ class _CalendarWidgetState extends State<CalendarWidget> {
                 strokeWidth: 2,
                 child: Padding(
                   padding: const EdgeInsets.all(kBottomPadding),
-                  child: Text(
+                  child: AutoSizeText(
                     day.day.toString(),
-                    style: const TextStyle(
-                      color: AppColors.grey200,
-                    ),
+                    style: TextStyles.InterBlackS14W400.copyWith(
+                        color: AppColors.grey200),
                   ),
                 ),
               );
@@ -177,43 +190,42 @@ class _CalendarWidgetState extends State<CalendarWidget> {
                 child: Container(
                   margin: const EdgeInsets.only(top: kInternalPadding),
                   padding: const EdgeInsets.all(kBottomPadding),
-                  child: Text(
+                  child: AutoSizeText(
                     day.day.toString(),
-                    style: const TextStyle(color: AppColors.grey200),
+                    style: TextStyles.InterBlackS14W400.copyWith(
+                        color: AppColors.grey200),
                   ),
                 ),
               );
             },
             rangeStartBuilder: (context, day, focusedDay) {
               return Container(
+                padding: const EdgeInsets.all(kBottomPadding),
+                // margin: const EdgeInsets.all(kBottomPadding),
                 decoration: const BoxDecoration(
                   shape: BoxShape.circle,
                   color: AppColors.primary300,
                 ),
                 child: Container(
-                  padding: const EdgeInsets.all(kBottomPadding),
-                  child: Text(
+                  child: AutoSizeText(
                     day.day.toString(),
-                    style: const TextStyle(
-                      color: AppColors.black,
-                    ),
+                    style: TextStyles.InterBlackS14W600,
                   ),
                 ),
               );
             },
             rangeEndBuilder: (context, day, focusedDay) {
               return Container(
+                padding: const EdgeInsets.all(kBottomPadding),
                 decoration: const BoxDecoration(
                   shape: BoxShape.circle,
                   color: AppColors.primary300,
                 ),
                 child: Container(
-                  padding: const EdgeInsets.all(kBottomPadding),
-                  child: Text(
+                  // padding: const EdgeInsets.all(kBottomPadding),
+                  child: AutoSizeText(
                     day.day.toString(),
-                    style: const TextStyle(
-                      color: AppColors.black,
-                    ),
+                    style: TextStyles.InterBlackS14W600,
                   ),
                 ),
               );
@@ -268,9 +280,9 @@ class _CalendarWidgetState extends State<CalendarWidget> {
                   strokeWidth: 2,
                   child: Padding(
                     padding: const EdgeInsets.all(kBottomPadding),
-                    child: Text(
+                    child: AutoSizeText(
                       day.day.toString(),
-                      style: const TextStyle(color: AppColors.black),
+                      style: TextStyles.InterBlackS14W400,
                     ),
                   ),
                 ),
@@ -285,27 +297,24 @@ class _CalendarWidgetState extends State<CalendarWidget> {
                 ),
                 child: Padding(
                   padding: const EdgeInsets.all(kBottomPadding),
-                  child: Text(
+                  child: AutoSizeText(
                     day.day.toString(),
-                    style: const TextStyle(color: AppColors.black),
+                    style: TextStyles.InterBlackS14W600,
                   ),
                 ),
               );
             },
             todayBuilder: (context, day, focusedDay) {
-              return Container(
-                margin: const EdgeInsets.only(bottom: 2),
-                child: DottedBorder(
-                  color: AppColors.primary700,
-                  borderType: BorderType.Circle,
-                  dashPattern: const <double>[6, 4],
-                  strokeWidth: 2,
-                  child: Container(
-                    padding: const EdgeInsets.all(kHelpingPadding),
-                    child: Text(
-                      day.day.toString(),
-                      style: const TextStyle(color: AppColors.black),
-                    ),
+              return DottedBorder(
+                color: AppColors.primary700,
+                borderType: BorderType.Circle,
+                dashPattern: const <double>[6, 4],
+                strokeWidth: 2,
+                child: Container(
+                  padding: const EdgeInsets.all(kHelpingPadding),
+                  child: AutoSizeText(
+                    day.day.toString(),
+                    style: TextStyles.InterBlackS14W600,
                   ),
                 ),
               );
@@ -320,9 +329,9 @@ class _CalendarWidgetState extends State<CalendarWidget> {
                   strokeWidth: 2,
                   child: Container(
                     padding: const EdgeInsets.all(kHelpingPadding),
-                    child: Text(
+                    child: AutoSizeText(
                       day.day.toString(),
-                      style: const TextStyle(color: AppColors.black),
+                      style: TextStyles.InterBlackS14W600,
                     ),
                   ),
                 ),
@@ -368,7 +377,7 @@ class _CalendarWidgetState extends State<CalendarWidget> {
               child: Row(
                 children: [
                   Expanded(
-                    child: Text(
+                    child: AutoSizeText(
                       AppLocale.selectMultiDay
                           .getString(context)
                           .capitalizeAllWord(),

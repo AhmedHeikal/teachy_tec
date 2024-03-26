@@ -190,7 +190,6 @@ class _DayTableState extends State<DayTable> {
                                         )
                                     ],
                                   ),
-                                  // Spacer(),
                                   Expanded(
                                     // alignment: AlignmentDirectional.bottomStart,
                                     child: Align(

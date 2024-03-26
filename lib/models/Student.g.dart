@@ -57,16 +57,16 @@ Student _$StudentFromJson(Map<String, dynamic> json) => Student(
       id: json['id'] as String?,
       name: json['name'] as String,
       gender: $enumDecodeNullable(_$GenderEnumMap, json['gender']),
-      studentClass: json['studentClass'] == null
+      studentClass: json['class'] == null
           ? null
-          : Class.fromJson(json['studentClass'] as Map<String, dynamic>),
+          : Class.fromJson(json['class'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$StudentToJson(Student instance) => <String, dynamic>{
       'id': instance.id,
       'name': instance.name,
       'gender': _$GenderEnumMap[instance.gender],
-      'studentClass': instance.studentClass?.toJson(),
+      'class': instance.studentClass?.toJson(),
     };
 
 const _$GenderEnumMap = {

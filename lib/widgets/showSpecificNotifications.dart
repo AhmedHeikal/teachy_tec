@@ -580,6 +580,15 @@ class AppNotifcationsItems {
         icon: NotificationIcons.Successful,
         color: NotificationColors.Successful,
       );
+  static AppNotifcation fileDownloadedSuccessfullyPleaseViewItInDownloads(
+          BuildContext context) =>
+      AppNotifcation(
+        text: AppLocale.fileDownloadedSuccessfullyPleaseViewItInDownloads
+            .getString(context)
+            .capitalizeFirstLetter(),
+        icon: NotificationIcons.Require,
+        color: NotificationColors.Requirement,
+      );
 
   static AppNotifcation didntFindNamesColumn(BuildContext context) =>
       AppNotifcation(

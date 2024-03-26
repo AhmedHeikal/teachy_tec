@@ -14,6 +14,7 @@ class Student {
   @HiveField(2)
   Gender? gender;
   @HiveField(3)
+  @JsonKey(name: 'class')
   Class? studentClass;
 
   Student({

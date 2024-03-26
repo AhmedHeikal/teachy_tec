@@ -52,14 +52,16 @@ class _TrueFalsePracticePageState extends State<TrueFalsePracticePage> {
               // if (widget.model.isInNewsFeed) ...[
               if (widget.model.currentTask.downloadUrl != null) ...[
                 Align(
-                    child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: kMainPadding),
-                  child: Text(
-                    widget.model.currentTask.task.trim(),
-                    style: TextStyles.InterBlackS18W600,
-                    textAlign: TextAlign.center,
+                  child: Padding(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: kMainPadding),
+                    child: Text(
+                      widget.model.currentTask.task.trim(),
+                      style: TextStyles.InterBlackS18W600,
+                      textAlign: TextAlign.center,
+                    ),
                   ),
-                )),
+                ),
                 const SizedBox(height: kBottomPadding),
               ],
               SizedBox(

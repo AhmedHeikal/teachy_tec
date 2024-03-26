@@ -24,7 +24,14 @@ class MultioptionsPracticePage extends StatelessWidget {
       child: Column(
         children: [
           if (currentTask.downloadUrl != null) ...[
-            Text(currentTask.task, style: TextStyles.InterBlackS18W700),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: kMainPadding),
+              child: Text(
+                currentTask.task,
+                style: TextStyles.InterBlackS18W700,
+                textAlign: TextAlign.center,
+              ),
+            ),
             const SizedBox(
               height: kMainPadding,
             ),

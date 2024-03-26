@@ -20,6 +20,7 @@ import 'package:teachy_tec/utils/Routing/AppAnalyticsConstants.dart';
 import 'package:teachy_tec/utils/UIRouter.dart';
 import 'package:teachy_tec/utils/serviceLocator.dart';
 import 'package:teachy_tec/widgets/showSpecificNotifications.dart';
+import 'package:uuid/uuid.dart';
 
 class StudentsComponentVM extends ChangeNotifier {
   List<StudentPreviewInFormVM> studentsList = [];
@@ -32,10 +33,12 @@ class StudentsComponentVM extends ChangeNotifier {
   }) {
     laodStudentsFromDB(currentClass);
   }
+
   StudentsComponentVM.preview(
       {required Class? currentClass, this.isPreview = true}) {
     laodStudentsFromDB(currentClass);
   }
+
   StudentsComponentVM({
     this.isPreview = false,
   });
@@ -47,9 +50,11 @@ class StudentsComponentVM extends ChangeNotifier {
             model: StudentDetailsScreenVM(
           currentStudent: studentFormVM.currentStudent,
           onDeleteStudent: () {
-            studentsList.removeWhere((element) =>
-                element.studentFormVM.oldStudent?.id ==
-                studentFormVM.currentStudent.id);
+            studentsList.removeWhere(
+              (element) =>
+                  element.studentFormVM.oldStudent?.id ==
+                  studentFormVM.currentStudent.id,
+            );
             notifyListeners();
           },
           onUpdateStudent: (newStudent) {
@@ -90,7 +95,7 @@ class StudentsComponentVM extends ChangeNotifier {
     int currentIndex = studentsList.length;
     studentsList.add(
       StudentPreviewInFormVM(
-        currentStudent: Student(id: currentIndex.toString(), name: ''),
+        currentStudent: Student(id: const Uuid().v4(), name: ''),
         isInEditMode: true,
         isPreview: isPreview,
         changeGeneralGenderSettings: setCurrentGender,
@@ -128,7 +133,7 @@ class StudentsComponentVM extends ChangeNotifier {
     });
 
     for (var student in students) {
-      int currentIndex = studentsList.length;
+      // int currentIndex = studentsList.length;
       if (student.name.trim().isEmpty) continue;
       if (studentsList.any((studentObject) =>
           studentObject.currentStudent.name.trim().toLowerCase() ==
@@ -143,15 +148,20 @@ class StudentsComponentVM extends ChangeNotifier {
             changeGeneralGenderSettings: setCurrentGender,
             gender: currentGender,
             onEditTapped: () async {
-              finishAllOtherStudents(indexTrigerredFunction: currentIndex);
+              finishAllOtherStudents(
+                  indexTrigerredFunction: studentsList.indexWhere(
+                      (element) => element.currentStudent.id == student.id));
             },
             onFinishTapped: (newStudent, startAddingNewStudent) {
+              var currentIndex = studentsList.indexWhere(
+                  (element) => element.currentStudent.id == student.id);
               studentsList[currentIndex].currentStudent = newStudent;
               if (startAddingNewStudent) onAddNewStudent();
               notifyListeners();
             },
             onDeleteTapped: () {
-              studentsList.removeAt(currentIndex);
+              studentsList.removeWhere(
+                  (student_) => student_.currentStudent.id == student.id);
               notifyListeners();
             },
           ),
@@ -257,7 +267,7 @@ class StudentsComponentVM extends ChangeNotifier {
       }
 
       newStudents.add(Student(
-          id: (studentsList.length + i - 1).toString(),
+          id: const Uuid().v4(),
           name: (excel.tables.values.first.rows[i][nameIndex]?.value ?? "")
               .toString()
               .trim(),
@@ -285,7 +295,16 @@ class StudentsComponentVM extends ChangeNotifier {
       if (kDebugMode) {
         print('File already exists at $targetPath');
       }
-      await OpenFile.open(file.path);
+
+      await OpenFile.open(file.path).then((value) {
+        if (value.type == ResultType.noAppToOpen) {
+          showSpecificNotificaiton(
+              notifcationDetails: AppNotifcationsItems
+                  .fileDownloadedSuccessfullyPleaseViewItInDownloads);
+        }
+        debugPrint(
+            'Heikal - openFile results type ${value.type.name} message ${value.message}');
+      });
       return;
     }
 

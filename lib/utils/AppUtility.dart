@@ -619,6 +619,12 @@ class AppUtility {
             ? "assets/svg/ArrowRight.svg"
             : "assets/svg/ArrowLeft.svg";
   }
+
+  static String getDayNameFromDateTime(DateTime day) {
+    return DateFormat('EEEE',
+            serviceLocator<FlutterLocalization>().currentLocale!.languageCode)
+        .format(day);
+  }
   // static String getDayName(WeekDays day) {
   //   switch (day) {
   //     case WeekDays.Monday:

@@ -28,7 +28,12 @@ class TextOnlyPracticePage extends StatelessWidget {
       mainAxisSize: MainAxisSize.max,
       children: [
         if (currentTask.downloadUrl != null) ...[
-          Text(currentTask.task, style: TextStyles.InterBlackS18W700),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: kMainPadding),
+            child: Text(currentTask.task,
+                textAlign: TextAlign.center,
+                style: TextStyles.InterBlackS18W700),
+          ),
           const SizedBox(
             height: kMainPadding,
           ),

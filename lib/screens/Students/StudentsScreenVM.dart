@@ -11,11 +11,12 @@ import 'package:teachy_tec/utils/serviceLocator.dart';
 
 class StudentsScreenVM extends ChangeNotifier {
   bool isInitialized = false;
+  ValueNotifier<bool> isClassesLoading = ValueNotifier(false);
 
   final Class? currentClass;
   List<Student> _studentsList = [];
   int get studentsCount => _studentsList.length;
-
+  List<Class>? classesList;
   String? searchQuery;
   StudentsScreenVM({required this.currentClass}) {
     getStudentsList();
@@ -77,6 +78,21 @@ class StudentsScreenVM extends ChangeNotifier {
               ),
       ),
     ));
+  }
+
+  Future<List<Class>> getClassesList({bool selectFirstClass = true}) async {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      isClassesLoading.value = true;
+    });
+    classesList = await serviceLocator<AppNetworkProvider>().getClassesList();
+    if (classesList == null) return [];
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      isClassesLoading.value = false;
+    });
+
+    // notifyListeners();
+
+    return classesList!;
   }
 
   Future<List<Student>> getStudentsList() async {

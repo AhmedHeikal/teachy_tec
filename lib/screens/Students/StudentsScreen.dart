@@ -43,13 +43,6 @@ class StudentsScreen extends StatelessWidget {
               ),
             ],
           ),
-          // if (!model.isInitialized) return Container();
-          //         if (model.activitiesList.isEmpty) {
-          //           return EmptyPlugin(
-          //             plugin: AppPluginsItems().activitiesEmptyPlugin,
-          //           );
-          //         }
-
           body: SafeArea(
             child: AppPullToRefreshComponent(
               onRefresh: () => model.getStudentsList(),
@@ -95,8 +88,8 @@ class StudentsScreen extends StatelessWidget {
                                     var currentItem = model.students[index];
                                     return InkWell(
                                       onTap: () => UIRouter.pushScreen(
-                                          StudentDetailsScreen(
-                                              model: StudentDetailsScreenVM(
+                                        StudentDetailsScreen(
+                                          model: StudentDetailsScreenVM(
                                             currentStudent: currentItem,
                                             onDeleteStudent: () {
                                               model.students.removeAt(index);
@@ -110,11 +103,15 @@ class StudentsScreen extends StatelessWidget {
                                               model.onUpdateStudent(
                                                   model.students);
                                             },
-                                          )),
-                                          pageName: AppAnalyticsConstants
-                                              .StudentDetailsScreen),
+                                          ),
+                                        ),
+                                        pageName: AppAnalyticsConstants
+                                            .StudentDetailsScreen,
+                                      ),
                                       child: StudentPreview(
-                                          key: UniqueKey(), model: currentItem),
+                                        key: UniqueKey(),
+                                        model: currentItem,
+                                      ),
                                     );
                                   },
                                   separatorBuilder: (context, index) {

@@ -1459,18 +1459,17 @@ Future<bool> requestGalleryPermissions(
   }
 
   Map<Permission, PermissionStatus> statuses = await [
-    if (Platform.isIOS) Permission.photos,
-    // if (Platform.isIOS) Permission.storage,
-    if (Platform.isAndroid) Permission.accessMediaLocation,
-    // Permission.camera,
-    // Permission.microphone,
+    Permission.photos,
+
+    // if (Platform.isAndroid) Permission.accessMediaLocation,
   ].request();
   if (statuses.values.any((element) => (element.isPermanentlyDenied))) {
     // openAppSettings();
     return false;
   } else if (statuses.values
-      .any((element) => !(element.isLimited || element.isGranted)))
+      .any((element) => !(element.isLimited || element.isGranted))) {
     return false;
+  }
   return true;
 }
 
@@ -1483,7 +1482,7 @@ Future<bool> requestPhotoAndVideoPermissions() async {
 
   Map<Permission, PermissionStatus> statuses = await [
     Permission.camera,
-    Permission.microphone,
+    // Permission.microphone,
   ].request();
   if (statuses.values.any((element) => (element.isPermanentlyDenied))) {
     // openAppSettings();

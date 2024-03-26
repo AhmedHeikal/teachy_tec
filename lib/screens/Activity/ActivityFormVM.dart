@@ -105,6 +105,8 @@ class ActivityFormVM extends ChangeNotifier with FormParentClass {
           .updateTasksReadOnlyInEditMode(isTasksReadOnlyInEditMode!);
       notifyListeners();
       return;
+    } else {
+      isTasksReadOnlyInEditMode = false;
     }
   }
 
@@ -252,19 +254,19 @@ class ActivityFormVM extends ChangeNotifier with FormParentClass {
       FirestoreConstants.tasks: questionEvaluations,
     };
 
-    List<Map<String, dynamic>> studentsQuestionEvaluations = [];
+    // List<Map<String, dynamic>> studentsQuestionEvaluations = [];
     // TODO change for newTask details
-    for (var task in tasks) {
-      studentsQuestionEvaluations.add({
-        FirestoreConstants.id: task.id,
-        FirestoreConstants.task: task.task,
-        FirestoreConstants.taskType: task.taskType?.jsonValue,
-        FirestoreConstants.selectedOption: '',
-        FirestoreConstants.gradeValue: '',
-        FirestoreConstants.emojId: '',
-        FirestoreConstants.comment: '',
-      });
-    }
+    // for (var task in tasks) {
+    //   studentsQuestionEvaluations.add({
+    //     FirestoreConstants.id: task.id,
+    //     FirestoreConstants.task: task.task,
+    //     FirestoreConstants.taskType: task.taskType?.jsonValue,
+    //     FirestoreConstants.selectedOption: '',
+    //     FirestoreConstants.gradeValue: '',
+    //     FirestoreConstants.emojId: '',
+    //     FirestoreConstants.comment: '',
+    //   });
+    // }
 
     var studentsInClass = await serviceLocator<AppNetworkProvider>()
         .getStudentsInClass(classId: selectedClass?.id ?? '');
@@ -302,24 +304,52 @@ class ActivityFormVM extends ChangeNotifier with FormParentClass {
           {activityDocRef.id: newActivity});
 
       // Step 4: Add student-specific data to 'activityStudents' collection
-      for (Student student in studentsInClass) {
-        studentsData[student.id!] = studentsQuestionEvaluations;
-      }
 
-      var activityStudentsDocRef = FirebaseFirestore.instance
+      // Generate a new document reference for the activity
+      DocumentReference activityDocReference = FirebaseFirestore.instance
           .collection(FirestoreConstants.activityStudents)
           .doc(activityDocRef.id);
 
+      // Get a reference to the students subcollection within the activity document
+      CollectionReference studentsCollection =
+          activityDocReference.collection(FirestoreConstants.students);
+
+      // Iterate over the students and add them to the students subcollection
+      for (Student student in studentsInClass) {
+        DocumentReference studentDocRef = studentsCollection.doc(student.id);
+
+        // Add the set operation for each student to the batch
+        batch.set(
+          studentDocRef,
+          {
+            FirestoreConstants.tasks: questionEvaluations.map((e) => {
+                  ...e,
+                  FirestoreConstants.selectedOption: null,
+                  FirestoreConstants.gradeValue: null,
+                  FirestoreConstants.emojId: null,
+                  FirestoreConstants.comment: null,
+                }),
+          },
+          SetOptions(merge: true),
+        );
+      }
+
+      // Add the set operation for the activity data to the batch
       batch.set(
-        activityStudentsDocRef,
+        activityDocReference,
         {
           FirestoreConstants.activityId: activityDocRef.id,
-          FirestoreConstants.students: FieldValue.arrayUnion([studentsData]),
+          // FirestoreConstants.students: FieldValue.arrayUnion([studentsData]),
           FirestoreConstants.classId: selectedClass?.id,
           FirestoreConstants.timestamp: pageDate,
         },
         SetOptions(merge: true),
       );
+
+      // for (var student in studentsQuestionEvaluations) {
+      //   // Generate a new document reference with an auto-generated ID
+      // }
+
       // Commit the batched write
       await batch.commit().then((_) async {
         debugPrint('Batch write successful');
@@ -396,7 +426,7 @@ class ActivityFormVM extends ChangeNotifier with FormParentClass {
     try {
       // Step 1: Prepare data for the updated activity
       List<Map<String, dynamic>> questionEvaluations = [];
-      var studentsData = {};
+      // var studentsData = {};
       var tasks = customQuestionVM.submitForms();
       var updatedActivity = {
         FirestoreConstants.Kclass: selectedClass?.toJson(),
@@ -544,36 +574,77 @@ class ActivityFormVM extends ChangeNotifier with FormParentClass {
       );
 
       if (isTasksReadOnlyInEditMode == false) {
-        for (Student student in studentsInClass) {
-          // var currentStudentGrade =
-          //     currentActivityStudents?.studentTasks[student.id!];
-          // List<Task> newTasks = [];
-          // int tasksIndex = 0;
-          for (var task in questionEvaluations) {
-            studentsData[student.id] = {
-              ...task,
-              FirestoreConstants.selectedOption: null,
-              FirestoreConstants.gradeValue: null,
-              FirestoreConstants.emojId: null,
-              FirestoreConstants.comment: null,
-            };
-          }
-        }
-
-        var activityStudentsDocRef = FirebaseFirestore.instance
+        // Generate a new document reference for the activity
+        DocumentReference activityDocReference = FirebaseFirestore.instance
             .collection(FirestoreConstants.activityStudents)
             .doc(oldModel!.id);
 
+        // Get a reference to the students subcollection within the activity document
+        CollectionReference studentsCollection =
+            activityDocReference.collection(FirestoreConstants.students);
+
+        // Iterate over the students and add them to the students subcollection
+        for (Student student in studentsInClass) {
+          DocumentReference studentDocRef = studentsCollection.doc(student.id);
+
+          // Add the set operation for each student to the batch
+          batch.set(
+            studentDocRef,
+            {
+              FirestoreConstants.tasks: questionEvaluations.map((e) => {
+                    ...e,
+                    FirestoreConstants.selectedOption: null,
+                    FirestoreConstants.gradeValue: null,
+                    FirestoreConstants.emojId: null,
+                    FirestoreConstants.comment: null,
+                  }),
+            },
+            SetOptions(merge: true),
+          );
+        }
+
+        // Add the set operation for the activity data to the batch
         batch.set(
-          activityStudentsDocRef,
+          activityDocReference,
           {
             FirestoreConstants.activityId: oldModel!.id,
-            FirestoreConstants.students: studentsData,
+            // FirestoreConstants.students: FieldValue.arrayUnion([studentsData]),
             FirestoreConstants.classId: selectedClass?.id,
             FirestoreConstants.timestamp: pageDate,
           },
           SetOptions(merge: true),
         );
+
+        // for (Student student in studentsInClass) {
+        //   // var currentStudentGrade =
+        //   //     currentActivityStudents?.studentTasks[student.id!];
+        //   // List<Task> newTasks = [];
+        //   // int tasksIndex = 0;
+        //   for (var task in questionEvaluations) {
+        //     studentsData[student.id] = {
+        //       ...task,
+        //       FirestoreConstants.selectedOption: null,
+        //       FirestoreConstants.gradeValue: null,
+        //       FirestoreConstants.emojId: null,
+        //       FirestoreConstants.comment: null,
+        //     };
+        //   }
+        // }
+
+        // var activityStudentsDocRef = FirebaseFirestore.instance
+        //     .collection(FirestoreConstants.activityStudents)
+        //     .doc(oldModel!.id);
+
+        // batch.set(
+        //   activityStudentsDocRef,
+        //   {
+        //     FirestoreConstants.activityId: oldModel!.id,
+        //     FirestoreConstants.students: studentsData,
+        //     FirestoreConstants.classId: selectedClass?.id,
+        //     FirestoreConstants.timestamp: pageDate,
+        //   },
+        //   SetOptions(merge: true),
+        // );
       }
       await batch.commit().then((_) async {
         debugPrint('Batch write successful');

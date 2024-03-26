@@ -5,6 +5,7 @@ import 'package:teachy_tec/screens/Students/StudentsComponentVM.dart';
 import 'package:teachy_tec/utils/AppEnums.dart';
 import 'package:teachy_tec/widgets/FormParentClass.dart';
 import 'package:teachy_tec/widgets/showSpecificNotifications.dart';
+import 'package:uuid/uuid.dart';
 
 class StudentFormVM extends ChangeNotifier with FormParentClass {
   String? name;
@@ -14,6 +15,8 @@ class StudentFormVM extends ChangeNotifier with FormParentClass {
   Function(Student, bool) onFinishEditingStudent;
   VoidCallback onDeleteStudent;
   bool? isPlain;
+
+  var uuid = const Uuid();
 
   StudentFormVM.edit({
     required this.changeGeneralGenderSettings,
@@ -25,12 +28,14 @@ class StudentFormVM extends ChangeNotifier with FormParentClass {
     gender = oldStudent!.gender ?? gender;
     name = oldStudent!.name;
   }
+
   StudentFormVM({
     required this.gender,
     required this.changeGeneralGenderSettings,
     required this.onFinishEditingStudent,
     required this.onDeleteStudent,
   });
+
   StudentFormVM.plain({
     required this.gender,
     required this.changeGeneralGenderSettings,
@@ -62,8 +67,12 @@ class StudentFormVM extends ChangeNotifier with FormParentClass {
         return false;
       }
     }
-    Student studentToReturn =
-        Student(id: null, name: name ?? '', gender: gender);
+
+    Student studentToReturn = Student(
+      id: uuid.v4(),
+      name: name ?? '',
+      gender: gender,
+    );
     if (oldStudent != null) {
       studentToReturn = studentToReturn..id = oldStudent!.id;
     }
@@ -89,7 +98,7 @@ class StudentFormVM extends ChangeNotifier with FormParentClass {
     }
 
     Student studentToReturn =
-        Student(id: null, name: name ?? '', gender: gender);
+        Student(id: uuid.v4(), name: name ?? '', gender: gender);
     if (oldStudent != null) {
       studentToReturn = studentToReturn..id = oldStudent!.id;
     }
@@ -101,7 +110,7 @@ class StudentFormVM extends ChangeNotifier with FormParentClass {
     if (!validateForm()) return false;
 
     Student studentToReturn =
-        Student(id: null, name: name ?? '', gender: gender);
+        Student(id: uuid.v4(), name: name ?? '', gender: gender);
     if (oldStudent != null) {
       studentToReturn = studentToReturn..id = oldStudent!.id;
     }

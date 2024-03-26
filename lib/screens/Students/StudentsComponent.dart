@@ -140,11 +140,11 @@ class StudentsComponent extends StatelessWidget {
               itemBuilder: (context, index) {
                 var currentItem = model.studentsList[index];
                 return InkWell(
+                  key: UniqueKey(),
                   onTap: currentItem.isPreview
                       ? () => model.onTapStudentInPreviewDetails(currentItem)
                       : null,
                   child: StudentPreviewInForm(
-                    key: UniqueKey(),
                     model: currentItem,
                   ),
                 );
